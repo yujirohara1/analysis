@@ -1,0 +1,113 @@
+{% extends 'common.html' %}
+ 
+{% block title %}地方財政{% endblock %}
+
+{% block content %}
+
+%div.container-fluid
+  %div.row
+    %div.col-4
+      %h2.display-6
+        日本の地方財政
+    %div.col-2
+      %select#selTdfk.form-select.form-select-sm(aria-label=".form-select-sm example"  style="margin-top:10px")
+        %option(selected value="0")
+          （都道府県選択）
+    %div.col-2
+      %select#selCity.form-select.form-select-sm(aria-label=".form-select-sm example"  style="margin-top:10px")
+        %option(selected value="0")
+          （市区町村選択）
+    %div.col-4
+      %button.btn.btn-primary.btn-sm.float-end(type="button" data-bs-toggle="modal" data-bs-target="#modalExcelUpload" style="margin-top:10px")
+        データ取り込み
+
+  %div.container-fluid.table-responsive#mainTableDiv
+
+%div.container-fluid#divGraphGroup
+  %div.row#divGraphRow1
+
+<!-- Modal -->
+%div.modal.fade#modalExcelUpload(data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modalExcelUploadLabel" aria-hidden="true")
+  %div.modal-dialog.modal-dialog-centered.modal-dialog-scrollable.modal-xl
+    %div.modal-content
+      %div.modal-header
+        %display-6.modal-title#modalExcelUploadLabel
+          地方財政に関する統計ファイルを収集してデータを取り込みます。
+      %div.modal-body
+        %div.row
+          %div.col-4
+            %select#selFilePattern.form-select.form-select-sm(aria-label=".form-select-sm example")
+              %option(selected value="0")
+                （資料の種類を選択）
+          %div.col-4
+            %button.btn.btn-sm.btn-primary#btnExecuteCollect(type="button")
+              収集実行
+          %div.col-4
+            %button.btn.btn-sm.btn-primary.float-end#btnExecuteImport(type="button")
+              取込実行
+        %div.row
+          &nbsp;
+        %div.row
+          %div.container-fluid.table-responsive#tableFileCollectDiv
+
+        %div.row
+          &nbsp;
+
+        %div.input-group
+          %input.form-control#inputGroupFile(type="file")
+        %label.form-label#lblFileProperty
+      %div.modal-footer
+        %button.btn.btn-secondary(type="button" data-bs-dismiss="modal")
+          キャンセル
+        %button.btn.btn-primary#btnFileImport(type="button")
+          実行
+
+
+<!-- Modal -->
+%div.modal.fade#modalGraphHikaku(data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modalGraphHikakuLabel" aria-hidden="true")
+  %div.modal-dialog.modal-dialog-centered.modal-dialog-scrollable.modal-xl
+    %div.modal-content
+      %div.modal-header
+        %display-6.modal-title#modalGraphHikakuLabel
+          aaaaaa
+      %div.modal-body
+        %div.row
+          %div.col-12#modalGraphHikakuLabel
+        %div.row
+          %div.col-10#divGraphHikakuArea
+          %div.col-2
+            %div.row
+              %div.col-12
+                %select#selTdfkSub.form-select.form-select-sm(aria-label=".form-select-sm example"  style="margin-top:10px")
+                  %option(selected value="0")
+            %div.row
+              &nbsp;
+            %div.row
+              %div.col-12
+                %div.col-12.table-responsive#tableDivHikakuCityList
+
+            
+
+      %div.modal-footer
+        %button.btn.btn-secondary(type="button" data-bs-dismiss="modal")
+          閉じる
+
+
+%div#loading
+  %div.spinner-border(role="status" style="position:relative; left:50%; top:50%; width: 6rem; height: 6rem;")
+
+<div id="loader-bg" class="is-hide">
+    <div id="loader" class="is-hide">
+        <p>
+            <img src="../static/image/loading.gif">
+        </p>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+  <script src="../static/main/js/main.js"></script>
+{% endblock  %}
+
+
