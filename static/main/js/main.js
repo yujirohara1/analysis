@@ -4,8 +4,8 @@
 
 window.onload = function(){
 
-  //収益性ランキングテーブルを作成
-  getAndCreateTable_ShuekiRankList();
+  getAndCreateTable_ShuekiRankList();//収益性ランキングテーブルを作成
+  getAndCreateTable_AnzenRankList();//安全性ランキングテーブルを作成
 
   return;
 }
@@ -38,7 +38,7 @@ function createTableLoading(locationId, tableDivId, messageLabel){
 function getAndCreateTable_ShuekiRankList(){
   
   //枠内にローダーを表示
-  createTableLoading("divMainLeftTop", "tableDivLoading", "経常収支比率による収益性ランクを作成中...");
+  createTableLoading("divMainLeftTop", "tableDivLoading1", "経常収支比率による収益性ランクを作成中...");
 
   val = "2020"; //document.getElementById("selTdfkSub").value;
   fetch('/getShuekiRankList/' + val, {
@@ -52,10 +52,10 @@ function getAndCreateTable_ShuekiRankList(){
     var hdText = ["ランク", "団体名", "施設名",　"経常収支比率(%)"];
     var propId = ["rank", "dantai_nm", "sisetu_nm",　"keijo_shusi_hiritu"];
     var align = ["center", "left", "left",　"right"];
-    createTableByJsonList(list, "divMainLeftTop", "tableDivShueki", "収益性ランキング", hdText, propId, align);
+    createTableByJsonList(list, "divMainLeftTop", "tableDivShueki", "経常収支比率による収益性ランキング", hdText, propId, align);
 
     //ローダーを削除
-    destroyTableLoading("divMainLeftTop", "tableDivLoading");
+    destroyTableLoading("divMainLeftTop", "tableDivLoading1");
 
     return;
   })
@@ -150,6 +150,34 @@ document.getElementById('btnFileImport').addEventListener('click', function() {
 
 
 
+
+//安全性ランキングテーブルを作成
+function getAndCreateTable_AnzenRankList(){
+  
+  //枠内にローダーを表示
+  createTableLoading("divMainCenterTop", "tableDivLoading", "流動比率による安全性ランクを作成中...");
+
+  val = "2020"; //document.getElementById("selTdfkSub").value;
+  fetch('/getAnzenRankList/' + val, {
+    method: 'GET',
+    'Content-Type': 'application/json'
+  })
+  .then(res => res.json())
+  .then(jsonData => {
+    createTableDiv("divMainCenterTop", "tableDivAnzen");
+    list = JSON.parse(jsonData.data)
+    var hdText = ["ランク", "団体名", "施設名",　"流動比率(%)"];
+    var propId = ["rank", "dantai_nm", "sisetu_nm",　"ryudo_hiritu"];
+    var align = ["center", "left", "left",　"right"];
+    createTableByJsonList(list, "divMainCenterTop", "tableDivAnzen", "流動比率による安全性ランキング", hdText, propId, align);
+
+    //ローダーを削除
+    destroyTableLoading("divMainCenterTop", "tableDivLoading");
+
+    return;
+  })
+  .catch(error => { console.log(error); });
+}
 
 
 

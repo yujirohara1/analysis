@@ -6,11 +6,11 @@
 
 %div.container-fluid
   %div.row
-    %div.col-5(style="display:flex; align-items:center")
+    %div.col-6(style="display:flex; align-items:center")
       %h2.display-5(style="float:left; margin-right:15px")
         DiAna
       %h6.lead(style="float:left; margin-right:15px")
-        Diagnosys（診断） and Analysis（分析）のダイアナ。<br>
+        Diagnosis（診断） and Analysis（分析）のダイアナ。<br>
         日本の公営企業をもっとおもしろく。
         <!-- <i class="fa-solid fa-thumbs-up fa-2x"></i> -->
         
@@ -22,13 +22,14 @@
       %select#selCity.form-select.form-select-sm(aria-label=".form-select-sm example"  style="margin-top:10px")
         %option(selected value="0")
           （市区町村選択）
-    %div.col-3
+    %div.col-2
       %button.btn.btn-primary.btn-sm.float-end(type="button" data-bs-toggle="modal" data-bs-target="#modalExcelUpload" style="margin-top:10px")
         データ取り込み
 
   %div.container-fluid#topPain
     %div.row
       %div.col-4#divMainLeftTop(style="text-align:center; height:calc(100vh/3);align-items: center;display: inline-flex;display: flex;flex-direction: column;justify-content: center;")
+      %div.col-4#divMainCenterTop(style="text-align:center; height:calc(100vh/3);align-items: center;display: inline-flex;display: flex;flex-direction: column;justify-content: center;")
 
         
   %div.container-fluid.table-responsive#mainTableDiv

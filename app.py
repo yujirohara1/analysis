@@ -19,7 +19,8 @@ from marshmallow_sqlalchemy import ModelSchema
 from api.database import db, ma
 from models.sisetumain import SisetuMain, SisetuMainSchema, VCity, VCitySchema
 from models.analymain import AnalyMain, AnalyMainSchema
-from models.vanalyshuekiseia import VAnalyShuekiseiA, VAnalyShuekiseiASchema #収益性ランクA
+from models.vanalyshuekiseia import VAnalyShuekiseiA, VAnalyShuekiseiASchema #収益性ランクA・・・経常収支比率
+from models.vanalyryudoanzenseia import VAnalyRyudoAnzenseiA, VAnalyRyudoAnzenseiASchema #安全性ランクA・・・流動比率
 from models.jotai import Jotai, JotaiSchema
 from sqlalchemy.sql import text
 from sqlalchemy import distinct
@@ -769,6 +770,12 @@ def getShuekiRankList(nendo):
     datalist_schema = VAnalyShuekiseiASchema(many=True)
     return jsonify({'data': datalist_schema.dumps(datalist, ensure_ascii=False, default=decimal_default_proc)})
 
+# 安全性ランキングの作成（流動比率の昇順）
+@app.route('/getAnzenRankList/<nendo>')
+def getAnzenRankList(nendo):
+    datalist = VAnalyRyudoAnzenseiA.query.filter(VAnalyRyudoAnzenseiA.nendo == nendo, VAnalyRyudoAnzenseiA.ryudo_hiritu != None).order_by(desc(VAnalyRyudoAnzenseiA.ryudo_hiritu)).all()
+    datalist_schema = VAnalyRyudoAnzenseiASchema(many=True)
+    return jsonify({'data': datalist_schema.dumps(datalist, ensure_ascii=False, default=decimal_default_proc)})
 
 @app.route('/getCityListByTdfkCd/<tdfkCd>')
 def getCityListByTdfkCd(tdfkCd):
