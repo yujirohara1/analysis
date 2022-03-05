@@ -1,7 +1,7 @@
-drop view V_ANALY_SHUEKISEI_A; 
+drop view V_ANALY_RUISEKIKESSON_A; 
 
 create 
-or replace view V_ANALY_SHUEKISEI_A as 
+or replace view V_ANALY_RUISEKIKESSON_A as 
 select
     nendo
     , gyomu_cd
@@ -11,6 +11,10 @@ select
     , dantai_nm
     , sisetu_cd
     , sisetu_nm
+    , hyo_num
+    , hyo_num_sub
+    , gyo_num
+    , gyo_num_sub
     , joken_1
     , joken_2
     , joken_3
@@ -20,26 +24,11 @@ select
     , joken_7
     , joken_8
     , joken_9
-    , eigyo_shueki
-    , eigyo_gai_shueki
-    , (eigyo_shueki + eigyo_gai_shueki) keijo_shueki
-    , eigyo_hiyo
-    , eigyo_gai_hiyo
-    , (eigyo_hiyo + eigyo_gai_hiyo) keijo_hiyo
-    , eigyo_shueki - eigyo_hiyo eigyo_soneki
-    , (eigyo_shueki + eigyo_gai_shueki) - (eigyo_hiyo + eigyo_gai_hiyo) keijo_soneki
     , round(case 
-        when (eigyo_hiyo) = 0 
+        when (eigyo_shueki - jutaku_koji_shueki) <= 0 
             then null 
-        else ((eigyo_shueki) / (eigyo_hiyo)) * 100 
-        end) eigyo_shusi_hiritu
-    , round(case 
-        when (eigyo_hiyo + eigyo_gai_hiyo) = 0 
-            then null 
-        else ( 
-            (eigyo_shueki + eigyo_gai_shueki) / (eigyo_hiyo + eigyo_gai_hiyo)
-        ) * 100 
-        end) keijo_shusi_hiritu 
+        else ((mishori_kesson) / (eigyo_shueki - jutaku_koji_shueki)) * 100 
+        end) ruiseki_kesson_hiritu
 from
     ( 
         select
@@ -51,6 +40,10 @@ from
             , dantai_nm
             , sisetu_cd
             , sisetu_nm
+            , hyo_num
+            , hyo_num_sub
+            , gyo_num
+            , gyo_num_sub
             , joken_1
             , joken_2
             , joken_3
@@ -60,16 +53,15 @@ from
             , joken_7
             , joken_8
             , joken_9
-            , sum(case when retu_num = 2 then val_num else 0 end) eigyo_shueki
-            , sum(case when retu_num = 15 then val_num else 0 end) eigyo_gai_shueki
-            , sum(case when retu_num = 26 then val_num else 0 end) eigyo_hiyo
-            , sum(case when retu_num = 40 then val_num else 0 end) eigyo_gai_hiyo 
+            , sum(case when hyo_num = 20 and gyo_num = 1 and retu_num = 2  then val_num else 0 end) eigyo_shueki
+            , sum(case when hyo_num = 20 and gyo_num = 1 and retu_num = 11 then val_num else 0 end) jutaku_koji_shueki
+            , sum(case when hyo_num = 22 and gyo_num = 1 and retu_num = 64 then val_num else 0 end) mishori_kesson
+            , sum(case when retu_num = 31 then val_num else 0 end) ryudo_fusai
         from
             analy_main a 
         where
-            hyo_num = 20 
-            and gyo_num = 1 
-            and retu_num in (2, 15, 26, 40) 
+            (hyo_num = 22 and gyo_num = 1 and retu_num = 64)  or
+            (hyo_num = 20 and gyo_num = 1 and retu_num in (2,11))  
         group by
             nendo
             , gyomu_cd
@@ -79,6 +71,10 @@ from
             , dantai_nm
             , sisetu_cd
             , sisetu_nm
+            , hyo_num
+            , hyo_num_sub
+            , gyo_num
+            , gyo_num_sub
             , joken_1
             , joken_2
             , joken_3

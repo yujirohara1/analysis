@@ -11,10 +11,6 @@ select
     , dantai_nm
     , sisetu_cd
     , sisetu_nm
-    , hyo_num
-    , hyo_num_sub
-    , gyo_num
-    , gyo_num_sub
     , joken_1
     , joken_2
     , joken_3
@@ -43,10 +39,6 @@ from
             , dantai_nm
             , sisetu_cd
             , sisetu_nm
-            , hyo_num
-            , hyo_num_sub
-            , gyo_num
-            , gyo_num_sub
             , joken_1
             , joken_2
             , joken_3
@@ -73,10 +65,6 @@ from
             , dantai_nm
             , sisetu_cd
             , sisetu_nm
-            , hyo_num
-            , hyo_num_sub
-            , gyo_num
-            , gyo_num_sub
             , joken_1
             , joken_2
             , joken_3
