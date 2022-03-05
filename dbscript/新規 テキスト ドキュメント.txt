@@ -1,0 +1,58 @@
+psql -U postgres newdb3
+yjrhr1102
+
+
+drop table analy_main_2020_20;
+drop table analy_main_2020_21;
+drop table analy_main_2020_22;
+drop table analy_main_2020_23;
+
+
+create table analy_main_2020_20 as select * from analy_main where nendo = 2020 and hyo_num = 20;
+create table analy_main_2020_21 as select * from analy_main where nendo = 2020 and hyo_num = 21;
+create table analy_main_2020_22 as select * from analy_main where nendo = 2020 and hyo_num = 22;
+create table analy_main_2020_23 as select * from analy_main where nendo = 2020 and hyo_num = 23;
+
+\q
+
+
+pg_dump -h localhost -p 5432 -U postgres -a --column-inserts -d newdb3 --table analy_main_2020_20 > e:\analymain_insert_2020_20.sql
+yjrhr1102
+
+pg_dump -h localhost -p 5432 -U postgres -a --column-inserts -d newdb3 --table analy_main_2020_21 > e:\analymain_insert_2020_21.sql
+yjrhr1102
+
+pg_dump -h localhost -p 5432 -U postgres -a --column-inserts -d newdb3 --table analy_main_2020_22 > e:\analymain_insert_2020_22.sql
+yjrhr1102
+
+pg_dump -h localhost -p 5432 -U postgres -a --column-inserts -d newdb3 --table analy_main_2020_23 > e:\analymain_insert_2020_23.sql
+yjrhr1102
+
+
+heroku pg:psql postgresql-flexible-14532 --app diana12
+
+\i 'C:\\diana12_insert\\analymain_insert_2020_20.sql'
+\i 'C:\\diana12_insert\\analymain_insert_2020_21.sql'
+\i 'C:\\diana12_insert\\analymain_insert_2020_22.sql'
+\i 'C:\\diana12_insert\\analymain_insert_2020_23.sql'
+\i 'C:\\diana12_insert\\analymain_insert_2020_24.sql'
+\i 'C:\\diana12_insert\\analymain_insert_2020_25.sql'
+
+\i 'C:\\diana12_insert_2\\analymain_insert_2020_20.sql'
+\i 'C:\\diana12_insert_2\\analymain_insert_2020_21.sql'
+\i 'C:\\diana12_insert_2\\analymain_insert_2020_22.sql'
+\i 'C:\\diana12_insert_2\\analymain_insert_2020_23.sql'
+\i 'C:\\diana12_insert_2\\analymain_insert_2020_24.sql'
+\i 'C:\\diana12_insert_2\\analymain_insert_2020_25.sql'
+
+
+
+
+
+
+delete from analy_main where hyo_num = 20 and retu_num > 76;
+delete from analy_main where hyo_num = 21 and retu_num > 64;
+delete from analy_main where hyo_num = 22 and retu_num > 65;
+delete from analy_main where hyo_num = 23 and retu_num > 70;
+delete from analy_main where hyo_num = 24 and retu_num > 16;
+
