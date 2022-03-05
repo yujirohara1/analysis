@@ -26,10 +26,10 @@
 
 
   %div
-    %ul.nav.nav-tabs.mb-3#myTab(role="tablist")
+    %ul.nav.nav-tabs.mb-3#dataTab(role="tablist")
       %li.nav-item(role="presentation")
         %a.nav-link.active#home-tab(data-bs-toggle="tab" data-bs-target="#home-panel" type="button" role="tab" aria-controls="home" aria-selected="true")
-          ホーム
+          ダイジェスト
       %li.nav-item(role="presentation")
         %a.nav-link#profile-tab(data-bs-toggle="tab" data-bs-target="#profile-panel" type="button" role="tab" aria-controls="profile" aria-selected="true")
           基本情報
@@ -40,7 +40,7 @@
         %a.nav-link#compare-tab(data-bs-toggle="tab" data-bs-target="#compare-panel" type="button" role="tab" aria-controls="compare" aria-selected="true")
           類似団体比較
 
-    %div.tab-content#myTabContent
+    %div.tab-content#dataTabContent
       %div.tab-pane.active.show#home-panel(role="tabpanel" aria-labelledby="home-tab")
             
         %div.container-fluid#topPain

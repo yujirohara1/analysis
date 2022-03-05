@@ -141,12 +141,10 @@ function createTableByJsonList(datalist, locationId, tableDivId, caption, hdText
 
 function moveProfileTab(key){
   try{
-    //AudioParamMap
-    document.getElementById('home-tab').classList.remove("active");
+    document.getElementById('dataTab').querySelector("a.nav-link").classList.remove("active");
     document.getElementById('profile-tab').classList.add("active");
-    
-    document.getElementById('home-panel').classList.remove("active");
-    document.getElementById('home-panel').classList.remove("show");
+    document.getElementById('dataTabContent').querySelector("div.tab-pane").classList.remove("active");
+    document.getElementById('dataTabContent').querySelector("div.tab-pane").classList.remove("show");
     document.getElementById('profile-panel').classList.add("active");
     document.getElementById('profile-panel').classList.add("show");
     
@@ -154,6 +152,7 @@ function moveProfileTab(key){
 
   }
 }
+
 
 
 // function openModalDantaiProfile(key){
