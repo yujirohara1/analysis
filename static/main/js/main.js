@@ -93,6 +93,31 @@ function createTableByJsonList(datalist, locationId, tableDivId, caption, hdText
         tdataA.innerHTML = i*1+1;
       }else{
         tdataA.innerHTML = datalist[i][propId[id]];
+
+        if(propId[id]=="dantai_nm"){
+          tdataA.title = 
+            datalist[i].gyomu_cd + "-" + 
+            datalist[i].gyoshu_cd + "-" + 
+            datalist[i].jigyo_cd + "-" +  
+            datalist[i].dantai_cd;
+
+
+
+            tdataA.addEventListener('click', (event) => {
+              var key = event.target.title;
+              moveProfileTab(key);
+            });
+
+
+
+        } else if(propId[id]=="sisetu_nm"){
+          tdataA.title = 
+            datalist[i].gyomu_cd + "-" + 
+            datalist[i].gyoshu_cd + "-" + 
+            datalist[i].jigyo_cd + "-" +  
+            datalist[i].dantai_cd + "-" +  
+            datalist[i].sisetu_cd;
+        } 
       }
       tdataA.style.textAlign=align[id];
       trow.appendChild(tdataA);
@@ -114,7 +139,40 @@ function createTableByJsonList(datalist, locationId, tableDivId, caption, hdText
 }
 
 
+function moveProfileTab(key){
+  try{
+    //AudioParamMap
+    document.getElementById('home-tab').classList.remove("active");
+    document.getElementById('profile-tab').classList.add("active");
+    
+    document.getElementById('home-panel').classList.remove("active");
+    document.getElementById('home-panel').classList.remove("show");
+    document.getElementById('profile-panel').classList.add("active");
+    document.getElementById('profile-panel').classList.add("show");
+    
+  }catch(e){
 
+  }
+}
+
+
+// function openModalDantaiProfile(key){
+//   var myModal = new bootstrap.Modal(document.getElementById('modalDantaiProfile'), {
+//     keyboard: false
+//   });
+
+  
+//   // var ele = document.getElementById("divGraphHikakuArea");
+//   // while( ele.firstChild ){
+//   //   ele.removeChild( ele.firstChild );
+//   // }
+
+//   // //document.getElementById("modalGraphHikakuLabel").innerText = rowindex;
+//   // var graphId = createGraphAreaModal(datalist, rowindex, "divGraphHikakuArea");
+//   // graphHikakuChart = createGraphTest(datalist, rowindex, graphId, title);
+  
+//   myModal.show();
+// }
 
 
 

@@ -7,21 +7,15 @@
 %div.container-fluid
   %div.row
     %div.col-6(style="display:flex; align-items:center")
-      %img.img-responsive(src="../static/image/top_icon.png" style="margin-right:20px")
+      %img.img-responsive(src="../static/image/top_icon.png" style="margin-left:5px;margin-right:20px")
       %h2.display-5(style="float:left; margin-right:15px; font-size:3.8rem")
         DiAna
       %h6.lead(style="float:left; margin-right:15px")
-        Diagnosis（診断） and Analysis（分析）のダイアナ。<br>
+        Diagnosis（診断） と Analysis（分析）のダイアナ。<br>
         日本の公営企業を、<font>もっとおもしろく。</font>
         
     %div.col-2
-      %select#selTdfk.form-select.form-select-sm(aria-label=".form-select-sm example"  style="margin-top:10px")
-        %option(selected value="0")
-          （都道府県選択）
     %div.col-2
-      %select#selCity.form-select.form-select-sm(aria-label=".form-select-sm example"  style="margin-top:10px")
-        %option(selected value="0")
-          （市区町村選択）
     %div.col-2
       %button.btn.btn-primary.btn-sm.float-end(type="button" data-bs-toggle="modal" data-bs-target="#modalExcelUpload" style="margin-top:10px")
         データ取り込み
@@ -29,11 +23,61 @@
   %div.row
     &nbsp;
     
-  %div.container-fluid#topPain
-    %div.row
-      %div.col-4#divMainLeftTop(style="text-align:center; height:calc(100vh/3);align-items: center;display: inline-flex;display: flex;flex-direction: column;justify-content: center;")
-      %div.col-4#divMainCenterTop(style="text-align:center; height:calc(100vh/3);align-items: center;display: inline-flex;display: flex;flex-direction: column;justify-content: center;")
-      %div.col-4#divMainRightTop(style="text-align:center; height:calc(100vh/3);align-items: center;display: inline-flex;display: flex;flex-direction: column;justify-content: center;")
+
+
+  %div
+    %ul.nav.nav-tabs.mb-3#myTab(role="tablist")
+      %li.nav-item(role="presentation")
+        %a.nav-link.active#home-tab(data-bs-toggle="tab" data-bs-target="#home-panel" type="button" role="tab" aria-controls="home" aria-selected="true")
+          ホーム
+      %li.nav-item(role="presentation")
+        %a.nav-link#profile-tab(data-bs-toggle="tab" data-bs-target="#profile-panel" type="button" role="tab" aria-controls="profile" aria-selected="true")
+          基本情報
+      %li.nav-item(role="presentation")
+        %a.nav-link#transition-tab(data-bs-toggle="tab" data-bs-target="#transition-panel" type="button" role="tab" aria-controls="transition" aria-selected="true")
+          データ推移
+      %li.nav-item(role="presentation")
+        %a.nav-link#compare-tab(data-bs-toggle="tab" data-bs-target="#compare-panel" type="button" role="tab" aria-controls="compare" aria-selected="true")
+          類似団体比較
+
+    %div.tab-content#myTabContent
+      %div.tab-pane.active.show#home-panel(role="tabpanel" aria-labelledby="home-tab")
+            
+        %div.container-fluid#topPain
+          %div.row
+            %div.col-4#divMainLeftTop(style="text-align:center; height:calc(100vh/3);align-items: center;display: inline-flex;display: flex;flex-direction: column;justify-content: center;")
+            %div.col-4#divMainCenterTop(style="text-align:center; height:calc(100vh/3);align-items: center;display: inline-flex;display: flex;flex-direction: column;justify-content: center;")
+            %div.col-4#divMainRightTop(style="text-align:center; height:calc(100vh/3);align-items: center;display: inline-flex;display: flex;flex-direction: column;justify-content: center;")
+
+
+      %div.tab-pane#profile-panel(role="tabpanel" aria-labelledby="profile-tab")
+      %div.tab-pane#transition-panel(role="tabpanel" aria-labelledby="transition-tab")
+      %div.tab-pane#compare-panel(role="tabpanel" aria-labelledby="compare-tab")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         
   %div.container-fluid.table-responsive#mainTableDiv
@@ -76,6 +120,34 @@
           キャンセル
         %button.btn.btn-primary#btnFileImport(type="button")
           実行
+
+
+
+<!-- 個別団体情報の表示モーダル -->
+%div.modal.fade#modalDantaiProfile(data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modalDantaiProfileLabel" aria-hidden="true")
+  %div.modal-dialog.modal-dialog-centered.modal-dialog-scrollable.modal-xl
+    %div.modal-content
+      %div.modal-header
+        %display-6.modal-title#modalDantaiProfileLabel
+          aaaaaa
+      %div.modal-body
+        %div.row
+          %div.col-12#modalDantaiProfileLabel
+        %div.row
+          %div.col-10
+          %div.col-2
+            %div.row
+              %div.col-12
+            %div.row
+              &nbsp;
+            %div.row
+              %div.col-12
+                %div.col-12.table-responsive
+
+      %div.modal-footer
+        %button.btn.btn-secondary(type="button" data-bs-dismiss="modal")
+          閉じる
+
 
 
 <!-- Modal -->
