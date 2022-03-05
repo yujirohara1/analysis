@@ -1,8 +1,131 @@
+/*
+|| バニラで書いていく。
+*/
+
 window.onload = function(){
 
-  createTdfkSelectOption();
-  createFilePatternSelectOption();
+  //収益性ランキングテーブルを作成
+  getAndCreateTable_ShuekiRankList();
+
+  return;
 }
+
+
+
+//ロケーションdiv に テーブル格納用divを作る。
+// このように利用　→　createTableDiv("divMainLeftTop", "tableDivShueki"); //左上エリアに、収益グリッドを作る場合
+function createTableDiv(locationId, tableDivId){
+  let tableDiv = document.createElement('div');
+  tableDiv.classList.add("table-responsive");
+  tableDiv.id = tableDivId;
+  document.getElementById(locationId).appendChild(tableDiv);
+}
+
+// テーブル内のデータが表示されるまでの間、小さいローダーを枠内に表示
+function createTableLoading(locationId, tableDivId, messageLabel){
+  let tableDiv = document.createElement('div');
+  tableDiv.classList.add("loadingDiv");
+  tableDiv.id = tableDivId;
+  let messageDiv = document.createElement('div');
+  messageDiv.id = locationId + "Caption";
+  messageDiv.innerText = messageLabel
+  document.getElementById(locationId).appendChild(messageDiv);
+  document.getElementById(locationId).appendChild(tableDiv);
+}
+
+
+//収益性ランキングテーブルを作成
+function getAndCreateTable_ShuekiRankList(){
+  
+  //枠内にローダーを表示
+  createTableLoading("divMainLeftTop", "tableDivLoading", "経常収支比率による収益性ランクを作成中...");
+
+  val = "2020"; //document.getElementById("selTdfkSub").value;
+  fetch('/getShuekiRankList/' + val, {
+    method: 'GET',
+    'Content-Type': 'application/json'
+  })
+  .then(res => res.json())
+  .then(jsonData => {
+    createTableDiv("divMainLeftTop", "tableDivShueki");
+    list = JSON.parse(jsonData.data)
+    var hdText = ["ランク", "団体名", "施設名",　"経常収支比率(%)"];
+    var propId = ["rank", "dantai_nm", "sisetu_nm",　"keijo_shusi_hiritu"];
+    var align = ["center", "left", "left",　"right"];
+    createTableByJsonList(list, "divMainLeftTop", "tableDivShueki", "収益性ランキング", hdText, propId, align);
+
+    //ローダーを削除
+    destroyTableLoading("divMainLeftTop", "tableDivLoading");
+
+    return;
+  })
+  .catch(error => { console.log(error); });
+}
+
+//ローダーを削除
+function destroyTableLoading(locationId, tableDivId){
+  document.getElementById(locationId).removeChild(
+    document.getElementById(tableDivId)
+  )
+  document.getElementById(locationId).style.height = "";
+}
+
+//jsonデータからhtmlテーブルを自作する。
+function createTableByJsonList(datalist, locationId, tableDivId, caption, hdText, propId, align){
+  let table = document.createElement("table");
+  let thead = document.createElement('thead');
+  let tbody = document.createElement('tbody');
+
+  let trow = document.createElement('tr');
+
+  for (let hd in hdText){
+    var thA = document.createElement('th');
+    thA.innerHTML = hdText[hd];
+    thA.style.textAlign = "center";
+    thA.style.verticalAlign = "middle";
+    trow.appendChild(thA);
+  }
+  thead.appendChild(trow);
+  
+  for(let i in datalist){
+    trow = document.createElement('tr');
+    
+    for (let id in propId){
+      var tdataA = document.createElement('td');
+      if(propId[id]=="rank"){
+        tdataA.innerHTML = i*1+1;
+      }else{
+        tdataA.innerHTML = datalist[i][propId[id]];
+      }
+      tdataA.style.textAlign=align[id];
+      trow.appendChild(tdataA);
+    }
+    
+    tbody.appendChild(trow);
+  }
+  table.appendChild(thead);
+  table.appendChild(tbody);
+  table.classList.add("table");
+  table.classList.add("table-bordered");
+  table.classList.add("table_sticky");
+  table.classList.add("table-hover");
+  table.classList.add("fs-6"); //text-end
+  table.id = tableDivId.replace("Div","");  ;//"tableHikakuCityList";
+  document.getElementById(tableDivId).appendChild(table);
+  //table = new DataTable(mainTable);
+  document.getElementById(locationId + "Caption").innerText = caption;
+}
+
+
+
+
+
+
+
+
+
+
+
 
 document.getElementById('btnFileImport').addEventListener('click', function() {
   var files = document.querySelector('#inputGroupFile').files
@@ -21,6 +144,69 @@ document.getElementById('btnFileImport').addEventListener('click', function() {
   .catch(error => { console.log(error); });
   document.getElementById('btnFileImport').classList.add("disabled");
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// ここからは過去資料
+
+
+
+// //テーブル要素のオールクリア
+// function AllClearTable(tableDivId){
+//   var tableDiv = document.getElementById(tableDivId);
+//   while(tableDiv.lastChild){
+//     tableDiv.removeChild(tableDiv.lastChild);
+//   }
+// }
+
+
 
 document.getElementById('btnExecuteImport').addEventListener('click', function() {
   document.getElementById('btnExecuteCollect').classList.add("disabled");
@@ -554,52 +740,52 @@ function getCityList(){
   //dispLoading();
 }
 
-function createTableRightSideCityList(datalist){
-  var tableDiv = document.getElementById("tableDivHikakuCityList");
-  while(tableDiv.lastChild){
-    tableDiv.removeChild(tableDiv.lastChild);
-  }
+// function createTableRightSideCityList(datalist){
+//   var tableDiv = document.getElementById("tableDivHikakuCityList");
+//   while(tableDiv.lastChild){
+//     tableDiv.removeChild(tableDiv.lastChild);
+//   }
 
-  let table = document.createElement("table");
-  let thead = document.createElement('thead');
-  let tbody = document.createElement('tbody');
+//   let table = document.createElement("table");
+//   let thead = document.createElement('thead');
+//   let tbody = document.createElement('tbody');
 
-  let trow = document.createElement('tr');
+//   let trow = document.createElement('tr');
 
-  let th = document.createElement('th');
-  th.innerHTML = "市区町村";
-  trow.appendChild(th);
-  thead.appendChild(trow);
+//   let th = document.createElement('th');
+//   th.innerHTML = "市区町村";
+//   trow.appendChild(th);
+//   thead.appendChild(trow);
 
-  let tdataVal = document.createElement('td');
-  for(let i in datalist){
-    trow = document.createElement('tr');
-    let tdataA = document.createElement('td');
-    tdataA.innerHTML = datalist[i].city_nm;
-    tdataA.title = datalist[i].dantai_cd
-    trow.appendChild(tdataA);
+//   let tdataVal = document.createElement('td');
+//   for(let i in datalist){
+//     trow = document.createElement('tr');
+//     let tdataA = document.createElement('td');
+//     tdataA.innerHTML = datalist[i].city_nm;
+//     tdataA.title = datalist[i].dantai_cd
+//     trow.appendChild(tdataA);
 
-    trow.addEventListener('click', (event) => {
-      var cityNm = event.srcElement.parentElement.cells[0].innerText;
-      var dantaiCd = event.srcElement.parentElement.cells[0].title;
-      var graphCanvas = document.getElementById("divGraphHikakuArea").firstChild;
-      //graphHikakuChart
-      //alert(cityNm);
-      getRadarChartData(graphHikakuChart, dantaiCd)
-    });
-    tbody.appendChild(trow);
-  }
-  table.appendChild(thead);
-  table.appendChild(tbody);
-  table.classList.add("table");
-  table.classList.add("table-bordered");
-  table.classList.add("table_sticky");
-  table.classList.add("table-hover");
-  table.classList.add("fs-6"); //text-end
-  table.id = "tableHikakuCityList";
-  document.getElementById('tableDivHikakuCityList').appendChild(table);
-  //table = new DataTable(mainTable);
-}
+//     trow.addEventListener('click', (event) => {
+//       var cityNm = event.srcElement.parentElement.cells[0].innerText;
+//       var dantaiCd = event.srcElement.parentElement.cells[0].title;
+//       var graphCanvas = document.getElementById("divGraphHikakuArea").firstChild;
+//       //graphHikakuChart
+//       //alert(cityNm);
+//       getRadarChartData(graphHikakuChart, dantaiCd)
+//     });
+//     tbody.appendChild(trow);
+//   }
+//   table.appendChild(thead);
+//   table.appendChild(tbody);
+//   table.classList.add("table");
+//   table.classList.add("table-bordered");
+//   table.classList.add("table_sticky");
+//   table.classList.add("table-hover");
+//   table.classList.add("fs-6"); //text-end
+//   table.id = "tableHikakuCityList";
+//   document.getElementById('tableDivHikakuCityList').appendChild(table);
+//   //table = new DataTable(mainTable);
+// }
 
 
 // function funcRadarHikaku(vendornm){

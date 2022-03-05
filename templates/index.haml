@@ -1,14 +1,19 @@
 {% extends 'common.html' %}
  
-{% block title %}地方財政{% endblock %}
+{% block title %}公営企業の経営診断{% endblock %}
 
 {% block content %}
 
 %div.container-fluid
   %div.row
-    %div.col-4
-      %h2.display-6
-        日本の地方財政
+    %div.col-5(style="display:flex; align-items:center")
+      %h2.display-5(style="float:left; margin-right:15px")
+        DiAna
+      %h6.lead(style="float:left; margin-right:15px")
+        Diagnosys（診断） and Analysis（分析）のダイアナ。<br>
+        日本の公営企業をもっとおもしろく。
+        <!-- <i class="fa-solid fa-thumbs-up fa-2x"></i> -->
+        
     %div.col-2
       %select#selTdfk.form-select.form-select-sm(aria-label=".form-select-sm example"  style="margin-top:10px")
         %option(selected value="0")
@@ -17,10 +22,15 @@
       %select#selCity.form-select.form-select-sm(aria-label=".form-select-sm example"  style="margin-top:10px")
         %option(selected value="0")
           （市区町村選択）
-    %div.col-4
+    %div.col-3
       %button.btn.btn-primary.btn-sm.float-end(type="button" data-bs-toggle="modal" data-bs-target="#modalExcelUpload" style="margin-top:10px")
         データ取り込み
 
+  %div.container-fluid#topPain
+    %div.row
+      %div.col-4#divMainLeftTop(style="text-align:center; height:calc(100vh/3);align-items: center;display: inline-flex;display: flex;flex-direction: column;justify-content: center;")
+
+        
   %div.container-fluid.table-responsive#mainTableDiv
 
 %div.container-fluid#divGraphGroup
@@ -103,6 +113,8 @@
         </p>
     </div>
 </div>
+
+<!-- <div class="loadingDiv"></div> -->
 
 {% endblock %}
 

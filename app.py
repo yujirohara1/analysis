@@ -19,6 +19,7 @@ from marshmallow_sqlalchemy import ModelSchema
 from api.database import db, ma
 from models.sisetumain import SisetuMain, SisetuMainSchema, VCity, VCitySchema
 from models.analymain import AnalyMain, AnalyMainSchema
+from models.vanalyshuekiseia import VAnalyShuekiseiA, VAnalyShuekiseiASchema #収益性ランクA
 from models.jotai import Jotai, JotaiSchema
 from sqlalchemy.sql import text
 from sqlalchemy import distinct
@@ -721,19 +722,6 @@ def createSisetuMain(xl):
   for sh in xl:
     for row in xl[sh].itertuples():
 
-      # if row.Index <= 11:
-      #   dictJuchu[(sh, "hr" + str(row.Index+1))]=[]
-      #   columnId = 0
-      #   prevCell = ""
-        
-      #   for cell in row:
-      #     vcell = str(cell if str(cell) !="nan" else prevCell).replace( '\n' , '' )
-      #     dictJuchu[(sh, "hr" + str(row.Index+1))].append(vcell)
-      #     prevCell = vcell
-      #     columnId += 1
-      # #データ行
-      # if row.Index>=12:
-
       columnId = 1
       for cell in row[19:117]:
         
@@ -772,6 +760,27 @@ def createSisetuMain(xl):
         
         columnId += 1
 
+
+
+# 収益性ランキングの作成（経常収支比率の昇順）
+@app.route('/getShuekiRankList/<nendo>')
+def getShuekiRankList(nendo):
+    datalist = VAnalyShuekiseiA.query.filter(VAnalyShuekiseiA.nendo == nendo, VAnalyShuekiseiA.keijo_shusi_hiritu != None).order_by(desc(VAnalyShuekiseiA.keijo_shusi_hiritu)).all()
+    datalist_schema = VAnalyShuekiseiASchema(many=True)
+    return jsonify({'data': datalist_schema.dumps(datalist, ensure_ascii=False, default=decimal_default_proc)})
+
+
+@app.route('/getCityListByTdfkCd/<tdfkCd>')
+def getCityListByTdfkCd(tdfkCd):
+    vcitylist = VCity.query.filter(VCity.tdfk_cd==tdfkCd).order_by(asc(VCity.dantai_cd)).all()
+    vcitylist_schema = VCitySchema(many=True)
+    return jsonify({'data': vcitylist_schema.dumps(vcitylist, ensure_ascii=False)})
+
+# @app.route('/getCityListByTdfkCd/<tdfkCd>')
+# def getCityListByTdfkCd(tdfkCd):
+#     vcitylist = VCity.query.filter(VCity.tdfk_cd==tdfkCd).order_by(asc(VCity.dantai_cd)).all()
+#     vcitylist_schema = VCitySchema(many=True)
+#     return jsonify({'data': vcitylist_schema.dumps(vcitylist, ensure_ascii=False)})
 
 
         
@@ -821,12 +830,6 @@ def seireki(wareki):
 
   return ad
       
-
-@app.route('/getCityListByTdfkCd/<tdfkCd>')
-def getCityListByTdfkCd(tdfkCd):
-    vcitylist = VCity.query.filter(VCity.tdfk_cd==tdfkCd).order_by(asc(VCity.dantai_cd)).all()
-    vcitylist_schema = VCitySchema(many=True)
-    return jsonify({'data': vcitylist_schema.dumps(vcitylist, ensure_ascii=False)})
 
 
 @app.route('/getFullRecordByDantaiCd/<cityCd>')

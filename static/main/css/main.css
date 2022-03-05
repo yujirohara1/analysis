@@ -196,7 +196,6 @@ table.dataTable thead tr {
     display: inline-block;
 }
 
-
 /*　スクロールバーの実装 */
 .table_sticky {
     display: block;
@@ -210,12 +209,29 @@ table.dataTable thead tr {
     background-color: #454545;
     color: white;
     text-align: center;
+    font-size: 0.75em;
 }
 
 .table_sticky tbody td {
-    white-space: nowrap;
+    /* white-space: nowrap; */
+    font-size: 0.85em;
 }
 
+.loadingDiv {
+    width: 5em;
+    height: 5em;
+    border-radius: 50%;
+    border: 0.25em solid #ccc;
+    border-top-color: #333;
+    animation: spinner 1.5s linear infinite;
+    display: inline-block;
+  }
+
+  @keyframes spinner {
+    to {
+      transform: rotate(360deg);
+    }
+  }
 
 .badge-clickable {
     cursor: pointer;   
