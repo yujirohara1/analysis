@@ -1,7 +1,7 @@
-drop view V_ANALY_RUISEKIKESSON_A; 
+drop view V_ANALY_RUISEKI_KESSON_A; 
 
 create 
-or replace view V_ANALY_RUISEKIKESSON_A as 
+or replace view V_ANALY_RUISEKI_KESSON_A as 
 select
     nendo
     , gyomu_cd
@@ -11,10 +11,6 @@ select
     , dantai_nm
     , sisetu_cd
     , sisetu_nm
-    , hyo_num
-    , hyo_num_sub
-    , gyo_num
-    , gyo_num_sub
     , joken_1
     , joken_2
     , joken_3
@@ -40,10 +36,6 @@ from
             , dantai_nm
             , sisetu_cd
             , sisetu_nm
-            , hyo_num
-            , hyo_num_sub
-            , gyo_num
-            , gyo_num_sub
             , joken_1
             , joken_2
             , joken_3
@@ -71,10 +63,6 @@ from
             , dantai_nm
             , sisetu_cd
             , sisetu_nm
-            , hyo_num
-            , hyo_num_sub
-            , gyo_num
-            , gyo_num_sub
             , joken_1
             , joken_2
             , joken_3

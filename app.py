@@ -21,6 +21,7 @@ from models.sisetumain import SisetuMain, SisetuMainSchema, VCity, VCitySchema
 from models.analymain import AnalyMain, AnalyMainSchema
 from models.vanalyshuekiseia import VAnalyShuekiseiA, VAnalyShuekiseiASchema #収益性ランクA・・・経常収支比率
 from models.vanalyryudoanzenseia import VAnalyRyudoAnzenseiA, VAnalyRyudoAnzenseiASchema #安全性ランクA・・・流動比率
+from models.vanalyruisekikessona import VAnalyRuisekiKessonA, VAnalyRuisekiKessonASchema #健全性ランクA・・・累積欠損比率
 from models.jotai import Jotai, JotaiSchema
 from sqlalchemy.sql import text
 from sqlalchemy import distinct
@@ -776,6 +777,22 @@ def getAnzenRankList(nendo):
     datalist = VAnalyRyudoAnzenseiA.query.filter(VAnalyRyudoAnzenseiA.nendo == nendo, VAnalyRyudoAnzenseiA.ryudo_hiritu != None).order_by(desc(VAnalyRyudoAnzenseiA.ryudo_hiritu)).all()
     datalist_schema = VAnalyRyudoAnzenseiASchema(many=True)
     return jsonify({'data': datalist_schema.dumps(datalist, ensure_ascii=False, default=decimal_default_proc)})
+
+
+# 累積欠損金比率ランキングの作成（流動比率の昇順）
+@app.route('/getRuisekiKessonRankList/<nendo>')
+def getRuisekiKessonRankList(nendo):
+    datalist = VAnalyRuisekiKessonA.query.filter(VAnalyRuisekiKessonA.nendo == nendo, VAnalyRuisekiKessonA.ruiseki_kesson_hiritu != None).order_by(desc(VAnalyRuisekiKessonA.ruiseki_kesson_hiritu)).all()
+    datalist_schema = VAnalyRuisekiKessonASchema(many=True)
+    return jsonify({'data': datalist_schema.dumps(datalist, ensure_ascii=False, default=decimal_default_proc)})
+
+
+
+
+
+
+
+
 
 @app.route('/getCityListByTdfkCd/<tdfkCd>')
 def getCityListByTdfkCd(tdfkCd):

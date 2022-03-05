@@ -6,6 +6,7 @@ window.onload = function(){
 
   getAndCreateTable_ShuekiRankList();//収益性ランキングテーブルを作成
   getAndCreateTable_AnzenRankList();//安全性ランキングテーブルを作成
+  getAndCreateTable_RuisekiKessonRankList(); //健全性ランキングテーブル（累積欠損比率）
 
   return;
 }
@@ -36,10 +37,8 @@ function createTableLoading(locationId, tableDivId, messageLabel){
 
 //収益性ランキングテーブルを作成
 function getAndCreateTable_ShuekiRankList(){
-  
   //枠内にローダーを表示
   createTableLoading("divMainLeftTop", "tableDivLoading1", "経常収支比率による収益性ランクを作成中...");
-
   val = "2020"; //document.getElementById("selTdfkSub").value;
   fetch('/getShuekiRankList/' + val, {
     method: 'GET',
@@ -53,10 +52,8 @@ function getAndCreateTable_ShuekiRankList(){
     var propId = ["rank", "dantai_nm", "sisetu_nm",　"keijo_shusi_hiritu"];
     var align = ["center", "left", "left",　"right"];
     createTableByJsonList(list, "divMainLeftTop", "tableDivShueki", "経常収支比率による収益性ランキング", hdText, propId, align);
-
     //ローダーを削除
     destroyTableLoading("divMainLeftTop", "tableDivLoading1");
-
     return;
   })
   .catch(error => { console.log(error); });
@@ -182,6 +179,30 @@ function getAndCreateTable_AnzenRankList(){
 
 
 
+
+//累積欠損比率ランキングテーブルを作成
+function getAndCreateTable_RuisekiKessonRankList(){
+  //枠内にローダーを表示
+  createTableLoading("divMainRightTop", "tableDivLoading2", "累積欠損比率による健全性ランクを作成中...");
+  val = "2020"; //document.getElementById("selTdfkSub").value;
+  fetch('/getRuisekiKessonRankList/' + val, {
+    method: 'GET',
+    'Content-Type': 'application/json'
+  })
+  .then(res => res.json())
+  .then(jsonData => {
+    createTableDiv("divMainRightTop", "tableDivRuisekiKesson");
+    list = JSON.parse(jsonData.data)
+    var hdText = ["ランク", "団体名", "施設名",　"累積欠損比率(%)"];
+    var propId = ["rank", "dantai_nm", "sisetu_nm",　"ruiseki_kesson_hiritu"];
+    var align = ["center", "left", "left",　"right"];
+    createTableByJsonList(list, "divMainRightTop", "tableDivRuisekiKesson", "累積欠損比率による健全性ランキング", hdText, propId, align);
+    //ローダーを削除
+    destroyTableLoading("divMainRightTop", "tableDivLoading2");
+    return;
+  })
+  .catch(error => { console.log(error); });
+}
 
 
 
