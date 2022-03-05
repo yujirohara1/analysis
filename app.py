@@ -130,8 +130,8 @@ def load_user(user_id):
   return users.get(int(user_id))
 
 # db_uri = "postgresql://postgres:yjrhr1102@localhost:5432/newdb3" #開発用
-# db_uri = "postgres://morhqmoeynucjp:84ef69242ae3632d57282807e8831cdec54648e7d7763f70e9bc74a11a7672a7@ec2-34-236-136-215.compute-1.amazonaws.com:5432/daokjtn9svbnh7" #開発用
-db_uri = os.environ.get('HEROKU_POSTGRESQL_COBALT') #本番用HEROKU_POSTGRESQL_COBALT
+db_uri = "postgres://morhqmoeynucjp:84ef69242ae3632d57282807e8831cdec54648e7d7763f70e9bc74a11a7672a7@ec2-34-236-136-215.compute-1.amazonaws.com:5432/daokjtn9svbnh7" #開発用
+# db_uri = os.environ.get('HEROKU_POSTGRESQL_COBALT') #本番用HEROKU_POSTGRESQL_COBALT
 app.config['SQLALCHEMY_DATABASE_URI'] = db_uri 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
