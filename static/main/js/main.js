@@ -587,25 +587,25 @@ document.getElementById("inputGroupFile").addEventListener("change", function(){
 }, false);
 
 
-document.getElementById("selTdfk").addEventListener("change", function(){
-  //AllClearGraphs();
-  AllClearTable("mainTableDiv");
-  val = document.getElementById("selTdfk").value;
-  document.getElementById("selTdfkSub").value = val;
-  fetch('/getCityListByTdfkCd/' + val, {
-    method: 'GET',
-    'Content-Type': 'application/json'
-  })
-  .then(res => res.json())
-  .then(jsonData => {
-    list = JSON.parse(jsonData.data)
-    createCitySelectOption(list);
-    UndispLoading();
-    return;
-  })
-  .catch(error => { console.log(error); });
-    dispLoading();
-});
+// document.getElementById("selTdfk").addEventListener("change", function(){
+//   //AllClearGraphs();
+//   AllClearTable("mainTableDiv");
+//   val = document.getElementById("selTdfk").value;
+//   document.getElementById("selTdfkSub").value = val;
+//   fetch('/getCityListByTdfkCd/' + val, {
+//     method: 'GET',
+//     'Content-Type': 'application/json'
+//   })
+//   .then(res => res.json())
+//   .then(jsonData => {
+//     list = JSON.parse(jsonData.data)
+//     createCitySelectOption(list);
+//     UndispLoading();
+//     return;
+//   })
+//   .catch(error => { console.log(error); });
+//     dispLoading();
+// });
 
 
 function AllClearGraphs(){
@@ -637,27 +637,27 @@ document.getElementById("selFilePattern").addEventListener("change", function(){
 
 var datalist = null;
 
-document.getElementById("selCity").addEventListener("change", function(){
-  //AllClearGraphs();
-  AllClearTable("mainTableDiv");
-  val = document.getElementById("selCity").value;
-  fetch('/getFullRecordByDantaiCd/' + val, {
-    method: 'GET',
-    'Content-Type': 'application/json'
-  })
-  .then(res => res.json())
-  .then(jsonData => {
-    list = JSON.parse(jsonData.data);
-    datalist = list;
-    createTable(list);
-    UndispLoading();
-    return;
-    //document.querySelector('#lblFileProperty').innerHTML = "取り込み完了！"; //jsonData.data;
-    //document.getElementById('btnFileImport').classList.remove("disabled");
-  })
-  .catch(error => { console.log(error); });
-  dispLoading();
-});
+// document.getElementById("selCity").addEventListener("change", function(){
+//   //AllClearGraphs();
+//   AllClearTable("mainTableDiv");
+//   val = document.getElementById("selCity").value;
+//   fetch('/getFullRecordByDantaiCd/' + val, {
+//     method: 'GET',
+//     'Content-Type': 'application/json'
+//   })
+//   .then(res => res.json())
+//   .then(jsonData => {
+//     list = JSON.parse(jsonData.data);
+//     datalist = list;
+//     createTable(list);
+//     UndispLoading();
+//     return;
+//     //document.querySelector('#lblFileProperty').innerHTML = "取り込み完了！"; //jsonData.data;
+//     //document.getElementById('btnFileImport').classList.remove("disabled");
+//   })
+//   .catch(error => { console.log(error); });
+//   dispLoading();
+// });
 
 function createTable(datalist){
   var tableDiv = document.getElementById("mainTableDiv");

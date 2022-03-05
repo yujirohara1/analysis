@@ -17,12 +17,11 @@ from marshmallow_sqlalchemy import ModelSchema
 # from reportlab.lib.units import mm
 # from reportlab.lib import colors
 from api.database import db, ma
-from models.sisetumain import SisetuMain, SisetuMainSchema, VCity, VCitySchema
 from models.analymain import AnalyMain, AnalyMainSchema
 from models.vanalyshuekiseia import VAnalyShuekiseiA, VAnalyShuekiseiASchema #収益性ランクA・・・経常収支比率
 from models.vanalyryudoanzenseia import VAnalyRyudoAnzenseiA, VAnalyRyudoAnzenseiASchema #安全性ランクA・・・流動比率
 from models.vanalyruisekikessona import VAnalyRuisekiKessonA, VAnalyRuisekiKessonASchema #健全性ランクA・・・累積欠損比率
-from models.jotai import Jotai, JotaiSchema
+
 from sqlalchemy.sql import text
 from sqlalchemy import distinct
 from sqlalchemy import desc
