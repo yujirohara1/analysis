@@ -110,7 +110,7 @@ function createTableByJsonList(datalist, locationId, tableDivId, caption, hdText
         // <img class="" ="" style="margin-left:5px;margin-right:20px"></img>
       }else{
         tdataA.innerHTML = datalist[i][propId[id]];
-        if(propId[id]=="dantai_nm" || propId[id]=="sisetu_nm"){
+        if(locationId.substring(0,7) == "divMain" && (propId[id]=="dantai_nm" || propId[id]=="sisetu_nm")){
           tdataA.title = 
             datalist[i].gyomu_cd + "-" + 
             datalist[i].gyoshu_cd + "-" + 
@@ -122,13 +122,35 @@ function createTableByJsonList(datalist, locationId, tableDivId, caption, hdText
               moveProfileTab(key);
             });
         } 
-
       }
       tdataA.style.textAlign=align[id];
       if(width!=null){
         tdataA.style.width=width[id];
       }
+
+
       trow.appendChild(tdataA);
+    }
+      
+    if(locationId.substring(0,7) == "v-pills"){
+      trow.addEventListener('click', (event) => {
+        var key = event.target.title;
+        // alert(datalist[i].hyo_num + "," + datalist[i].gyo_num + "," + datalist[i].retu_num);
+
+        var gyo_num = Number(event.target.parentElement.cells[0].innerText);
+        var retu_num = Number(event.target.parentElement.cells[1].innerText);
+        var name1 = event.target.parentElement.cells[2].innerText;
+        var valueArray = datalist.filter(value => value["gyo_num"] ==gyo_num).filter(value => value["retu_num"] ==retu_num);
+
+        let graphs = document.querySelectorAll("[id^='canvasChart']"); //' #divGraphArea *');
+        let divGraphRow = document.createElement("div");
+        divGraphRow.classList.add("row");
+        divGraphRow.id = "divGraphRow1";
+        document.getElementById(locationId).appendChild(divGraphRow);
+        var graphId = createGraphArea(valueArray, "divGraphRow1", "aaa");
+        createGraph(valueArray, graphId, name1);
+
+      });
     }
     
     tbody.appendChild(trow);
@@ -346,6 +368,7 @@ function createHyoTableByHyoNumber(key, hyo_num){
 
 
 
+
 document.getElementById('btnFileImport').addEventListener('click', function() {
   var files = document.querySelector('#inputGroupFile').files
   let formData = new FormData();
@@ -427,6 +450,44 @@ function getAndCreateTable_RuisekiKessonRankList(){
 }
 
 
+
+function createGraph(datalist, canvasId, labelStr){
+  document.getElementById("canvasChart" + canvasId).title = labelStr;
+  const ctx = document.getElementById("canvasChart" + canvasId).getContext('2d');
+  var data = [datalist[0].val_a, datalist[0].val_b,datalist[0].val_c, datalist[0].val_d,datalist[0].val_e, datalist[0].val_f,datalist[0].val_g, datalist[0].val_h,datalist[0].val_i, datalist[0].val_j];
+  var objChart1 = new Chart(ctx, {
+      type: 'line',
+      data: {
+          labels: [2015,2016,2017,2018,2019,2020,2021,2022,2023,2024],
+          datasets: [{
+              label: labelStr,
+              data: data, //datalist.filter(value => value["col_index"] ==rowindex).map(item => item["val_num"]), //[12, 19, 3, 5, 2, 3],tableから取得する 
+              backgroundColor: [
+                  'rgba(255, 99, 132, 0.2)',
+              ],
+              borderColor: [
+                  'rgba(255, 99, 132, 1)',
+              ],
+              borderWidth: 1
+          }]
+      },
+      options: {
+          scales: {
+              y: {
+                  beginAtZero: true
+              }
+          },
+          plugins: {
+              title: {
+                  display: true,
+                  align: "start",
+                  text: labelStr
+              }
+          }
+      }
+  });
+  return objChart1
+}
 
 
 
@@ -916,6 +977,7 @@ function createTable(datalist){
             return;
           }
         }
+
         var graphId = createGraphArea(datalist, rowindex, "divGraphRow1", title);
         createGraphTest(datalist, rowindex, graphId, title);
 
@@ -1203,24 +1265,24 @@ document.getElementById('modalGraphHikaku').addEventListener('show.bs.modal', fu
 });
 
 
-function destroyGraph(key, rowindex){
+function destroyGraph(key, gyo_num, retu_num){
   var id = key.split("_")[0]
   let graphDiv = document.querySelector("#" + id); 
   if (graphDiv) {
     document.getElementById("divGraphRow1").removeChild(graphDiv)
     var tablerows = document.getElementById("mainTable").rows;
-    for(let i=0; i<tablerows.length; i++){
-      if(tablerows[Number(i)].cells[0].innerText == rowindex){
-        //tablerows[Number(i)].style.backgroundColor = "";
-        tablerows[Number(i)].classList.remove("row_selected");
-        //bg.classList.remove('is-hide');
+    // for(let i=0; i<tablerows.length; i++){
+    //   if(tablerows[Number(i)].cells[0].innerText == rowindex){
+    //     //tablerows[Number(i)].style.backgroundColor = "";
+    //     tablerows[Number(i)].classList.remove("row_selected");
+    //     //bg.classList.remove('is-hide');
 
-      }
-    }
+    //   }
+    // }
   }
 }
 
-function createGraphArea(datalist, rowindex, areaId, title){
+function createGraphArea(valueArray, areaId, title){
   //divGraphGroup
   let graphs = document.querySelectorAll("[id^='divGraphArea']"); //' #divGraphArea *');
   var max = 1;
@@ -1232,6 +1294,9 @@ function createGraphArea(datalist, rowindex, areaId, title){
       }
     }
   }
+  
+        // %div.container-fluid#divGraphGroup
+        // %div.row#divGraphRow1
 
   var spanBadge1 = document.createElement("span");
   spanBadge1.innerText = "消去";
@@ -1242,7 +1307,7 @@ function createGraphArea(datalist, rowindex, areaId, title){
   spanBadge1.classList.add("badge-clickable"); //
   spanBadge1.id = "divGraphArea" + (max+1) + "_deleteBtn";
   spanBadge1.addEventListener('click', function() {
-    destroyGraph(spanBadge1.id, rowindex);
+    destroyGraph(spanBadge1.id, valueArray[0].gyo_num, valueArray[0].retu_num);
   });
 
 
