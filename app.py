@@ -26,6 +26,7 @@ from models.vanalyruisekikessona import VAnalyRuisekiKessonA, VAnalyRuisekiKesso
 from models.vanalykigyosaiperkyusuia import VAnalyKigyosaiPerKyusuiA, VAnalyKigyosaiPerKyusuiASchema
 from models.vanalykoteishokyakuritua import VAnalyKoteiShokyakurituA, VAnalyKoteiShokyakurituASchema
 from models.vanalybyoshoriyoritua import VAnalyByoshoRiyorituA, VAnalyByoshoRiyorituASchema #回転率ランクA・・・病床利用率
+from models.vanalynyuinhitorishuekia import VAnalyNyuinHitoriShuekiA, VAnalyNyuinHitoriShuekiASchema #収益性・・・入院患者１人１日あたり収益
 
 from sqlalchemy.sql import text
 from sqlalchemy import distinct
@@ -134,8 +135,8 @@ def SendMail_AccountToroku():
 def load_user(user_id):
   return users.get(int(user_id))
 
-db_uri = "postgresql://postgres:yjrhr1102@localhost:5432/newdb3" #開発用
-# db_uri = os.environ.get('HEROKU_POSTGRESQL_COBALT_URL') #本番用HEROKU_POSTGRESQL_COBALTHEROKU_POSTGRESQL_DIANA_URL
+# db_uri = "postgresql://postgres:yjrhr1102@localhost:5432/newdb3" #開発用
+db_uri = os.environ.get('HEROKU_POSTGRESQL_COBALT_URL') #本番用HEROKU_POSTGRESQL_COBALTHEROKU_POSTGRESQL_DIANA_URL
 app.config['SQLALCHEMY_DATABASE_URI'] = db_uri 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -813,6 +814,15 @@ def getByoshoRiyorituRankList(nendo):
     datalist = VAnalyByoshoRiyorituA.query.filter(VAnalyByoshoRiyorituA.nendo == nendo, VAnalyByoshoRiyorituA.riyoritu != None).order_by(desc(VAnalyByoshoRiyorituA.riyoritu)).all()
     datalist_schema = VAnalyByoshoRiyorituASchema(many=True)
     return jsonify({'data': datalist_schema.dumps(datalist, ensure_ascii=False, default=decimal_default_proc)})
+
+
+# 入院患者一人１日あたり収益
+@app.route('/getNyuinHitoriShuekiRankList/<nendo>')
+def getNyuinHitoriShuekiRankList(nendo):
+    datalist = VAnalyNyuinHitoriShuekiA.query.filter(VAnalyNyuinHitoriShuekiA.nendo == nendo, VAnalyNyuinHitoriShuekiA.hitori_ichinichi_shueki != None).order_by(desc(VAnalyNyuinHitoriShuekiA.hitori_ichinichi_shueki)).all()
+    datalist_schema = VAnalyNyuinHitoriShuekiASchema(many=True)
+    return jsonify({'data': datalist_schema.dumps(datalist, ensure_ascii=False, default=decimal_default_proc)})
+
 
 # 基本情報タブ用の表リスト取得
 @app.route('/getHyoListForProfile/<nendo>/<gyomu_cd>/<gyoshu_cd>/<jigyo_cd>/<dantai_cd>/<sisetu_cd>')

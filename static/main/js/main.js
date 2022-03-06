@@ -10,6 +10,7 @@ window.onload = function(){
   getAndCreateTable_KigyosaiKyusuiRankList(); //健全性ランキングテーブル（起債 割る 給水収益）
   getAndCreateTable_KoteiShokyakurituRankList(); //健全性ランキングテーブル（減価償却累計 割る 簿価＋減価償却累計）
   getAndCreateTable_ByoshoRiyorituRankList(); //効率性ランキングテーブル（延べ年間患者数　割る　延べ病床数）
+  getAndCreateTable_NyuinHitoriShuekiRankList(); //収益性ランキングテーブル（入院患者一人１日あたり収益）
 
   return;
 }
@@ -530,6 +531,30 @@ function getAndCreateTable_ByoshoRiyorituRankList(){
   .catch(error => { console.log(error); });
 }
 
+
+//入院患者1人1日あたり収益による収益性ランキングテーブルを作成
+function getAndCreateTable_NyuinHitoriShuekiRankList(){
+  //枠内にローダーを表示
+  createTableLoading("divMainLeftBottom", "tableDivLoading7", "入院患者1人1日あたり収益による収益性ランクを作成中...");
+  val = "2020"; //document.getElementById("selTdfkSub").value;
+  fetch('/getNyuinHitoriShuekiRankList/' + val, {
+    method: 'GET',
+    'Content-Type': 'application/json'
+  })
+  .then(res => res.json())
+  .then(jsonData => {
+    createTableDiv("divMainLeftBottom", "tableDivNyuinHitoriShuekiRankList");
+    list = JSON.parse(jsonData.data)
+    var hdText = ["ランク", "団体名", "施設名",　"入院患者1人1日あたり収益(%)"];
+    var propId = ["rank", "dantai_nm", "sisetu_nm",　"hitori_ichinichi_shueki"];
+    var align = ["center", "left", "left",　"right"];
+    createTableByJsonList(list, "divMainLeftBottom", "tableDivNyuinHitoriShuekiRankList", "入院患者1人1日あたり収益による収益性ランキング", hdText, propId, align, null, 3);
+    //ローダーを削除
+    destroyTableLoading("divMainLeftBottom", "tableDivLoading7");
+    return;
+  })
+  .catch(error => { console.log(error); });
+}
 
 
 
