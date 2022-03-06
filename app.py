@@ -18,6 +18,8 @@ from marshmallow_sqlalchemy import ModelSchema
 # from reportlab.lib import colors
 from api.database import db, ma
 from models.analymain import AnalyMain, AnalyMainSchema
+from models.analyhyo import AnalyHyo, AnalyHyoSchema
+from models.vanalyhyo import VAnalyHyo, VAnalyHyoSchema
 from models.vanalyshuekiseia import VAnalyShuekiseiA, VAnalyShuekiseiASchema #収益性ランクA・・・経常収支比率
 from models.vanalyryudoanzenseia import VAnalyRyudoAnzenseiA, VAnalyRyudoAnzenseiASchema #安全性ランクA・・・流動比率
 from models.vanalyruisekikessona import VAnalyRuisekiKessonA, VAnalyRuisekiKessonASchema #健全性ランクA・・・累積欠損比率
@@ -129,8 +131,8 @@ def SendMail_AccountToroku():
 def load_user(user_id):
   return users.get(int(user_id))
 
-# db_uri = "postgresql://postgres:yjrhr1102@localhost:5432/newdb3" #開発用
-db_uri = "postgres://morhqmoeynucjp:84ef69242ae3632d57282807e8831cdec54648e7d7763f70e9bc74a11a7672a7@ec2-34-236-136-215.compute-1.amazonaws.com:5432/daokjtn9svbnh7" #開発用
+db_uri = "postgresql://postgres:yjrhr1102@localhost:5432/newdb3" #開発用
+# db_uri = "postgres://morhqmoeynucjp:84ef69242ae3632d57282807e8831cdec54648e7d7763f70e9bc74a11a7672a7@ec2-34-236-136-215.compute-1.amazonaws.com:5432/daokjtn9svbnh7" #開発用
 # db_uri = os.environ.get('HEROKU_POSTGRESQL_COBALT') #本番用HEROKU_POSTGRESQL_COBALT
 app.config['SQLALCHEMY_DATABASE_URI'] = db_uri 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -787,9 +789,25 @@ def getRuisekiKessonRankList(nendo):
     return jsonify({'data': datalist_schema.dumps(datalist, ensure_ascii=False, default=decimal_default_proc)})
 
 
+# 基本情報タブ用の表リスト取得
+@app.route('/getHyoListForProfile/<nendo>/<gyomu_cd>/<gyoshu_cd>/<jigyo_cd>/<dantai_cd>/<sisetu_cd>')
+def getHyoListForProfile(nendo, gyomu_cd, gyoshu_cd, jigyo_cd, dantai_cd, sisetu_cd):
+    datalist = AnalyHyo.query.filter(AnalyHyo.nendo == nendo).order_by(asc(AnalyHyo.hyo_num)).all()
+    datalist_schema = AnalyHyoSchema(many=True)
+    return jsonify({'data': datalist_schema.dumps(datalist, ensure_ascii=False, default=decimal_default_proc)})
 
-
-
+@app.route('/getHyoData/<nendo>/<gyomu_cd>/<gyoshu_cd>/<jigyo_cd>/<dantai_cd>/<sisetu_cd>/<hyo_num>')
+def getHyoData(nendo, gyomu_cd, gyoshu_cd, jigyo_cd, dantai_cd, sisetu_cd, hyo_num):
+    datalist = VAnalyHyo.query.filter(
+                  VAnalyHyo.gyomu_cd == gyomu_cd,
+                  VAnalyHyo.gyoshu_cd == gyoshu_cd,
+                  VAnalyHyo.jigyo_cd == jigyo_cd,
+                  VAnalyHyo.dantai_cd == dantai_cd,
+                  VAnalyHyo.sisetu_cd == sisetu_cd,
+                  VAnalyHyo.hyo_num == hyo_num
+                ).order_by(asc(VAnalyHyo.gyo_num), asc(VAnalyHyo.retu_num)).all()
+    datalist_schema = VAnalyHyoSchema(many=True)
+    return jsonify({'data': datalist_schema.dumps(datalist, ensure_ascii=False, default=decimal_default_proc)})
 
 
 

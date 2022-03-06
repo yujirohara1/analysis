@@ -55,4 +55,6 @@ delete from analy_main where hyo_num = 21 and retu_num > 64;
 delete from analy_main where hyo_num = 22 and retu_num > 65;
 delete from analy_main where hyo_num = 23 and retu_num > 70;
 delete from analy_main where hyo_num = 24 and retu_num > 16;
+delete from analy_main where hyo_num = 25 and retu_num > 75;
+delete from analy_main where hyo_num = 27 and retu_num > 60;
 

@@ -196,6 +196,16 @@ table.dataTable thead tr {
     display: inline-block;
 }
 
+.loadableTable{
+    text-align:center; 
+    height:calc(100vh/3);
+    align-items: center;
+    display: inline-flex;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
 /*　スクロールバーの実装 */
 .table_sticky {
     display: block;
@@ -211,6 +221,24 @@ table.dataTable thead tr {
     text-align: center;
     font-size: 0.75em;
 }
+
+.rank_number{
+    font-size:0px !important;
+    color:red;
+}
+
+.nav-pills .nav-link.active, .nav-pills .show>.nav-link {
+    color: #fff;
+    background-color: #454545!important;
+}
+
+/* .nav-link {
+    display: block;
+    padding: .5rem 1rem;
+    text-decoration: none;
+    transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out;
+    color: #454545!important;
+} */
 
 .table_sticky tbody td {
     /* white-space: nowrap; */

@@ -6,7 +6,7 @@
 
 %div.container-fluid
   %div.row
-    %div.col-6(style="display:flex; align-items:center")
+    %div.col-8(style="display:flex; align-items:center")
       %img.img-responsive(src="../static/image/top_icon.png" style="margin-left:5px;margin-right:20px")
       %h2.display-5(style="float:left; margin-right:15px; font-size:3.8rem")
         DiAna
@@ -14,7 +14,6 @@
         Diagnosis（診断） と Analysis（分析）のダイアナ。<br>
         日本の公営企業を、<font>もっとおもしろく。</font>
         
-    %div.col-2
     %div.col-2
     %div.col-2
       %button.btn.btn-primary.btn-sm.float-end(type="button" data-bs-toggle="modal" data-bs-target="#modalExcelUpload" style="margin-top:10px")
@@ -25,7 +24,7 @@
     
 
 
-  %div
+  %div.row
     %ul.nav.nav-tabs.mb-3#dataTab(role="tablist")
       %li.nav-item(role="presentation")
         %a.nav-link.active#home-tab(data-bs-toggle="tab" data-bs-target="#home-panel" type="button" role="tab" aria-controls="home" aria-selected="true")
@@ -51,6 +50,12 @@
 
 
       %div.tab-pane#profile-panel(role="tabpanel" aria-labelledby="profile-tab")
+
+
+
+
+
+
       %div.tab-pane#transition-panel(role="tabpanel" aria-labelledby="transition-tab")
       %div.tab-pane#compare-panel(role="tabpanel" aria-labelledby="compare-tab")
 

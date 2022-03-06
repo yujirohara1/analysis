@@ -16,14 +16,22 @@ window.onload = function(){
 //ロケーションdiv に テーブル格納用divを作る。
 // このように利用　→　createTableDiv("divMainLeftTop", "tableDivShueki"); //左上エリアに、収益グリッドを作る場合
 function createTableDiv(locationId, tableDivId){
+  
   let tableDiv = document.createElement('div');
   tableDiv.classList.add("table-responsive");
   tableDiv.id = tableDivId;
   document.getElementById(locationId).appendChild(tableDiv);
+
 }
 
 // テーブル内のデータが表示されるまでの間、小さいローダーを枠内に表示
 function createTableLoading(locationId, tableDivId, messageLabel){
+  
+  var tmp = document.getElementById(locationId);
+  while(tmp.lastChild){
+    tmp.removeChild(tmp.lastChild);
+  }
+
   let tableDiv = document.createElement('div');
   tableDiv.classList.add("loadingDiv");
   tableDiv.id = tableDivId;
@@ -51,7 +59,7 @@ function getAndCreateTable_ShuekiRankList(){
     var hdText = ["ランク", "団体名", "施設名",　"経常収支比率(%)"];
     var propId = ["rank", "dantai_nm", "sisetu_nm",　"keijo_shusi_hiritu"];
     var align = ["center", "left", "left",　"right"];
-    createTableByJsonList(list, "divMainLeftTop", "tableDivShueki", "経常収支比率による収益性ランキング", hdText, propId, align);
+    createTableByJsonList(list, "divMainLeftTop", "tableDivShueki", "経常収支比率による収益性ランキング", hdText, propId, align, null, 3);
     //ローダーを削除
     destroyTableLoading("divMainLeftTop", "tableDivLoading1");
     return;
@@ -68,7 +76,7 @@ function destroyTableLoading(locationId, tableDivId){
 }
 
 //jsonデータからhtmlテーブルを自作する。
-function createTableByJsonList(datalist, locationId, tableDivId, caption, hdText, propId, align){
+function createTableByJsonList(datalist, locationId, tableDivId, caption, hdText, propId, align, width, height){
   let table = document.createElement("table");
   let thead = document.createElement('thead');
   let tbody = document.createElement('tbody');
@@ -90,36 +98,36 @@ function createTableByJsonList(datalist, locationId, tableDivId, caption, hdText
     for (let id in propId){
       var tdataA = document.createElement('td');
       if(propId[id]=="rank"){
-        tdataA.innerHTML = i*1+1;
+        var r = i*1+1;
+        tdataA.innerHTML = r;
+        if(r <= 3){
+          var img = document.createElement('img');
+          img.classList.add("img-responsive")
+          img.setAttribute("src","../static/image/ranking" + (r) + ".png");
+          tdataA.classList.add("rank_number");
+          tdataA.appendChild(img);
+        }
+        // <img class="" ="" style="margin-left:5px;margin-right:20px"></img>
       }else{
         tdataA.innerHTML = datalist[i][propId[id]];
-
-        if(propId[id]=="dantai_nm"){
-          tdataA.title = 
-            datalist[i].gyomu_cd + "-" + 
-            datalist[i].gyoshu_cd + "-" + 
-            datalist[i].jigyo_cd + "-" +  
-            datalist[i].dantai_cd;
-
-
-
-            tdataA.addEventListener('click', (event) => {
-              var key = event.target.title;
-              moveProfileTab(key);
-            });
-
-
-
-        } else if(propId[id]=="sisetu_nm"){
+        if(propId[id]=="dantai_nm" || propId[id]=="sisetu_nm"){
           tdataA.title = 
             datalist[i].gyomu_cd + "-" + 
             datalist[i].gyoshu_cd + "-" + 
             datalist[i].jigyo_cd + "-" +  
             datalist[i].dantai_cd + "-" +  
             datalist[i].sisetu_cd;
+            tdataA.addEventListener('click', (event) => {
+              var key = event.target.title;
+              moveProfileTab(key);
+            });
         } 
+
       }
       tdataA.style.textAlign=align[id];
+      if(width!=null){
+        tdataA.style.width=width[id];
+      }
       trow.appendChild(tdataA);
     }
     
@@ -130,12 +138,15 @@ function createTableByJsonList(datalist, locationId, tableDivId, caption, hdText
   table.classList.add("table");
   table.classList.add("table-bordered");
   table.classList.add("table_sticky");
+  table.style.height = "calc(100vh/" + height + ")";
   table.classList.add("table-hover");
   table.classList.add("fs-6"); //text-end
   table.id = tableDivId.replace("Div","");  ;//"tableHikakuCityList";
   document.getElementById(tableDivId).appendChild(table);
   //table = new DataTable(mainTable);
-  document.getElementById(locationId + "Caption").innerText = caption;
+  if(locationId!=""){
+    document.getElementById(locationId + "Caption").innerText = caption;
+  }
 }
 
 
@@ -148,11 +159,165 @@ function moveProfileTab(key){
     document.getElementById('profile-panel').classList.add("active");
     document.getElementById('profile-panel').classList.add("show");
     
+    createHyoVerticalNavbar(key);
   }catch(e){
 
   }
 }
 
+
+function createHyoVerticalNavbar(key){
+    val = "2020"; //document.getElementById("selTdfkSub").value;
+    fetch('/getHyoListForProfile/' + val + '/20/30/40/50/60', {
+      method: 'GET',
+      'Content-Type': 'application/json'
+    })
+    .then(res => res.json())
+    .then(jsonData => {
+      
+      var tmp = document.getElementById("profile-panel");
+      while(tmp.lastChild){
+        tmp.removeChild(tmp.lastChild);
+      }
+
+      let div1 = document.createElement("div");
+      div1.classList.add("d-flex");
+      div1.classList.add("align-items-start");
+
+      var divTabGroup = document.createElement("div");
+      divTabGroup.classList.add("nav");
+      divTabGroup.classList.add("flex-column");
+      divTabGroup.classList.add("nav-pills");
+      divTabGroup.classList.add("me-3");
+      divTabGroup.id = "v-pills-tab";
+      divTabGroup.setAttribute("role","tablist"); //role="tablist" aria-orientation="vertical"
+      divTabGroup.setAttribute("aria-orientation","vertical"); //role="tablist" aria-orientation="vertical"
+
+      var divContentGroup = document.createElement("div");
+      divContentGroup.classList.add("tab-content");
+      divContentGroup.id = "v-pills-tabContent";
+      //divContentGroup.classList.add("loadableTable"); //ローダーをセンタリングする
+      divContentGroup.style.width="100%";
+
+      list = JSON.parse(jsonData.data)
+      for(let i in list){
+        var tabButtonA = document.createElement("a");
+        tabButtonA.classList.add("nav-link");
+        tabButtonA.id = "vTabHyo_" + list[i].hyo_num;
+        tabButtonA.setAttribute("data-bs-toggle","pill");
+        tabButtonA.setAttribute("data-bs-target","#v-pills-" + list[i].hyo_num);
+        tabButtonA.setAttribute("type","button");
+        tabButtonA.setAttribute("role","tab");
+        tabButtonA.setAttribute("aria-controls","v-pills-" + list[i].hyo_num);
+        tabButtonA.setAttribute("aria-selected","true");
+        tabButtonA.innerText = list[i].hyo_num + "." + list[i].hyo_nm;
+        
+        tabButtonA.addEventListener('click', (event) => {
+          createHyoTableByHyoNumber(key, event.target.innerText.substring(0,2));
+        });
+
+        divTabGroup.appendChild(tabButtonA);
+
+        //<div class="tab-pane fade" id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab">
+        var divContent = document.createElement("div");
+        divContent.classList.add("tab-pane");
+        divContent.classList.add("face");
+        divContent.classList.add("loadableTable"); //ローダーをセンタリングする
+        divContent.classList.add("col-12");
+        divContent.id = "v-pills-" + list[i].hyo_num;
+        divContent.setAttribute("role","tabpanel");
+        divContent.setAttribute("aria-labelledby","v-pills-" + list[i].hyo_num + "-tab");
+        divContent.innerText = "aaaaaaaaaaaaaaaaaaaaaaaaa";
+        divContentGroup.appendChild(divContent);
+      }
+      div1.appendChild(divTabGroup);
+      div1.appendChild(divContentGroup);
+      document.getElementById('profile-panel').appendChild(div1);
+      return;
+    })
+    .catch(error => { console.log(error); });
+}
+
+function createHyoTableByHyoNumber(key, hyo_num){
+  if(document.getElementById("tableDivHyo")!=null){
+    document.getElementById("tableDivHyo").remove();
+  }
+  createTableLoading("v-pills-" + hyo_num, "tableDivHyoLoading", event.target.innerText + "を読み込み中...");
+
+  var nendo = "2020"; //document.getElementById("selTdfkSub").value; fetch('/getHyoListForProfile/' + val + '/20/30/40/50/60', {
+  var keys = key.split("-");
+  fetch('/getHyoData/' + nendo + '/' + keys[0] + '/' + keys[1] + '/' + keys[2] + '/' + keys[3] + '/' + keys[4] + '/' + hyo_num, {
+    method: 'GET',
+    'Content-Type': 'application/json'
+  })
+  .then(res => res.json())
+  .then(jsonData => {
+    createTableDiv("v-pills-" + hyo_num, "tableDivHyo");
+    list = JSON.parse(jsonData.data);
+    var hdText = ["行", "列", "項目名",　"2015",　"2016",　"2017",　"2018",　"2019",　"2020",　"2021",　"2022",　"2023",　"2024"];
+    var propId = ["gyo_num", "retu_num", "name1", "val_a",　"val_b", "val_c",　"val_d",　"val_e", "val_f",　"val_g",　"val_h", "val_i",　"val_j"];
+    var align = ["center", "center", "left",　"right",　"right",　"right",　"right",　"right",　"right",　"right",　"right",　"right",　"right"];
+    var width = ["", "", "40%",　"6%",　"6%",　"6%",　"6%",　"6%",　"6%",　"6%",　"6%",　"6%",　"6%"];
+    createTableByJsonList(list, "v-pills-" + hyo_num, "tableDivHyo", "", hdText, propId, align, width, 2);
+
+    destroyTableLoading("v-pills-" + hyo_num, "tableDivHyoLoading");
+  })
+  .catch(error => { console.log(error); });
+
+}
+
+
+// //安全性ランキングテーブルを作成
+// function getAndCreateTable_AnzenRankList(){
+  
+//   //枠内にローダーを表示
+//   createTableLoading("divMainCenterTop", "tableDivLoading", "流動比率による安全性ランクを作成中...");
+
+//   val = "2020"; //document.getElementById("selTdfkSub").value;
+//   fetch('/getAnzenRankList/' + val, {
+//     method: 'GET',
+//     'Content-Type': 'application/json'
+//   })
+//   .then(res => res.json())
+//   .then(jsonData => {
+//     createTableDiv("divMainCenterTop", "tableDivAnzen");
+//     list = JSON.parse(jsonData.data);
+//     var hdText = ["ランク", "団体名", "施設名",　"流動比率(%)"];
+//     var propId = ["rank", "dantai_nm", "sisetu_nm",　"ryudo_hiritu"];
+//     var align = ["center", "left", "left",　"right"];
+//     createTableByJsonList(list, "divMainCenterTop", "tableDivAnzen", "流動比率による安全性ランキング", hdText, propId, align);
+
+//     //ローダーを削除
+//     destroyTableLoading("divMainCenterTop", "tableDivLoading");
+
+//     return;
+//   })
+//   .catch(error => { console.log(error); });
+// }
+
+
+// <div class="d-flex align-items-start">
+// <div class="nav flex-column nav-pills me-3" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+//   <a class="nav-link" id="v-pills-home-tab" data-bs-toggle="pill" data-bs-target="#v-pills-home" type="button" role="tab" aria-controls="v-pills-home" aria-selected="false">Home</button>
+//   <a class="nav-link" id="v-pills-profile-tab" data-bs-toggle="pill" data-bs-target="#v-pills-profile" type="button" role="tab" aria-controls="v-pills-profile" aria-selected="false">Profile</button>
+//   <a class="nav-link" id="v-pills-messages-tab" data-bs-toggle="pill" data-bs-target="#v-pills-messages" type="button" role="tab" aria-controls="v-pills-messages" aria-selected="false">Messages</button>
+//   <a class="nav-link active" id="v-pills-settings-tab" data-bs-toggle="pill" data-bs-target="#v-pills-settings" type="button" role="tab" aria-controls="v-pills-settings" aria-selected="true">Settings</button>
+// </div>
+// <div class="tab-content" id="v-pills-tabContent">
+//   <div class="tab-pane fade" id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab">
+//   <p><strong>This is some placeholder content the Home tab's associated content.</strong> Clicking another tab will toggle the visibility of this one for the next. The tab JavaScript swaps classes to control the content visibility and styling. You can use it with tabs, pills, and any other <code>.nav</code>-powered navigation.</p>
+//   </div>
+//   <div class="tab-pane fade" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab">
+//   <p><strong>This is some placeholder content the Profile tab's associated content.</strong> Clicking another tab will toggle the visibility of this one for the next. The tab JavaScript swaps classes to control the content visibility and styling. You can use it with tabs, pills, and any other <code>.nav</code>-powered navigation.</p>
+//   </div>
+//   <div class="tab-pane fade" id="v-pills-messages" role="tabpanel" aria-labelledby="v-pills-messages-tab">
+//   <p><strong>This is some placeholder content the Messages tab's associated content.</strong> Clicking another tab will toggle the visibility of this one for the next. The tab JavaScript swaps classes to control the content visibility and styling. You can use it with tabs, pills, and any other <code>.nav</code>-powered navigation.</p>
+//   </div>
+//   <div class="tab-pane fade active show" id="v-pills-settings" role="tabpanel" aria-labelledby="v-pills-settings-tab">
+//   <p><strong>This is some placeholder content the Settings tab's associated content.</strong> Clicking another tab will toggle the visibility of this one for the next. The tab JavaScript swaps classes to control the content visibility and styling. You can use it with tabs, pills, and any other <code>.nav</code>-powered navigation.</p>
+//   </div>
+// </div>
+// </div>
 
 
 // function openModalDantaiProfile(key){
@@ -219,11 +384,11 @@ function getAndCreateTable_AnzenRankList(){
   .then(res => res.json())
   .then(jsonData => {
     createTableDiv("divMainCenterTop", "tableDivAnzen");
-    list = JSON.parse(jsonData.data)
+    list = JSON.parse(jsonData.data);
     var hdText = ["ランク", "団体名", "施設名",　"流動比率(%)"];
     var propId = ["rank", "dantai_nm", "sisetu_nm",　"ryudo_hiritu"];
     var align = ["center", "left", "left",　"right"];
-    createTableByJsonList(list, "divMainCenterTop", "tableDivAnzen", "流動比率による安全性ランキング", hdText, propId, align);
+    createTableByJsonList(list, "divMainCenterTop", "tableDivAnzen", "流動比率による安全性ランキング", hdText, propId, align, null, 3);
 
     //ローダーを削除
     destroyTableLoading("divMainCenterTop", "tableDivLoading");
@@ -253,7 +418,7 @@ function getAndCreateTable_RuisekiKessonRankList(){
     var hdText = ["ランク", "団体名", "施設名",　"累積欠損比率(%)"];
     var propId = ["rank", "dantai_nm", "sisetu_nm",　"ruiseki_kesson_hiritu"];
     var align = ["center", "left", "left",　"right"];
-    createTableByJsonList(list, "divMainRightTop", "tableDivRuisekiKesson", "累積欠損比率による健全性ランキング", hdText, propId, align);
+    createTableByJsonList(list, "divMainRightTop", "tableDivRuisekiKesson", "累積欠損比率による健全性ランキング", hdText, propId, align, null, 3);
     //ローダーを削除
     destroyTableLoading("divMainRightTop", "tableDivLoading2");
     return;
