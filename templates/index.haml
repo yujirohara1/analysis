@@ -44,9 +44,14 @@
             
         %div.container-fluid#topPain
           %div.row
-            %div.col-4#divMainLeftTop(style="text-align:center; height:calc(100vh/3);align-items: center;display: inline-flex;display: flex;flex-direction: column;justify-content: center;")
-            %div.col-4#divMainCenterTop(style="text-align:center; height:calc(100vh/3);align-items: center;display: inline-flex;display: flex;flex-direction: column;justify-content: center;")
-            %div.col-4#divMainRightTop(style="text-align:center; height:calc(100vh/3);align-items: center;display: inline-flex;display: flex;flex-direction: column;justify-content: center;")
+            %div.col-4.loadableTable#divMainLeftTop
+            %div.col-4.loadableTable#divMainCenterTop
+            %div.col-4.loadableTable#divMainRightTop
+          %div.row
+            &nbsp;
+          %div.row
+            %div.col-4.loadableTable#divMainLeftMiddle
+            %div.col-4.loadableTable#divMainCenterMiddle
 
 
       %div.tab-pane#profile-panel(role="tabpanel" aria-labelledby="profile-tab")

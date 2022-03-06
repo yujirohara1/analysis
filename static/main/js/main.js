@@ -7,6 +7,8 @@ window.onload = function(){
   getAndCreateTable_ShuekiRankList();//収益性ランキングテーブルを作成
   getAndCreateTable_AnzenRankList();//安全性ランキングテーブルを作成
   getAndCreateTable_RuisekiKessonRankList(); //健全性ランキングテーブル（累積欠損比率）
+  getAndCreateTable_KigyosaiKyusuiRankList(); //健全性ランキングテーブル（起債 割る 給水収益）
+  getAndCreateTable_KoteiShokyakurituRankList(); //健全性ランキングテーブル（減価償却累計 割る 簿価＋減価償却累計）
 
   return;
 }
@@ -34,6 +36,7 @@ function createTableLoading(locationId, tableDivId, messageLabel){
 
   let tableDiv = document.createElement('div');
   tableDiv.classList.add("loadingDiv");
+  document.getElementById(locationId).style.height = "calc(100vh/3)";
   tableDiv.id = tableDivId;
   let messageDiv = document.createElement('div');
   messageDiv.id = locationId + "Caption";
@@ -444,6 +447,58 @@ function getAndCreateTable_RuisekiKessonRankList(){
     createTableByJsonList(list, "divMainRightTop", "tableDivRuisekiKesson", "累積欠損比率による健全性ランキング", hdText, propId, align, null, 3);
     //ローダーを削除
     destroyTableLoading("divMainRightTop", "tableDivLoading2");
+    return;
+  })
+  .catch(error => { console.log(error); });
+}
+
+
+
+//企業債残高対給水収益比率による健全性ランキングテーブルを作成
+function getAndCreateTable_KigyosaiKyusuiRankList(){
+  //枠内にローダーを表示
+  createTableLoading("divMainLeftMiddle", "tableDivLoading4", "企業債残高対給水収益比率による健全性ランクを作成中...");
+  val = "2020"; //document.getElementById("selTdfkSub").value;
+  fetch('/getKigyosaiKyusuiRankList/' + val, {
+    method: 'GET',
+    'Content-Type': 'application/json'
+  })
+  .then(res => res.json())
+  .then(jsonData => {
+    createTableDiv("divMainLeftMiddle", "tableDivKigyosaiKyusuiRankList");
+    list = JSON.parse(jsonData.data)
+    var hdText = ["ランク", "団体名", "施設名",　"企業債残高対給水収益比率(%)"];
+    var propId = ["rank", "dantai_nm", "sisetu_nm",　"kigyosai_shueki_hiritu"];
+    var align = ["center", "left", "left",　"right"];
+    createTableByJsonList(list, "divMainLeftMiddle", "tableDivKigyosaiKyusuiRankList", "企業債残高対給水収益比率による健全性ランキング", hdText, propId, align, null, 3);
+    //ローダーを削除
+    destroyTableLoading("divMainLeftMiddle", "tableDivLoading4");
+    return;
+  })
+  .catch(error => { console.log(error); });
+}
+
+
+
+//有形固定資産償却率による健全性ランキングテーブルを作成
+function getAndCreateTable_KoteiShokyakurituRankList(){
+  //枠内にローダーを表示
+  createTableLoading("divMainCenterMiddle", "tableDivLoading5", "有形固定資産償却率による健全性ランクを作成中...");
+  val = "2020"; //document.getElementById("selTdfkSub").value;
+  fetch('/getKoteiShokyakurituRankList/' + val, {
+    method: 'GET',
+    'Content-Type': 'application/json'
+  })
+  .then(res => res.json())
+  .then(jsonData => {
+    createTableDiv("divMainCenterMiddle", "tableDivKoteiShokyakurituRankList");
+    list = JSON.parse(jsonData.data)
+    var hdText = ["ランク", "団体名", "施設名",　"有形固定資産償却率(%)"];
+    var propId = ["rank", "dantai_nm", "sisetu_nm",　"shokyaku_hiritu"];
+    var align = ["center", "left", "left",　"right"];
+    createTableByJsonList(list, "divMainCenterMiddle", "tableDivKoteiShokyakurituRankList", "有形固定資産償却率による健全性ランキング", hdText, propId, align, null, 3);
+    //ローダーを削除
+    destroyTableLoading("divMainCenterMiddle", "tableDivLoading5");
     return;
   })
   .catch(error => { console.log(error); });

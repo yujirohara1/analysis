@@ -23,6 +23,8 @@ from models.vanalyhyo import VAnalyHyo, VAnalyHyoSchema
 from models.vanalyshuekiseia import VAnalyShuekiseiA, VAnalyShuekiseiASchema #収益性ランクA・・・経常収支比率
 from models.vanalyryudoanzenseia import VAnalyRyudoAnzenseiA, VAnalyRyudoAnzenseiASchema #安全性ランクA・・・流動比率
 from models.vanalyruisekikessona import VAnalyRuisekiKessonA, VAnalyRuisekiKessonASchema #健全性ランクA・・・累積欠損比率
+from models.vanalykigyosaiperkyusuia import VAnalyKigyosaiPerKyusuiA, VAnalyKigyosaiPerKyusuiASchema
+from models.vanalykoteishokyakuritua import VAnalyKoteiShokyakurituA, VAnalyKoteiShokyakurituASchema
 
 from sqlalchemy.sql import text
 from sqlalchemy import distinct
@@ -131,8 +133,8 @@ def SendMail_AccountToroku():
 def load_user(user_id):
   return users.get(int(user_id))
 
-# db_uri = "postgresql://postgres:yjrhr1102@localhost:5432/newdb3" #開発用
-db_uri = os.environ.get('HEROKU_POSTGRESQL_COBALT_URL') #本番用HEROKU_POSTGRESQL_COBALTHEROKU_POSTGRESQL_DIANA_URL
+db_uri = "postgresql://postgres:yjrhr1102@localhost:5432/newdb3" #開発用
+# db_uri = os.environ.get('HEROKU_POSTGRESQL_COBALT_URL') #本番用HEROKU_POSTGRESQL_COBALTHEROKU_POSTGRESQL_DIANA_URL
 app.config['SQLALCHEMY_DATABASE_URI'] = db_uri 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -787,6 +789,22 @@ def getRuisekiKessonRankList(nendo):
     datalist_schema = VAnalyRuisekiKessonASchema(many=True)
     return jsonify({'data': datalist_schema.dumps(datalist, ensure_ascii=False, default=decimal_default_proc)})
 
+
+# 企業債残高対給水収益比率（％）
+@app.route('/getKigyosaiKyusuiRankList/<nendo>')
+def getKigyosaiKyusuiRankList(nendo):
+    datalist =VAnalyKigyosaiPerKyusuiA.query.filter(VAnalyKigyosaiPerKyusuiA.nendo == nendo, VAnalyKigyosaiPerKyusuiA.kigyosai_shueki_hiritu != None).order_by(desc(VAnalyKigyosaiPerKyusuiA.kigyosai_shueki_hiritu)).all()
+    datalist_schema = VAnalyKigyosaiPerKyusuiASchema(many=True)
+    return jsonify({'data': datalist_schema.dumps(datalist, ensure_ascii=False, default=decimal_default_proc)})
+
+
+
+# 有形固定資産減価償却率 ※減価償却累計　割る（簿価＋減価償却累計）
+@app.route('/getKoteiShokyakurituRankList/<nendo>')
+def getKoteiShokyakurituRankList(nendo):
+    datalist =VAnalyKoteiShokyakurituA.query.filter(VAnalyKoteiShokyakurituA.nendo == nendo, VAnalyKoteiShokyakurituA.shokyaku_hiritu != None).order_by(desc(VAnalyKoteiShokyakurituA.shokyaku_hiritu)).all()
+    datalist_schema = VAnalyKoteiShokyakurituASchema(many=True)
+    return jsonify({'data': datalist_schema.dumps(datalist, ensure_ascii=False, default=decimal_default_proc)})
 
 # 基本情報タブ用の表リスト取得
 @app.route('/getHyoListForProfile/<nendo>/<gyomu_cd>/<gyoshu_cd>/<jigyo_cd>/<dantai_cd>/<sisetu_cd>')
