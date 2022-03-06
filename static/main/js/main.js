@@ -185,8 +185,15 @@ function moveProfileTab(key){
     document.getElementById('dataTabContent').querySelector("div.tab-pane").classList.remove("show");
     document.getElementById('profile-panel').classList.add("active");
     document.getElementById('profile-panel').classList.add("show");
-    
+
     createHyoVerticalNavbar(key);
+    // if(document.getElementById("tableDivHyo")!=null){
+    //   document.getElementById('tableDivHyo').remove();
+    // }
+    //document.getElementById('vTabHyo_20').classList.add("active");
+    //document.getElementById('v-pills-20').classList.add("active");
+    //createHyoTableByHyoNumber(key, 20);
+    //document.getElementById('v-pills-20').classList.add("show");
   }catch(e){
 
   }
@@ -260,6 +267,11 @@ function createHyoVerticalNavbar(key){
       div1.appendChild(divTabGroup);
       div1.appendChild(divContentGroup);
       document.getElementById('profile-panel').appendChild(div1);
+
+      // デフォルトで20表を選択する。
+      document.getElementById('vTabHyo_20').classList.add("active");
+      document.getElementById('v-pills-20').classList.add("active");
+      createHyoTableByHyoNumber(key, 20);
       return;
     })
     .catch(error => { console.log(error); });
@@ -269,7 +281,15 @@ function createHyoTableByHyoNumber(key, hyo_num){
   if(document.getElementById("tableDivHyo")!=null){
     document.getElementById("tableDivHyo").remove();
   }
-  createTableLoading("v-pills-" + hyo_num, "tableDivHyoLoading", event.target.innerText + "を読み込み中...");
+  if(document.getElementById("divGraphRow1")!=null){
+    document.getElementById("divGraphRow1").remove();
+  }
+  //
+  var loadingMidashi = "";
+  if(event != null){
+    loadingMidashi = event.target.innerText + "を読み込み中...";
+  }
+  createTableLoading("v-pills-" + hyo_num, "tableDivHyoLoading", loadingMidashi);
 
   var nendo = "2020"; //document.getElementById("selTdfkSub").value; fetch('/getHyoListForProfile/' + val + '/20/30/40/50/60', {
   var keys = key.split("-");
@@ -285,7 +305,7 @@ function createHyoTableByHyoNumber(key, hyo_num){
     var propId = ["gyo_num", "retu_num", "name1", "val_a",　"val_b", "val_c",　"val_d",　"val_e", "val_f",　"val_g",　"val_h", "val_i",　"val_j"];
     var align = ["center", "center", "left",　"right",　"right",　"right",　"right",　"right",　"right",　"right",　"right",　"right",　"right"];
     var width = ["", "", "40%",　"6%",　"6%",　"6%",　"6%",　"6%",　"6%",　"6%",　"6%",　"6%",　"6%"];
-    createTableByJsonList(list, "v-pills-" + hyo_num, "tableDivHyo", "", hdText, propId, align, width, 2);
+    createTableByJsonList(list, "v-pills-" + hyo_num, "tableDivHyo", "", hdText, propId, align, width, 2.75);
 
     destroyTableLoading("v-pills-" + hyo_num, "tableDivHyoLoading");
   })

@@ -6,12 +6,23 @@ drop table analy_main_2020_20;
 drop table analy_main_2020_21;
 drop table analy_main_2020_22;
 drop table analy_main_2020_23;
-
+drop table analy_main_2020_24;
+drop table analy_main_2020_25;
+drop table analy_main_2020_27;
+drop table analy_main_2020_28;
+drop table analy_main_2020_30;
+drop table analy_main_2020_31;
 
 create table analy_main_2020_20 as select * from analy_main where nendo = 2020 and hyo_num = 20;
 create table analy_main_2020_21 as select * from analy_main where nendo = 2020 and hyo_num = 21;
 create table analy_main_2020_22 as select * from analy_main where nendo = 2020 and hyo_num = 22;
 create table analy_main_2020_23 as select * from analy_main where nendo = 2020 and hyo_num = 23;
+create table analy_main_2020_24 as select * from analy_main where nendo = 2020 and hyo_num = 24;
+create table analy_main_2020_25 as select * from analy_main where nendo = 2020 and hyo_num = 25;
+create table analy_main_2020_27 as select * from analy_main where nendo = 2020 and hyo_num = 27;
+create table analy_main_2020_28 as select * from analy_main where nendo = 2020 and hyo_num = 28;
+create table analy_main_2020_30 as select * from analy_main where nendo = 2020 and hyo_num = 30;
+create table analy_main_2020_31 as select * from analy_main where nendo = 2020 and hyo_num = 31;
 
 \q
 
@@ -29,21 +40,46 @@ pg_dump -h localhost -p 5432 -U postgres -a --column-inserts -d newdb3 --table a
 yjrhr1102
 
 
+
+
+pg_dump -h localhost -p 5432 -U postgres -a --column-inserts -d newdb3 --table analy_main_2020_24 > e:\analymain_insert_2020_24.sql
+yjrhr1102
+
+pg_dump -h localhost -p 5432 -U postgres -a --column-inserts -d newdb3 --table analy_main_2020_25 > e:\analymain_insert_2020_25.sql
+yjrhr1102
+
+pg_dump -h localhost -p 5432 -U postgres -a --column-inserts -d newdb3 --table analy_main_2020_27 > e:\analymain_insert_2020_27.sql
+yjrhr1102
+
+pg_dump -h localhost -p 5432 -U postgres -a --column-inserts -d newdb3 --table analy_main_2020_28 > e:\analymain_insert_2020_28.sql
+yjrhr1102
+
+pg_dump -h localhost -p 5432 -U postgres -a --column-inserts -d newdb3 --table analy_main_2020_30 > e:\analymain_insert_2020_30.sql
+yjrhr1102
+
+pg_dump -h localhost -p 5432 -U postgres -a --column-inserts -d newdb3 --table analy_main_2020_31 > e:\analymain_insert_2020_31.sql
+yjrhr1102
+
+
+
+
+
+
 heroku pg:psql postgresql-flexible-14532 --app diana12
 
-\i 'C:\\diana12_insert\\analymain_insert_2020_20.sql'
-\i 'C:\\diana12_insert\\analymain_insert_2020_21.sql'
-\i 'C:\\diana12_insert\\analymain_insert_2020_22.sql'
-\i 'C:\\diana12_insert\\analymain_insert_2020_23.sql'
 \i 'C:\\diana12_insert\\analymain_insert_2020_24.sql'
 \i 'C:\\diana12_insert\\analymain_insert_2020_25.sql'
+\i 'C:\\diana12_insert\\analymain_insert_2020_27.sql'
+\i 'C:\\diana12_insert\\analymain_insert_2020_28.sql'
+\i 'C:\\diana12_insert\\analymain_insert_2020_30.sql'
+\i 'C:\\diana12_insert\\analymain_insert_2020_31.sql'
 
-\i 'C:\\diana12_insert_2\\analymain_insert_2020_20.sql'
-\i 'C:\\diana12_insert_2\\analymain_insert_2020_21.sql'
-\i 'C:\\diana12_insert_2\\analymain_insert_2020_22.sql'
-\i 'C:\\diana12_insert_2\\analymain_insert_2020_23.sql'
 \i 'C:\\diana12_insert_2\\analymain_insert_2020_24.sql'
 \i 'C:\\diana12_insert_2\\analymain_insert_2020_25.sql'
+\i 'C:\\diana12_insert_2\\analymain_insert_2020_27.sql'
+\i 'C:\\diana12_insert_2\\analymain_insert_2020_28.sql'
+\i 'C:\\diana12_insert_2\\analymain_insert_2020_30.sql'
+\i 'C:\\diana12_insert_2\\analymain_insert_2020_31.sql'
 
 
 
@@ -57,4 +93,7 @@ delete from analy_main where hyo_num = 23 and retu_num > 70;
 delete from analy_main where hyo_num = 24 and retu_num > 16;
 delete from analy_main where hyo_num = 25 and retu_num > 75;
 delete from analy_main where hyo_num = 27 and retu_num > 60;
+delete from analy_main where hyo_num = 28 and retu_num > 58;
+delete from analy_main where hyo_num = 30 and retu_num > 60;
+delete from analy_main where hyo_num = 31 and retu_num > 55;
 
