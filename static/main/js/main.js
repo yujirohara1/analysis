@@ -9,6 +9,7 @@ window.onload = function(){
   getAndCreateTable_RuisekiKessonRankList(); //健全性ランキングテーブル（累積欠損比率）
   getAndCreateTable_KigyosaiKyusuiRankList(); //健全性ランキングテーブル（起債 割る 給水収益）
   getAndCreateTable_KoteiShokyakurituRankList(); //健全性ランキングテーブル（減価償却累計 割る 簿価＋減価償却累計）
+  getAndCreateTable_ByoshoRiyorituRankList(); //効率性ランキングテーブル（延べ年間患者数　割る　延べ病床数）
 
   return;
 }
@@ -503,6 +504,32 @@ function getAndCreateTable_KoteiShokyakurituRankList(){
   })
   .catch(error => { console.log(error); });
 }
+
+
+//病床利用率による効率性ランキングテーブルを作成
+function getAndCreateTable_ByoshoRiyorituRankList(){
+  //枠内にローダーを表示
+  createTableLoading("divMainRightMiddle", "tableDivLoading6", "病床利用率による効率性ランクを作成中...");
+  val = "2020"; //document.getElementById("selTdfkSub").value;
+  fetch('/getByoshoRiyorituRankList/' + val, {
+    method: 'GET',
+    'Content-Type': 'application/json'
+  })
+  .then(res => res.json())
+  .then(jsonData => {
+    createTableDiv("divMainRightMiddle", "tableDivByoshoRiyorituRankList");
+    list = JSON.parse(jsonData.data)
+    var hdText = ["ランク", "団体名", "施設名",　"病床利用率(%)"];
+    var propId = ["rank", "dantai_nm", "sisetu_nm",　"riyoritu"];
+    var align = ["center", "left", "left",　"right"];
+    createTableByJsonList(list, "divMainRightMiddle", "tableDivByoshoRiyorituRankList", "病床利用率による効率性ランキング", hdText, propId, align, null, 3);
+    //ローダーを削除
+    destroyTableLoading("divMainRightMiddle", "tableDivLoading6");
+    return;
+  })
+  .catch(error => { console.log(error); });
+}
+
 
 
 

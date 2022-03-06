@@ -25,6 +25,7 @@ from models.vanalyryudoanzenseia import VAnalyRyudoAnzenseiA, VAnalyRyudoAnzense
 from models.vanalyruisekikessona import VAnalyRuisekiKessonA, VAnalyRuisekiKessonASchema #健全性ランクA・・・累積欠損比率
 from models.vanalykigyosaiperkyusuia import VAnalyKigyosaiPerKyusuiA, VAnalyKigyosaiPerKyusuiASchema
 from models.vanalykoteishokyakuritua import VAnalyKoteiShokyakurituA, VAnalyKoteiShokyakurituASchema
+from models.vanalybyoshoriyoritua import VAnalyByoshoRiyorituA, VAnalyByoshoRiyorituASchema #回転率ランクA・・・病床利用率
 
 from sqlalchemy.sql import text
 from sqlalchemy import distinct
@@ -804,6 +805,13 @@ def getKigyosaiKyusuiRankList(nendo):
 def getKoteiShokyakurituRankList(nendo):
     datalist =VAnalyKoteiShokyakurituA.query.filter(VAnalyKoteiShokyakurituA.nendo == nendo, VAnalyKoteiShokyakurituA.shokyaku_hiritu != None).order_by(desc(VAnalyKoteiShokyakurituA.shokyaku_hiritu)).all()
     datalist_schema = VAnalyKoteiShokyakurituASchema(many=True)
+    return jsonify({'data': datalist_schema.dumps(datalist, ensure_ascii=False, default=decimal_default_proc)})
+
+# 病床利用率
+@app.route('/getByoshoRiyorituRankList/<nendo>')
+def getByoshoRiyorituRankList(nendo):
+    datalist = VAnalyByoshoRiyorituA.query.filter(VAnalyByoshoRiyorituA.nendo == nendo, VAnalyByoshoRiyorituA.riyoritu != None).order_by(desc(VAnalyByoshoRiyorituA.riyoritu)).all()
+    datalist_schema = VAnalyByoshoRiyorituASchema(many=True)
     return jsonify({'data': datalist_schema.dumps(datalist, ensure_ascii=False, default=decimal_default_proc)})
 
 # 基本情報タブ用の表リスト取得
