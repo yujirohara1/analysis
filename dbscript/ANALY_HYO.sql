@@ -25,25 +25,25 @@ ALTER TABLE ONLY analy_hyo
 
 
 
-insert into analy_hyo values(2020, 20, 0, trim('æç›Šè¨ˆç®—æ›¸                             '),null,null,null);
-insert into analy_hyo values(2020, 21, 0, trim('è²»ç”¨æ§‹æˆè¡¨                             '),null,null,null);
-insert into analy_hyo values(2020, 22, 0, trim('è²¸å€Ÿå¯¾ç…§è¡¨                             '),null,null,null);
-insert into analy_hyo values(2020, 23, 0, trim('è³‡æœ¬çš„åæ”¯ã«é–¢ã™ã‚‹èª¿                   '),null,null,null);
-insert into analy_hyo values(2020, 24, 0, trim('ä¼æ¥­å‚µã«é–¢ã™ã‚‹èª¿                       '),null,null,null);
-insert into analy_hyo values(2020, 25, 0, trim('è·ç¨®åˆ¥çµ¦ä¸ã«é–¢ã™ã‚‹èª¿                   '),null,null,null);
-insert into analy_hyo values(2020, 27, 0, trim('çµŒå–¶åˆ†æã«é–¢ã™ã‚‹èª¿ï¼ˆä¸€ï¼‰               '),null,null,null);
-insert into analy_hyo values(2020, 28, 0, trim('çµŒå–¶åˆ†æã«é–¢ã™ã‚‹èª¿ï¼ˆäºŒï¼‰               '),null,null,null);
-insert into analy_hyo values(2020, 30, 0, trim('æ–½è¨­åŠã³æ¥­å‹™æ¦‚æ³ã«é–¢ã™ã‚‹èª¿ï¼ˆä»˜è¡¨ï¼‰     '),null,null,null);
-insert into analy_hyo values(2020, 31, 0, trim('çµŒå–¶åˆ†æã«é–¢ã™ã‚‹èª¿ï¼ˆä¸‰ï¼‰               '),null,null,null);
-insert into analy_hyo values(2020, 32, 0, trim('çµŒå–¶åˆ†æã«é–¢ã™ã‚‹èª¿ï¼ˆä¸€ï¼‰               '),null,null,null);
-insert into analy_hyo values(2020, 33, 0, trim('çµŒå–¶åˆ†æã«é–¢ã™ã‚‹èª¿ï¼ˆäºŒï¼‰               '),null,null,null);
-insert into analy_hyo values(2020, 34, 0, trim('æ–½è¨­åŠã³æ¥­å‹™æ¦‚æ³ã«é–¢ã™ã‚‹èª¿ï¼ˆä»˜è¡¨ï¼‰     '),null,null,null);
-insert into analy_hyo values(2020, 40, 0, trim('ç¹°å…¥é‡‘ã«é–¢ã™ã‚‹èª¿                       '),null,null,null);
-insert into analy_hyo values(2020, 45, 0, trim('ä¼æ¥­å‚µå¹´åº¦åˆ¥å„Ÿé‚„çŠ¶æ³èª¿                 '),null,null,null);
--- insert into analy_hyo values(2020, 45, 0, trim('ä¼æ¥­å‚µå¹´åº¦åˆ¥å„Ÿé‚„çŠ¶æ³èª¿                 '),null,null,null);
-insert into analy_hyo values(2020, 50, 0, trim('æ–½è¨­åŠã³æ¥­å‹™æ¦‚æ³ã«é–¢ã™ã‚‹èª¿             '),null,null,null);
-insert into analy_hyo values(2020, 51, 0, trim('æ–½è¨­åŠã³æ¥­å‹™æ¦‚æ³ã«é–¢ã™ã‚‹èª¿             '),null,null,null);
-insert into analy_hyo values(2020, 52, 0, trim('ãã®ä»–                                 '),null,null,null);
-insert into analy_hyo values(2020, 60, 0, trim('æ–½è¨­åŠã³æ¥­å‹™æ¦‚æ³ã«é–¢ã™ã‚‹èª¿             '),null,null,null);
+insert into analy_hyo values(2020, 20, 0, trim('‘¹‰vŒvZ‘                             '),null,null,null);
+insert into analy_hyo values(2020, 21, 0, trim('”ï—p\¬•\                             '),null,null,null);
+insert into analy_hyo values(2020, 22, 0, trim('‘İØ‘ÎÆ•\                             '),null,null,null);
+insert into analy_hyo values(2020, 23, 0, trim('‘–{“Iûx‚ÉŠÖ‚·‚é’²                   '),null,null,null);
+insert into analy_hyo values(2020, 24, 0, trim('Šé‹ÆÂ‚ÉŠÖ‚·‚é’²                       '),null,null,null);
+insert into analy_hyo values(2020, 25, 0, trim('Eí•Ê‹‹—^‚ÉŠÖ‚·‚é’²                   '),null,null,null);
+insert into analy_hyo values(2020, 27, 0, trim('Œo‰c•ªÍ‚ÉŠÖ‚·‚é’²iˆêj               '),null,null,null);
+insert into analy_hyo values(2020, 28, 0, trim('Œo‰c•ªÍ‚ÉŠÖ‚·‚é’²i“ñj               '),null,null,null);
+insert into analy_hyo values(2020, 30, 0, trim('{İ‹y‚Ñ‹Æ–±ŠT‹µ‚ÉŠÖ‚·‚é’²i•t•\j     '),null,null,null);
+insert into analy_hyo values(2020, 31, 0, trim('Œo‰c•ªÍ‚ÉŠÖ‚·‚é’²iOj               '),null,null,null);
+insert into analy_hyo values(2020, 32, 0, trim('Œo‰c•ªÍ‚ÉŠÖ‚·‚é’²iˆêj               '),null,null,null);
+insert into analy_hyo values(2020, 33, 0, trim('Œo‰c•ªÍ‚ÉŠÖ‚·‚é’²i“ñj               '),null,null,null);
+insert into analy_hyo values(2020, 34, 0, trim('{İ‹y‚Ñ‹Æ–±ŠT‹µ‚ÉŠÖ‚·‚é’²i•t•\j     '),null,null,null);
+insert into analy_hyo values(2020, 40, 0, trim('ŒJ“ü‹à‚ÉŠÖ‚·‚é’²                       '),null,null,null);
+insert into analy_hyo values(2020, 45, 0, trim('Šé‹ÆÂ”N“x•ÊŠÒó‹µ’²                 '),null,null,null);
+-- insert into analy_hyo values(2020, 45, 0, trim('Šé‹ÆÂ”N“x•ÊŠÒó‹µ’²                 '),null,null,null);
+insert into analy_hyo values(2020, 50, 0, trim('{İ‹y‚Ñ‹Æ–±ŠT‹µ‚ÉŠÖ‚·‚é’²             '),null,null,null);
+insert into analy_hyo values(2020, 51, 0, trim('{İ‹y‚Ñ‹Æ–±ŠT‹µ‚ÉŠÖ‚·‚é’²             '),null,null,null);
+insert into analy_hyo values(2020, 52, 0, trim('‚»‚Ì‘¼                                 '),null,null,null);
+insert into analy_hyo values(2020, 60, 0, trim('{İ‹y‚Ñ‹Æ–±ŠT‹µ‚ÉŠÖ‚·‚é’²             '),null,null,null);
 
 commit;

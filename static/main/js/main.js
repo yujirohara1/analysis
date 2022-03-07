@@ -4,6 +4,12 @@
 
 window.onload = function(){
 
+  // var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
+  // var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+  //   return new bootstrap.Popover(popoverTriggerEl)
+  // });
+
+
   getAndCreateTable_ShuekiRankList();//収益性ランキングテーブルを作成
   getAndCreateTable_AnzenRankList();//安全性ランキングテーブルを作成
   getAndCreateTable_RuisekiKessonRankList(); //健全性ランキングテーブル（累積欠損比率）
@@ -11,6 +17,7 @@ window.onload = function(){
   getAndCreateTable_KoteiShokyakurituRankList(); //健全性ランキングテーブル（減価償却累計 割る 簿価＋減価償却累計）
   getAndCreateTable_ByoshoRiyorituRankList(); //効率性ランキングテーブル（延べ年間患者数　割る　延べ病床数）
   getAndCreateTable_NyuinHitoriShuekiRankList(); //収益性ランキングテーブル（入院患者一人１日あたり収益）
+
 
   return;
 }
@@ -237,8 +244,35 @@ function createTableByJsonList(datalist, locationId, tableDivId, caption, hdText
   table.id = tableDivId.replace("Div","");  ;//"tableHikakuCityList";
   document.getElementById(tableDivId).appendChild(table);
   //table = new DataTable(mainTable);
-  if(locationId!=""){
-    document.getElementById(locationId + "Caption").innerText = caption;
+  if(locationId!="" && caption != ""){
+    var popLabel = "";
+    if(caption.split("による").length == 2){
+      popLabel1 = caption.split("による")[0];
+      popLabel2 = caption.split("による")[1];
+      let btnPopover = document.createElement("a");
+      btnPopover.classList.add("btn");
+      btnPopover.classList.add("btn-sm");
+      btnPopover.classList.add("btn-primary");
+      btnPopover.classList.add("sihyoPopOver");
+      btnPopover.setAttribute("data-bs-toggle","popover");
+      btnPopover.title = popLabel1 + "ってなに？";
+      //.popover-header
+      //document.getElementById('dataTab').querySelector("a.nav-link")
+      btnPopover.setAttribute("data-bs-content","And heres some amazing content. Its very engaging. Right?");
+      btnPopover.innerText = popLabel1;
+      var a = new bootstrap.Popover(btnPopover);
+      let divLabel2 = document.createElement("div");
+      divLabel2.style.float = "left";
+      divLabel2.innerText = "による" + popLabel2;
+      document.getElementById(locationId + "Caption").innerText = "";
+      document.getElementById(locationId + "Caption").appendChild(btnPopover);
+      document.getElementById(locationId + "Caption").appendChild(divLabel2);
+      //document.getElementById(locationId + "Caption").appendChild(popLabel2);
+    }else{
+      document.getElementById(locationId + "Caption").innerText = caption;
+    }
+    //document.getElementById(locationId + "Caption").innerHTML = '<button type="button" class="btn btn-lg btn-danger" data-bs-toggle="popover" title="Popover title" data-bs-content="And heres some amazing content. Its very engaging. Right?">Click to toggle popover</button>';
+    //new bootstrap.Popover(popoverTriggerEl)
   }
 }
 

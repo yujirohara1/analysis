@@ -19,6 +19,16 @@ table.dataTable thead tr {
     float: none;
 }
 
+.sihyoPopOver{
+    float: left;
+    padding: 0px 10px 0px 10px;
+    margin-right: 10px;
+}
+.popover-header{
+    font-size:13px;
+    color:#454545;
+}
+
 .kaitei{
     font-size:14px;
     margin:0 0 5px 0;
