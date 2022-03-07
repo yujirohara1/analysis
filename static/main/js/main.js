@@ -80,6 +80,71 @@ function destroyTableLoading(locationId, tableDivId){
   document.getElementById(locationId).style.height = "";
 }
 
+function createToasts(selectData){
+  if(document.getElementById("divToast")!=null){
+    document.getElementById("divToast").remove();
+  }
+
+  let divToast = document.createElement('div');
+  divToast.classList.add("toast");
+  divToast.classList.add("align-items-center");
+  divToast.classList.add("face");
+  divToast.classList.add("show");
+  divToast.setAttribute("role","alert");
+  divToast.setAttribute("roaria-livele","assertive");
+  divToast.setAttribute("aria-atomic","true");
+  divToast.id = "divToast";
+
+  
+  let divToastBody = document.createElement('div');
+  divToastBody.classList.add("toast-body");
+  divToastBody.innerText = (selectData.dantai_nm + " " + selectData.sisetu_nm).substring(0,16);
+
+  let divToastWrap = document.createElement('div');
+  divToastWrap.classList.add("d-flex");
+  divToastWrap.style.alignItems = "center";
+  divToastWrap.style.marginLeft = "10px";
+
+  let btn = document.createElement('button');
+  btn.setAttribute("type","button");
+  btn.setAttribute("data-bs-dismiss","toast");
+  btn.setAttribute("aria-label","Close");
+  btn.classList.add("btn");
+  btn.classList.add("btn-sm");
+  btn.classList.add("btn-secondary");
+  btn.innerText = "解除";
+  //<span class="badge bg-secondary">New</span>
+  let span =  document.createElement('span');
+  span.classList.add("badge");
+  span.classList.add("bg-warning");
+  span.innerText = "選択中";
+  
+
+  btn.addEventListener('click', (event) => {
+    divToast = document.getElementById("divToast");
+    divToast.classList.remove("show");
+    divToast.classList.add("hide");
+  });
+
+  divToastWrap.appendChild(span);
+  divToastWrap.appendChild(divToastBody);
+  divToastWrap.appendChild(btn);
+
+  divToast.appendChild(divToastWrap);
+
+  document.getElementById("areaSelectTarget").appendChild(divToast);
+
+  //alert(list.dantai_cd);
+// <div class="toast align-items-center fade show" role="alert" ="assertive" ="">
+//   <div class="d-flex">
+//     <div class=""><button type="button" class="btn btn-secondary btn-sm" ="toast">Close</button>
+//       Hello, world! This is a toast message.
+//     </div>
+//     <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+//   </div>
+// </div>
+}
+
 //jsonデータからhtmlテーブルを自作する。
 function createTableByJsonList(datalist, locationId, tableDivId, caption, hdText, propId, align, width, height){
   let table = document.createElement("table");
@@ -125,6 +190,7 @@ function createTableByJsonList(datalist, locationId, tableDivId, caption, hdText
             tdataA.addEventListener('click', (event) => {
               var key = event.target.title;
               moveProfileTab(key);
+              createToasts(datalist[i]);
             });
         } 
       }
