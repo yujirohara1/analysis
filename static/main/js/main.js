@@ -255,6 +255,9 @@ function createTableByJsonList(datalist, locationId, tableDivId, caption, hdText
       btnPopover.classList.add("btn-primary");
       btnPopover.classList.add("sihyoPopOver");
       btnPopover.setAttribute("data-bs-toggle","popover");
+      btnPopover.setAttribute("roll","button");
+      btnPopover.setAttribute("data-bs-trigger","focus");
+      btnPopover.setAttribute("tabindex","0");
       btnPopover.title = popLabel1 + "ってなに？";
       btnPopover.innerText = popLabel1;
       var a = new bootstrap.Popover(btnPopover,{
@@ -262,6 +265,7 @@ function createTableByJsonList(datalist, locationId, tableDivId, caption, hdText
         content:getDescribeHtml(popLabel1),
         sanitize: false,
         container:"body",
+        trigger: 'focus'
       });
       //a.config.html = true;
       // btnPopover.popover({
