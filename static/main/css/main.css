@@ -29,6 +29,10 @@ table.dataTable thead tr {
     color:#454545;
 }
 
+.popover{
+    max-width: 100% !important;
+}
+
 .kaitei{
     font-size:14px;
     margin:0 0 5px 0;

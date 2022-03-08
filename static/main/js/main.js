@@ -258,9 +258,28 @@ function createTableByJsonList(datalist, locationId, tableDivId, caption, hdText
       btnPopover.title = popLabel1 + "ってなに？";
       //.popover-header
       //document.getElementById('dataTab').querySelector("a.nav-link")
-      btnPopover.setAttribute("data-bs-content","And heres some amazing content. Its very engaging. Right?");
+      //getDescribeIndex(popLabel1);
+      //btnPopover.setAttribute("data-bs-content",getDescribeIndex(popLabel1));
+      //btnPopover.setAttribute("data-bs-content","<div style='color:red'>aaaa</div>");
+      //document.getElementById(locationId).querySelector(".popover-body")
       btnPopover.innerText = popLabel1;
-      var a = new bootstrap.Popover(btnPopover);
+      var a = new bootstrap.Popover(btnPopover,{
+        html: true,
+        content:getDescribeHtml(popLabel1),
+        sanitize: false,
+        container:"body",
+      });
+      //a.config.html = true;
+      // btnPopover.popover({
+      //   html: true,
+      //   container: 'body',
+      //   content: function () {
+      //       let divTmp = document.createElement("div");
+      //       divTmp.innerText = 
+      //       return divTmp.outerHTML;
+      //   },
+      //   trigger: 'hover'
+      // });
       let divLabel2 = document.createElement("div");
       divLabel2.style.float = "left";
       divLabel2.innerText = "による" + popLabel2;
