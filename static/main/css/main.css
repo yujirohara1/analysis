@@ -52,6 +52,11 @@ table.dataTable thead tr {
     font-size: 0.8em;
 }
 
+.alert-index{
+    padding: 2px 12px 2px 12px;
+    font-weight: bold;
+}
+
 .spinner-lg {
     background-image:url(../../../static/image/load_anime.gif); 
     background-repeat:  no-repeat;

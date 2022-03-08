@@ -4,11 +4,12 @@
 
 window.onload = function(){
 
-  // var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
-  // var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
-  //   return new bootstrap.Popover(popoverTriggerEl)
-  // });
-
+  /* スーパーリロードを実装。最終的にソースが固まったら外す。*/
+  if(document.URL.indexOf("#")==-1){
+    url = document.URL+"#";
+    location = "#";
+    window.location.href = window.location.href;
+  }
 
   getAndCreateTable_ShuekiRankList();//収益性ランキングテーブルを作成
   getAndCreateTable_AnzenRankList();//安全性ランキングテーブルを作成
@@ -17,7 +18,6 @@ window.onload = function(){
   getAndCreateTable_KoteiShokyakurituRankList(); //健全性ランキングテーブル（減価償却累計 割る 簿価＋減価償却累計）
   getAndCreateTable_ByoshoRiyorituRankList(); //効率性ランキングテーブル（延べ年間患者数　割る　延べ病床数）
   getAndCreateTable_NyuinHitoriShuekiRankList(); //収益性ランキングテーブル（入院患者一人１日あたり収益）
-
 
   return;
 }
@@ -244,7 +244,7 @@ function createTableByJsonList(datalist, locationId, tableDivId, caption, hdText
   table.id = tableDivId.replace("Div","");  ;//"tableHikakuCityList";
   document.getElementById(tableDivId).appendChild(table);
   //table = new DataTable(mainTable);
-  if(locationId!="" && caption != ""){
+  if(locationId!=""){
     var popLabel = "";
     if(caption.split("による").length == 2){
       popLabel1 = caption.split("による")[0];
@@ -256,12 +256,6 @@ function createTableByJsonList(datalist, locationId, tableDivId, caption, hdText
       btnPopover.classList.add("sihyoPopOver");
       btnPopover.setAttribute("data-bs-toggle","popover");
       btnPopover.title = popLabel1 + "ってなに？";
-      //.popover-header
-      //document.getElementById('dataTab').querySelector("a.nav-link")
-      //getDescribeIndex(popLabel1);
-      //btnPopover.setAttribute("data-bs-content",getDescribeIndex(popLabel1));
-      //btnPopover.setAttribute("data-bs-content","<div style='color:red'>aaaa</div>");
-      //document.getElementById(locationId).querySelector(".popover-body")
       btnPopover.innerText = popLabel1;
       var a = new bootstrap.Popover(btnPopover,{
         html: true,
