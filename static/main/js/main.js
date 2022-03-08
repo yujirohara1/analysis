@@ -4,6 +4,13 @@
 
 window.onload = function(){
 
+  /* スーパーリロードを実装。最終的にソースが固まったら外す。*/
+  if(document.URL.indexOf("#")==-1){
+    url = document.URL+"#";
+    location = "#";
+    window.location.href = window.location.href;
+  }
+
   getAndCreateTable_ShuekiRankList();//収益性ランキングテーブルを作成
   getAndCreateTable_AnzenRankList();//安全性ランキングテーブルを作成
   getAndCreateTable_RuisekiKessonRankList(); //健全性ランキングテーブル（累積欠損比率）
@@ -116,7 +123,7 @@ function createToasts(selectData){
   //<span class="badge bg-secondary">New</span>
   let span =  document.createElement('span');
   span.classList.add("badge");
-  span.classList.add("bg-warning");
+  span.classList.add("bg-danger");
   span.innerText = "選択中";
   
 
@@ -238,7 +245,51 @@ function createTableByJsonList(datalist, locationId, tableDivId, caption, hdText
   document.getElementById(tableDivId).appendChild(table);
   //table = new DataTable(mainTable);
   if(locationId!=""){
-    document.getElementById(locationId + "Caption").innerText = caption;
+    var popLabel = "";
+    if(caption.split("による").length == 2){
+      popLabel1 = caption.split("による")[0];
+      popLabel2 = caption.split("による")[1];
+      let btnPopover = document.createElement("a");
+      btnPopover.classList.add("btn");
+      btnPopover.classList.add("btn-sm");
+      btnPopover.classList.add("btn-primary");
+      btnPopover.classList.add("sihyoPopOver");
+      btnPopover.setAttribute("data-bs-toggle","popover");
+      btnPopover.setAttribute("roll","button");
+      btnPopover.setAttribute("data-bs-trigger","focus");
+      btnPopover.setAttribute("tabindex","0");
+      btnPopover.title = popLabel1 + "ってなに？";
+      btnPopover.innerText = popLabel1;
+      var a = new bootstrap.Popover(btnPopover,{
+        html: true,
+        content:getDescribeHtml(popLabel1),
+        sanitize: false,
+        container:"body",
+        trigger: 'focus'
+      });
+      //a.config.html = true;
+      // btnPopover.popover({
+      //   html: true,
+      //   container: 'body',
+      //   content: function () {
+      //       let divTmp = document.createElement("div");
+      //       divTmp.innerText = 
+      //       return divTmp.outerHTML;
+      //   },
+      //   trigger: 'hover'
+      // });
+      let divLabel2 = document.createElement("div");
+      divLabel2.style.float = "left";
+      divLabel2.innerText = "による" + popLabel2;
+      document.getElementById(locationId + "Caption").innerText = "";
+      document.getElementById(locationId + "Caption").appendChild(btnPopover);
+      document.getElementById(locationId + "Caption").appendChild(divLabel2);
+      //document.getElementById(locationId + "Caption").appendChild(popLabel2);
+    }else{
+      document.getElementById(locationId + "Caption").innerText = caption;
+    }
+    //document.getElementById(locationId + "Caption").innerHTML = '<button type="button" class="btn btn-lg btn-danger" data-bs-toggle="popover" title="Popover title" data-bs-content="And heres some amazing content. Its very engaging. Right?">Click to toggle popover</button>';
+    //new bootstrap.Popover(popoverTriggerEl)
   }
 }
 

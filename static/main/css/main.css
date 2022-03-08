@@ -19,6 +19,20 @@ table.dataTable thead tr {
     float: none;
 }
 
+.sihyoPopOver{
+    float: left;
+    padding: 0px 10px 0px 10px;
+    margin-right: 10px;
+}
+.popover-header{
+    font-size:13px;
+    color:#454545;
+}
+
+.popover{
+    max-width: 100% !important;
+}
+
 .kaitei{
     font-size:14px;
     margin:0 0 5px 0;
@@ -36,6 +50,11 @@ table.dataTable thead tr {
 
 .larger-badge {
     font-size: 0.8em;
+}
+
+.alert-index{
+    padding: 2px 12px 2px 12px;
+    font-weight: bold;
 }
 
 .spinner-lg {
