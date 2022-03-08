@@ -123,7 +123,7 @@ function createToasts(selectData){
   //<span class="badge bg-secondary">New</span>
   let span =  document.createElement('span');
   span.classList.add("badge");
-  span.classList.add("bg-warning");
+  span.classList.add("bg-danger");
   span.innerText = "選択中";
   
 

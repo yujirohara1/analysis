@@ -29,16 +29,16 @@
     %ul.nav.nav-tabs.mb-3#dataTab(role="tablist")
       %li.nav-item(role="presentation")
         %a.nav-link.active#home-tab(data-bs-toggle="tab" data-bs-target="#home-panel" type="button" role="tab" aria-controls="home" aria-selected="true")
-          ダイジェスト
+          <i class="bi bi-clouds-fill" style="margin-right:5px"></i>ダイジェスト
       %li.nav-item(role="presentation")
         %a.nav-link#profile-tab(data-bs-toggle="tab" data-bs-target="#profile-panel" type="button" role="tab" aria-controls="profile" aria-selected="true")
-          基本情報
+          <i class="bi bi-grid-fill" style="margin-right:5px"></i>基本情報
       %li.nav-item(role="presentation")
         %a.nav-link#transition-tab(data-bs-toggle="tab" data-bs-target="#transition-panel" type="button" role="tab" aria-controls="transition" aria-selected="true")
-          データ推移
+          <i class="bi bi-graph-up-arrow" style="margin-right:5px"></i>データ推移
       %li.nav-item(role="presentation")
         %a.nav-link#compare-tab(data-bs-toggle="tab" data-bs-target="#compare-panel" type="button" role="tab" aria-controls="compare" aria-selected="true")
-          類似団体比較
+          <i class="bi bi-images" style="margin-right:5px"></i>類似団体比較
 
     %div.tab-content#dataTabContent
       %div.tab-pane.active.show#home-panel(role="tabpanel" aria-labelledby="home-tab")
