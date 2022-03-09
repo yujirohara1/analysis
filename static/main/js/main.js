@@ -7,10 +7,17 @@ const BdrColor_RadarChart = ["rgba(2,35,199,1)",  "rgba(199,2,2,1)",  "rgba(42,1
 var nanajikuRadarChart=null;
 
 Chart.defaults.color = '#4d4d4d';
-Chart.defaults.font.weight = 'Bold';
+//Chart.defaults.font.weight = 'Bold';
 Chart.defaults.elements.point.borderWidth = 2;
 Chart.defaults.elements.line.borderWidth = 2;
 Chart.defaults.elements.point.radius = 2;
+// Chart.defaults.font.size = 10;
+// Chart.defaults.animation = false; // disables all animations
+// Chart.defaults.animations.colors = false; // disables animation defined by the collection of 'colors' properties
+// Chart.defaults.animations.x = false; // disables animation defined by the 'x' property
+//Chart.defaults.transitions.active.animation.duration = 0; // disables the animation for 'active' mode
+ 
+// Chart.defaults.elements.font.size = "15px";
 
 window.onload = function(){
 
@@ -32,11 +39,19 @@ window.onload = function(){
 
     //CreateRadarChart(); //行選択していないが空白のレーダーチャートを作っておく。
 
+    getAndCreateTable_DantaiListOfRadarChart(); //レーダーチャート右の団体リスト
 
-    CreateRadarChart();
+    CreateRadarChart("");
     
-    document.getElementById("btnMock").addEventListener('click', (event) => {
-      getRadarChartData(nanajikuRadarChart, "bbb");
+    document.getElementById("btnMock1").addEventListener('click', (event) => {
+      CreateRadarChart("a");
+      //var dantaiCnt = nanajikuRadarChart.data.datasets.length;
+      //getRadarChartData(nanajikuRadarChart, "a" + dantaiCnt);
+    });
+    
+    document.getElementById("btnMock2").addEventListener('click', (event) => {
+      var dantaiCnt = nanajikuRadarChart.data.datasets.length;
+      getRadarChartData(nanajikuRadarChart, "b" + dantaiCnt);
     });
     
 
@@ -45,6 +60,31 @@ window.onload = function(){
   }
   return;
 }
+
+//レーダーチャート右の団体リスト
+function getAndCreateTable_DantaiListOfRadarChart(){
+  //枠内にローダーを表示
+  createTableLoading("divCompareRight", "tableDivLoadingCompareRight", "団体リストを作成中...");
+  val = "2020"; // 会計年度、見直し必要。
+  fetch('/getDantaiListOfRadarChart/' + val, {
+    method: 'GET',
+    'Content-Type': 'application/json'
+  })
+  .then(res => res.json())
+  .then(jsonData => {
+    createTableDiv("divCompareRight", "tableDivDantaiListOfRadarChart");
+    var list = JSON.parse(jsonData.data);
+    var hdText = ["団体名", "施設名"];
+    var propId = ["dantai_nm", "sisetu_nm"];
+    var align = ["left", "left"];
+    createTableByJsonList(list, "divCompareRight", "tableDivDantaiListOfRadarChart", "登録団体リスト", hdText, propId, align, null, 1.5);
+    //ローダーを削除
+    destroyTableLoading("divCompareRight", "tableDivLoadingCompareRight");
+    return;
+  })
+  .catch(error => { console.log(error); });
+}
+
 
 // ロケーションdiv に テーブル格納用divを作る。
 // このように利用　→　createTableDiv("divMainLeftTop", "tableDivShueki"); //左上エリアに、収益グリッドを作る場合
@@ -681,7 +721,7 @@ function createGraph(datalist, canvasId, labelStr){
 
 
 
-function CreateRadarChart(){
+function CreateRadarChart(selectRow){
     var dummy = "左の表から企業名を選択してください。"
     var selectVendor = "aaaaa"; //(selectRowData == undefined ? dummy : selectRowData.vendor_nm);
     //var ctx = document.getElementById('myChart').getContext('2d');
@@ -690,29 +730,49 @@ function CreateRadarChart(){
         data: {
             labels: ['収益性', '短期資金力', '長期安全性', '設備効率性', '生産性', '成長性', '将来性'],
             datasets: []
-        },
+        }, //nanajikuRadarChart.config.options.scales.r.pointLabels.font.size = 20;
         options: {
-            layout: {
-                padding: {
-                    left: 0,
-                    right: 0,
-                    top: 0,
-                    bottom: 0
+          layout: {
+              padding: {
+                  left: 0,
+                  right: 0,
+                  top: 0,
+                  bottom: 0
+              }
+          },
+          scale: {
+              angleLines: {
+                  display: true
+              },
+              ticks: {
+                  min: 1,
+                  max: 10
+              }
+          },
+            plugins: {
+                legend: {
+                    labels: {
+                        // This more specific font property overrides the global property
+                        font: {
+                            size: 30
+                        }
+                    }
                 }
             },
-            scale: {
-                angleLines: {
-                    display: true
-                },
-                ticks: {
-                    min: 1,
-                    max: 10
+            scales: {
+                r:{
+                  pointLabels:{
+                    font:{
+                      size:20
+                    }
+                  }
                 }
-            }
+            },
         }
     };
-
-    getRadarChartData(chartData, "aaa");
+    //const ctx = document.getElementById("myChart").getContext('2d');
+    //nanajikuRadarChart = new Chart(ctx, chartData);
+    getRadarChartData(chartData, selectRow);
     //getRadarChartData(chartData, "2");
     //getRadarChartData(chartData, "3");
 }
@@ -744,12 +804,11 @@ function getRadarChartData(chartData, selectVendor){
       chartData.data.datasets[idx].label = selectVendor;//(idx == 0 ? selectVendor : selectVendor.substring(0,2));
       var list = JSON.parse(jsonData.data);
 
-      if(list.length > 0){
-        for(let i in list){
-          chartData.data.datasets[idx].data.push(list[i].eigyo_soneki);
 
-          if(i==6){
-            break;
+      if(selectVendor != "" && list.length > 0){
+        for(let i in list){
+          if(i<=6){
+            chartData.data.datasets[idx].data.push(list[i].eigyo_soneki);
           }
         }
           // $.each(list, function(i, item) {
@@ -763,6 +822,15 @@ function getRadarChartData(chartData, selectVendor){
           // });
       }
 
+      const ctx = document.getElementById("myChart").getContext('2d');
+      if(idx==0){
+        nanajikuRadarChart = new Chart(ctx, chartData);
+      }else{
+        nanajikuRadarChart.update();
+      }
+  
+  
+  
     })
     .catch(error => { console.log(error); });
 
@@ -783,14 +851,6 @@ function getRadarChartData(chartData, selectVendor){
     //     }
     // }
     // var ctx = $("#myChart").get(0).getContext("2d");
-    const ctx = document.getElementById("myChart").getContext('2d');
-    if(idx==0){
-        nanajikuRadarChart = new Chart(ctx, chartData);
-    }else{
-        nanajikuRadarChart.update();
-    }
-
-
 
 
 
