@@ -1,6 +1,23 @@
 /*
 || バニラで書いていく。
 */
+//graphHikakuChart = null;
+const BgColor_RadarChart =  ["rgba(2,35,199,.2)", "rgba(199,2,2,.2)", "rgba(42,199,2,.2)", "rgba(153,2,199,.2)", "rgba(199,120,2,.2)"];
+const BdrColor_RadarChart = ["rgba(2,35,199,1)",  "rgba(199,2,2,1)",  "rgba(42,199,2,1)",  "rgba(153,2,199,1)",  "rgba(199,120,2,1)"];
+var nanajikuRadarChart=null;
+
+Chart.defaults.color = '#4d4d4d';
+//Chart.defaults.font.weight = 'Bold';
+Chart.defaults.elements.point.borderWidth = 2;
+Chart.defaults.elements.line.borderWidth = 2;
+Chart.defaults.elements.point.radius = 2;
+// Chart.defaults.font.size = 10;
+//Chart.defaults.animation = false; // disables all animations
+// Chart.defaults.animations.colors = false; // disables animation defined by the collection of 'colors' properties
+// Chart.defaults.animations.x = false; // disables animation defined by the 'x' property
+//Chart.defaults.transitions.active.animation.duration = 0; // disables the animation for 'active' mode
+ 
+// Chart.defaults.elements.font.size = "15px";
 
 window.onload = function(){
 
@@ -11,38 +28,81 @@ window.onload = function(){
     window.location.href = window.location.href;
   }
 
-  getAndCreateTable_ShuekiRankList();//収益性ランキングテーブルを作成
-  getAndCreateTable_AnzenRankList();//安全性ランキングテーブルを作成
-  getAndCreateTable_RuisekiKessonRankList(); //健全性ランキングテーブル（累積欠損比率）
-  getAndCreateTable_KigyosaiKyusuiRankList(); //健全性ランキングテーブル（起債 割る 給水収益）
-  getAndCreateTable_KoteiShokyakurituRankList(); //健全性ランキングテーブル（減価償却累計 割る 簿価＋減価償却累計）
-  getAndCreateTable_ByoshoRiyorituRankList(); //効率性ランキングテーブル（延べ年間患者数　割る　延べ病床数）
-  getAndCreateTable_NyuinHitoriShuekiRankList(); //収益性ランキングテーブル（入院患者一人１日あたり収益）
+  try{
+    getAndCreateTable_ShuekiRankList();//収益性ランキングテーブルを作成
+    getAndCreateTable_AnzenRankList();//安全性ランキングテーブルを作成
+    getAndCreateTable_RuisekiKessonRankList(); //健全性ランキングテーブル（累積欠損比率）
+    getAndCreateTable_KigyosaiKyusuiRankList(); //健全性ランキングテーブル（起債 割る 給水収益）
+    getAndCreateTable_KoteiShokyakurituRankList(); //健全性ランキングテーブル（減価償却累計 割る 簿価＋減価償却累計）
+    getAndCreateTable_ByoshoRiyorituRankList(); //効率性ランキングテーブル（延べ年間患者数　割る　延べ病床数）
+    getAndCreateTable_NyuinHitoriShuekiRankList(); //収益性ランキングテーブル（入院患者一人１日あたり収益）
 
+    //CreateRadarChart(); //行選択していないが空白のレーダーチャートを作っておく。
+
+    getAndCreateTable_DantaiListOfRadarChart(); //レーダーチャート右の団体リスト
+
+    CreateRadarChart("");
+    
+    document.getElementById("btnMock1").addEventListener('click', (event) => {
+      CreateRadarChart("a");
+      //var dantaiCnt = nanajikuRadarChart.data.datasets.length;
+      //getRadarChartData(nanajikuRadarChart, "a" + dantaiCnt);
+    });
+    
+    document.getElementById("btnMock2").addEventListener('click', (event) => {
+      var dantaiCnt = nanajikuRadarChart.data.datasets.length;
+      getRadarChartData(nanajikuRadarChart, "b" + dantaiCnt);
+    });
+    
+
+  }catch(e){
+    console.log(e.message);
+  }
   return;
 }
 
+//レーダーチャート右の団体リスト
+function getAndCreateTable_DantaiListOfRadarChart(){
+  //枠内にローダーを表示
+  createTableLoading("divCompareRight", "tableDivLoadingCompareRight", "団体リストを作成中...");
+  val = "2020"; // 会計年度、見直し必要。
+  fetch('/getDantaiListOfRadarChart/' + val, {
+    method: 'GET',
+    'Content-Type': 'application/json'
+  })
+  .then(res => res.json())
+  .then(jsonData => {
+    createTableDiv("divCompareRight", "tableDivDantaiListOfRadarChart");
+    var list = JSON.parse(jsonData.data);
+    var hdText = ["団体名", "施設名"];
+    var propId = ["dantai_nm", "sisetu_nm"];
+    var align = ["left", "left"];
+    createTableByJsonList(list, "divCompareRight", "tableDivDantaiListOfRadarChart", "登録団体リスト", hdText, propId, align, null, 1.5);
+    //ローダーを削除
+    destroyTableLoading("divCompareRight", "tableDivLoadingCompareRight");
+    return;
+  })
+  .catch(error => { console.log(error); });
+}
 
 
-//ロケーションdiv に テーブル格納用divを作る。
+// ロケーションdiv に テーブル格納用divを作る。
 // このように利用　→　createTableDiv("divMainLeftTop", "tableDivShueki"); //左上エリアに、収益グリッドを作る場合
+// 主にダイジェストタブで使うことを目的として実装したものの、そこに限定しない使い方になった。
 function createTableDiv(locationId, tableDivId){
-  
   let tableDiv = document.createElement('div');
   tableDiv.classList.add("table-responsive");
   tableDiv.id = tableDivId;
   document.getElementById(locationId).appendChild(tableDiv);
-
 }
+
 
 // テーブル内のデータが表示されるまでの間、小さいローダーを枠内に表示
 function createTableLoading(locationId, tableDivId, messageLabel){
-  
   var tmp = document.getElementById(locationId);
   while(tmp.lastChild){
     tmp.removeChild(tmp.lastChild);
   }
-
   let tableDiv = document.createElement('div');
   tableDiv.classList.add("loadingDiv");
   document.getElementById(locationId).style.height = "calc(100vh/3)";
@@ -54,12 +114,11 @@ function createTableLoading(locationId, tableDivId, messageLabel){
   document.getElementById(locationId).appendChild(tableDiv);
 }
 
-
 //収益性ランキングテーブルを作成
 function getAndCreateTable_ShuekiRankList(){
   //枠内にローダーを表示
   createTableLoading("divMainLeftTop", "tableDivLoading1", "経常収支比率による収益性ランクを作成中...");
-  val = "2020"; //document.getElementById("selTdfkSub").value;
+  val = "2020"; // 会計年度、見直し必要。
   fetch('/getShuekiRankList/' + val, {
     method: 'GET',
     'Content-Type': 'application/json'
@@ -67,7 +126,7 @@ function getAndCreateTable_ShuekiRankList(){
   .then(res => res.json())
   .then(jsonData => {
     createTableDiv("divMainLeftTop", "tableDivShueki");
-    list = JSON.parse(jsonData.data)
+    var list = JSON.parse(jsonData.data);
     var hdText = ["ランク", "団体名", "施設名",　"経常収支比率(%)"];
     var propId = ["rank", "dantai_nm", "sisetu_nm",　"keijo_shusi_hiritu"];
     var align = ["center", "left", "left",　"right"];
@@ -87,16 +146,15 @@ function destroyTableLoading(locationId, tableDivId){
   document.getElementById(locationId).style.height = "";
 }
 
+
+// トーストを作る（画面ヘッダで、選択中の組織名を表示するバッジ）
 function createToasts(selectData){
   if(document.getElementById("divToast")!=null){
     document.getElementById("divToast").remove();
   }
 
   let divToast = document.createElement('div');
-  divToast.classList.add("toast");
-  divToast.classList.add("align-items-center");
-  divToast.classList.add("face");
-  divToast.classList.add("show");
+  divToast.classList.add("toast", "align-items-center", "face", "show");
   divToast.setAttribute("role","alert");
   divToast.setAttribute("roaria-livele","assertive");
   divToast.setAttribute("aria-atomic","true");
@@ -116,16 +174,11 @@ function createToasts(selectData){
   btn.setAttribute("type","button");
   btn.setAttribute("data-bs-dismiss","toast");
   btn.setAttribute("aria-label","Close");
-  btn.classList.add("btn");
-  btn.classList.add("btn-sm");
-  btn.classList.add("btn-secondary");
+  btn.classList.add("btn", "btn-sm", "btn-secondary");
   btn.innerText = "解除";
-  //<span class="badge bg-secondary">New</span>
   let span =  document.createElement('span');
-  span.classList.add("badge");
-  span.classList.add("bg-danger");
+  span.classList.add("badge", "bg-danger");
   span.innerText = "選択中";
-  
 
   btn.addEventListener('click', (event) => {
     divToast = document.getElementById("divToast");
@@ -141,25 +194,12 @@ function createToasts(selectData){
 
   document.getElementById("areaSelectTarget").appendChild(divToast);
 
-  //alert(list.dantai_cd);
-// <div class="toast align-items-center fade show" role="alert" ="assertive" ="">
-//   <div class="d-flex">
-//     <div class=""><button type="button" class="btn btn-secondary btn-sm" ="toast">Close</button>
-//       Hello, world! This is a toast message.
-//     </div>
-//     <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-//   </div>
-// </div>
 }
 
-//jsonデータからhtmlテーブルを自作する。
-function createTableByJsonList(datalist, locationId, tableDivId, caption, hdText, propId, align, width, height){
-  let table = document.createElement("table");
-  let thead = document.createElement('thead');
-  let tbody = document.createElement('tbody');
 
+//テーブルの見出し行を作成する。戻したDOMはtheadにappendされる想定。
+function createTableHeader(hdText){
   let trow = document.createElement('tr');
-
   for (let hd in hdText){
     var thA = document.createElement('th');
     thA.innerHTML = hdText[hd];
@@ -167,7 +207,27 @@ function createTableByJsonList(datalist, locationId, tableDivId, caption, hdText
     thA.style.verticalAlign = "middle";
     trow.appendChild(thA);
   }
-  thead.appendChild(trow);
+  return trow;
+}
+
+//ランク冠用のイメージDOMを返す
+function createRankingCup(rank){
+  var img = document.createElement('img');
+  img.classList.add("img-responsive")
+  img.setAttribute("src","../static/image/ranking" + (rank) + ".png");
+
+  return img;
+}
+
+//jsonデータからhtmlテーブルを自作する。
+function createTableByJsonList(datalist, locationId, tableDivId, caption, hdText, propId, align, width, height){
+  let table = document.createElement("table");
+  let thead = document.createElement('thead');
+  let tbody = document.createElement('tbody');
+  let trow = document.createElement('tr');
+
+  //見出し行作成
+  thead.appendChild(createTableHeader(hdText));
   
   for(let i in datalist){
     trow = document.createElement('tr');
@@ -178,22 +238,14 @@ function createTableByJsonList(datalist, locationId, tableDivId, caption, hdText
         var r = i*1+1;
         tdataA.innerHTML = r;
         if(r <= 3){
-          var img = document.createElement('img');
-          img.classList.add("img-responsive")
-          img.setAttribute("src","../static/image/ranking" + (r) + ".png");
+          tdataA.appendChild(createRankingCup(r));
           tdataA.classList.add("rank_number");
-          tdataA.appendChild(img);
         }
-        // <img class="" ="" style="margin-left:5px;margin-right:20px"></img>
       }else{
         tdataA.innerHTML = datalist[i][propId[id]];
+        //divMain から始まる場合のみ。つまりはダイジェストタブで利用される場合のみ。
         if(locationId.substring(0,7) == "divMain" && (propId[id]=="dantai_nm" || propId[id]=="sisetu_nm")){
-          tdataA.title = 
-            datalist[i].gyomu_cd + "-" + 
-            datalist[i].gyoshu_cd + "-" + 
-            datalist[i].jigyo_cd + "-" +  
-            datalist[i].dantai_cd + "-" +  
-            datalist[i].sisetu_cd;
+          tdataA.title = datalist[i].gyomu_cd + "-" + datalist[i].gyoshu_cd + "-" + datalist[i].jigyo_cd + "-" +  datalist[i].dantai_cd + "-" +  datalist[i].sisetu_cd;
             tdataA.addEventListener('click', (event) => {
               var key = event.target.title;
               moveProfileTab(key);
@@ -205,15 +257,12 @@ function createTableByJsonList(datalist, locationId, tableDivId, caption, hdText
       if(width!=null){
         tdataA.style.width=width[id];
       }
-
-
       trow.appendChild(tdataA);
     }
       
-    if(locationId.substring(0,7) == "v-pills"){
+    if(locationId.substring(0,7) == "v-pills"){ //v-pills始まりは、基本情報タブのメインテーブルエリア
       trow.addEventListener('click', (event) => {
         var key = event.target.title;
-        // alert(datalist[i].hyo_num + "," + datalist[i].gyo_num + "," + datalist[i].retu_num);
 
         var gyo_num = Number(event.target.parentElement.cells[0].innerText);
         var retu_num = Number(event.target.parentElement.cells[1].innerText);
@@ -235,25 +284,18 @@ function createTableByJsonList(datalist, locationId, tableDivId, caption, hdText
   }
   table.appendChild(thead);
   table.appendChild(tbody);
-  table.classList.add("table");
-  table.classList.add("table-bordered");
-  table.classList.add("table_sticky");
+  table.classList.add("table", "table-bordered", "table_sticky", "table-hover", "fs-6");
   table.style.height = "calc(100vh/" + height + ")";
-  table.classList.add("table-hover");
-  table.classList.add("fs-6"); //text-end
   table.id = tableDivId.replace("Div","");  ;//"tableHikakuCityList";
   document.getElementById(tableDivId).appendChild(table);
-  //table = new DataTable(mainTable);
+
   if(locationId!=""){
     var popLabel = "";
     if(caption.split("による").length == 2){
       popLabel1 = caption.split("による")[0];
       popLabel2 = caption.split("による")[1];
       let btnPopover = document.createElement("a");
-      btnPopover.classList.add("btn");
-      btnPopover.classList.add("btn-sm");
-      btnPopover.classList.add("btn-primary");
-      btnPopover.classList.add("sihyoPopOver");
+      btnPopover.classList.add("btn", "btn-sm", "btn-primary", "sihyoPopOver");
       btnPopover.setAttribute("data-bs-toggle","popover");
       btnPopover.setAttribute("roll","button");
       btnPopover.setAttribute("data-bs-trigger","focus");
@@ -267,29 +309,15 @@ function createTableByJsonList(datalist, locationId, tableDivId, caption, hdText
         container:"body",
         trigger: 'focus'
       });
-      //a.config.html = true;
-      // btnPopover.popover({
-      //   html: true,
-      //   container: 'body',
-      //   content: function () {
-      //       let divTmp = document.createElement("div");
-      //       divTmp.innerText = 
-      //       return divTmp.outerHTML;
-      //   },
-      //   trigger: 'hover'
-      // });
       let divLabel2 = document.createElement("div");
       divLabel2.style.float = "left";
       divLabel2.innerText = "による" + popLabel2;
       document.getElementById(locationId + "Caption").innerText = "";
       document.getElementById(locationId + "Caption").appendChild(btnPopover);
       document.getElementById(locationId + "Caption").appendChild(divLabel2);
-      //document.getElementById(locationId + "Caption").appendChild(popLabel2);
     }else{
       document.getElementById(locationId + "Caption").innerText = caption;
     }
-    //document.getElementById(locationId + "Caption").innerHTML = '<button type="button" class="btn btn-lg btn-danger" data-bs-toggle="popover" title="Popover title" data-bs-content="And heres some amazing content. Its very engaging. Right?">Click to toggle popover</button>';
-    //new bootstrap.Popover(popoverTriggerEl)
   }
 }
 
@@ -304,21 +332,13 @@ function moveProfileTab(key){
     document.getElementById('profile-panel').classList.add("show");
 
     createHyoVerticalNavbar(key);
-    // if(document.getElementById("tableDivHyo")!=null){
-    //   document.getElementById('tableDivHyo').remove();
-    // }
-    //document.getElementById('vTabHyo_20').classList.add("active");
-    //document.getElementById('v-pills-20').classList.add("active");
-    //createHyoTableByHyoNumber(key, 20);
-    //document.getElementById('v-pills-20').classList.add("show");
   }catch(e){
 
   }
 }
 
-
 function createHyoVerticalNavbar(key){
-    val = "2020"; //document.getElementById("selTdfkSub").value;
+    val = "2020"; // 会計年度、見直し必要。
     fetch('/getHyoListForProfile/' + val + '/20/30/40/50/60', {
       method: 'GET',
       'Content-Type': 'application/json'
@@ -350,7 +370,7 @@ function createHyoVerticalNavbar(key){
       //divContentGroup.classList.add("loadableTable"); //ローダーをセンタリングする
       divContentGroup.style.width="100%";
 
-      list = JSON.parse(jsonData.data)
+      var list = JSON.parse(jsonData.data);
       for(let i in list){
         var tabButtonA = document.createElement("a");
         tabButtonA.classList.add("nav-link");
@@ -371,10 +391,7 @@ function createHyoVerticalNavbar(key){
 
         //<div class="tab-pane fade" id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab">
         var divContent = document.createElement("div");
-        divContent.classList.add("tab-pane");
-        divContent.classList.add("face");
-        divContent.classList.add("loadableTable"); //ローダーをセンタリングする
-        divContent.classList.add("col-12");
+        divContent.classList.add("tab-pane", "face", "loadableTable", "col-12");
         divContent.id = "v-pills-" + list[i].hyo_num;
         divContent.setAttribute("role","tabpanel");
         divContent.setAttribute("aria-labelledby","v-pills-" + list[i].hyo_num + "-tab");
@@ -394,6 +411,7 @@ function createHyoVerticalNavbar(key){
     .catch(error => { console.log(error); });
 }
 
+
 function createHyoTableByHyoNumber(key, hyo_num){
   if(document.getElementById("tableDivHyo")!=null){
     document.getElementById("tableDivHyo").remove();
@@ -408,7 +426,7 @@ function createHyoTableByHyoNumber(key, hyo_num){
   }
   createTableLoading("v-pills-" + hyo_num, "tableDivHyoLoading", loadingMidashi);
 
-  var nendo = "2020"; //document.getElementById("selTdfkSub").value; fetch('/getHyoListForProfile/' + val + '/20/30/40/50/60', {
+  var nendo = "2020"; // 会計年度、見直し必要。 fetch('/getHyoListForProfile/' + val + '/20/30/40/50/60', {
   var keys = key.split("-");
   fetch('/getHyoData/' + nendo + '/' + keys[0] + '/' + keys[1] + '/' + keys[2] + '/' + keys[3] + '/' + keys[4] + '/' + hyo_num, {
     method: 'GET',
@@ -417,7 +435,7 @@ function createHyoTableByHyoNumber(key, hyo_num){
   .then(res => res.json())
   .then(jsonData => {
     createTableDiv("v-pills-" + hyo_num, "tableDivHyo");
-    list = JSON.parse(jsonData.data);
+    var list = JSON.parse(jsonData.data);
     var hdText = ["行", "列", "項目名",　"2015",　"2016",　"2017",　"2018",　"2019",　"2020",　"2021",　"2022",　"2023",　"2024"];
     var propId = ["gyo_num", "retu_num", "name1", "val_a",　"val_b", "val_c",　"val_d",　"val_e", "val_f",　"val_g",　"val_h", "val_i",　"val_j"];
     var align = ["center", "center", "left",　"right",　"right",　"right",　"right",　"right",　"right",　"right",　"right",　"right",　"right"];
@@ -429,86 +447,6 @@ function createHyoTableByHyoNumber(key, hyo_num){
   .catch(error => { console.log(error); });
 
 }
-
-
-// //安全性ランキングテーブルを作成
-// function getAndCreateTable_AnzenRankList(){
-  
-//   //枠内にローダーを表示
-//   createTableLoading("divMainCenterTop", "tableDivLoading", "流動比率による安全性ランクを作成中...");
-
-//   val = "2020"; //document.getElementById("selTdfkSub").value;
-//   fetch('/getAnzenRankList/' + val, {
-//     method: 'GET',
-//     'Content-Type': 'application/json'
-//   })
-//   .then(res => res.json())
-//   .then(jsonData => {
-//     createTableDiv("divMainCenterTop", "tableDivAnzen");
-//     list = JSON.parse(jsonData.data);
-//     var hdText = ["ランク", "団体名", "施設名",　"流動比率(%)"];
-//     var propId = ["rank", "dantai_nm", "sisetu_nm",　"ryudo_hiritu"];
-//     var align = ["center", "left", "left",　"right"];
-//     createTableByJsonList(list, "divMainCenterTop", "tableDivAnzen", "流動比率による安全性ランキング", hdText, propId, align);
-
-//     //ローダーを削除
-//     destroyTableLoading("divMainCenterTop", "tableDivLoading");
-
-//     return;
-//   })
-//   .catch(error => { console.log(error); });
-// }
-
-
-// <div class="d-flex align-items-start">
-// <div class="nav flex-column nav-pills me-3" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-//   <a class="nav-link" id="v-pills-home-tab" data-bs-toggle="pill" data-bs-target="#v-pills-home" type="button" role="tab" aria-controls="v-pills-home" aria-selected="false">Home</button>
-//   <a class="nav-link" id="v-pills-profile-tab" data-bs-toggle="pill" data-bs-target="#v-pills-profile" type="button" role="tab" aria-controls="v-pills-profile" aria-selected="false">Profile</button>
-//   <a class="nav-link" id="v-pills-messages-tab" data-bs-toggle="pill" data-bs-target="#v-pills-messages" type="button" role="tab" aria-controls="v-pills-messages" aria-selected="false">Messages</button>
-//   <a class="nav-link active" id="v-pills-settings-tab" data-bs-toggle="pill" data-bs-target="#v-pills-settings" type="button" role="tab" aria-controls="v-pills-settings" aria-selected="true">Settings</button>
-// </div>
-// <div class="tab-content" id="v-pills-tabContent">
-//   <div class="tab-pane fade" id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab">
-//   <p><strong>This is some placeholder content the Home tab's associated content.</strong> Clicking another tab will toggle the visibility of this one for the next. The tab JavaScript swaps classes to control the content visibility and styling. You can use it with tabs, pills, and any other <code>.nav</code>-powered navigation.</p>
-//   </div>
-//   <div class="tab-pane fade" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab">
-//   <p><strong>This is some placeholder content the Profile tab's associated content.</strong> Clicking another tab will toggle the visibility of this one for the next. The tab JavaScript swaps classes to control the content visibility and styling. You can use it with tabs, pills, and any other <code>.nav</code>-powered navigation.</p>
-//   </div>
-//   <div class="tab-pane fade" id="v-pills-messages" role="tabpanel" aria-labelledby="v-pills-messages-tab">
-//   <p><strong>This is some placeholder content the Messages tab's associated content.</strong> Clicking another tab will toggle the visibility of this one for the next. The tab JavaScript swaps classes to control the content visibility and styling. You can use it with tabs, pills, and any other <code>.nav</code>-powered navigation.</p>
-//   </div>
-//   <div class="tab-pane fade active show" id="v-pills-settings" role="tabpanel" aria-labelledby="v-pills-settings-tab">
-//   <p><strong>This is some placeholder content the Settings tab's associated content.</strong> Clicking another tab will toggle the visibility of this one for the next. The tab JavaScript swaps classes to control the content visibility and styling. You can use it with tabs, pills, and any other <code>.nav</code>-powered navigation.</p>
-//   </div>
-// </div>
-// </div>
-
-
-// function openModalDantaiProfile(key){
-//   var myModal = new bootstrap.Modal(document.getElementById('modalDantaiProfile'), {
-//     keyboard: false
-//   });
-
-  
-//   // var ele = document.getElementById("divGraphHikakuArea");
-//   // while( ele.firstChild ){
-//   //   ele.removeChild( ele.firstChild );
-//   // }
-
-//   // //document.getElementById("modalGraphHikakuLabel").innerText = rowindex;
-//   // var graphId = createGraphAreaModal(datalist, rowindex, "divGraphHikakuArea");
-//   // graphHikakuChart = createGraphTest(datalist, rowindex, graphId, title);
-  
-//   myModal.show();
-// }
-
-
-
-
-
-
-
-
 
 
 document.getElementById('btnFileImport').addEventListener('click', function() {
@@ -530,18 +468,13 @@ document.getElementById('btnFileImport').addEventListener('click', function() {
 });
 
 
-
-
-
-
-
 //安全性ランキングテーブルを作成
 function getAndCreateTable_AnzenRankList(){
   
   //枠内にローダーを表示
   createTableLoading("divMainCenterTop", "tableDivLoading", "流動比率による安全性ランクを作成中...");
 
-  val = "2020"; //document.getElementById("selTdfkSub").value;
+  val = "2020"; // 会計年度、見直し必要。
   fetch('/getAnzenRankList/' + val, {
     method: 'GET',
     'Content-Type': 'application/json'
@@ -549,7 +482,7 @@ function getAndCreateTable_AnzenRankList(){
   .then(res => res.json())
   .then(jsonData => {
     createTableDiv("divMainCenterTop", "tableDivAnzen");
-    list = JSON.parse(jsonData.data);
+    var list = JSON.parse(jsonData.data);
     var hdText = ["ランク", "団体名", "施設名",　"流動比率(%)"];
     var propId = ["rank", "dantai_nm", "sisetu_nm",　"ryudo_hiritu"];
     var align = ["center", "left", "left",　"right"];
@@ -571,7 +504,7 @@ function getAndCreateTable_AnzenRankList(){
 function getAndCreateTable_RuisekiKessonRankList(){
   //枠内にローダーを表示
   createTableLoading("divMainRightTop", "tableDivLoading2", "累積欠損比率による健全性ランクを作成中...");
-  val = "2020"; //document.getElementById("selTdfkSub").value;
+  val = "2020"; // 会計年度、見直し必要。
   fetch('/getRuisekiKessonRankList/' + val, {
     method: 'GET',
     'Content-Type': 'application/json'
@@ -579,7 +512,7 @@ function getAndCreateTable_RuisekiKessonRankList(){
   .then(res => res.json())
   .then(jsonData => {
     createTableDiv("divMainRightTop", "tableDivRuisekiKesson");
-    list = JSON.parse(jsonData.data)
+    var list = JSON.parse(jsonData.data);
     var hdText = ["ランク", "団体名", "施設名",　"累積欠損比率(%)"];
     var propId = ["rank", "dantai_nm", "sisetu_nm",　"ruiseki_kesson_hiritu"];
     var align = ["center", "left", "left",　"right"];
@@ -597,7 +530,7 @@ function getAndCreateTable_RuisekiKessonRankList(){
 function getAndCreateTable_KigyosaiKyusuiRankList(){
   //枠内にローダーを表示
   createTableLoading("divMainLeftMiddle", "tableDivLoading4", "企業債残高対給水収益比率による健全性ランクを作成中...");
-  val = "2020"; //document.getElementById("selTdfkSub").value;
+  val = "2020"; // 会計年度、見直し必要。
   fetch('/getKigyosaiKyusuiRankList/' + val, {
     method: 'GET',
     'Content-Type': 'application/json'
@@ -605,7 +538,7 @@ function getAndCreateTable_KigyosaiKyusuiRankList(){
   .then(res => res.json())
   .then(jsonData => {
     createTableDiv("divMainLeftMiddle", "tableDivKigyosaiKyusuiRankList");
-    list = JSON.parse(jsonData.data)
+    var list = JSON.parse(jsonData.data);
     var hdText = ["ランク", "団体名", "施設名",　"企業債残高対給水収益比率(%)"];
     var propId = ["rank", "dantai_nm", "sisetu_nm",　"kigyosai_shueki_hiritu"];
     var align = ["center", "left", "left",　"right"];
@@ -623,7 +556,7 @@ function getAndCreateTable_KigyosaiKyusuiRankList(){
 function getAndCreateTable_KoteiShokyakurituRankList(){
   //枠内にローダーを表示
   createTableLoading("divMainCenterMiddle", "tableDivLoading5", "有形固定資産償却率による健全性ランクを作成中...");
-  val = "2020"; //document.getElementById("selTdfkSub").value;
+  val = "2020"; // 会計年度、見直し必要。
   fetch('/getKoteiShokyakurituRankList/' + val, {
     method: 'GET',
     'Content-Type': 'application/json'
@@ -631,7 +564,7 @@ function getAndCreateTable_KoteiShokyakurituRankList(){
   .then(res => res.json())
   .then(jsonData => {
     createTableDiv("divMainCenterMiddle", "tableDivKoteiShokyakurituRankList");
-    list = JSON.parse(jsonData.data)
+    var list = JSON.parse(jsonData.data);
     var hdText = ["ランク", "団体名", "施設名",　"有形固定資産償却率(%)"];
     var propId = ["rank", "dantai_nm", "sisetu_nm",　"shokyaku_hiritu"];
     var align = ["center", "left", "left",　"right"];
@@ -648,7 +581,7 @@ function getAndCreateTable_KoteiShokyakurituRankList(){
 function getAndCreateTable_ByoshoRiyorituRankList(){
   //枠内にローダーを表示
   createTableLoading("divMainRightMiddle", "tableDivLoading6", "病床利用率による効率性ランクを作成中...");
-  val = "2020"; //document.getElementById("selTdfkSub").value;
+  val = "2020"; // 会計年度、見直し必要。
   fetch('/getByoshoRiyorituRankList/' + val, {
     method: 'GET',
     'Content-Type': 'application/json'
@@ -656,7 +589,7 @@ function getAndCreateTable_ByoshoRiyorituRankList(){
   .then(res => res.json())
   .then(jsonData => {
     createTableDiv("divMainRightMiddle", "tableDivByoshoRiyorituRankList");
-    list = JSON.parse(jsonData.data)
+    var list = JSON.parse(jsonData.data);
     var hdText = ["ランク", "団体名", "施設名",　"病床利用率(%)"];
     var propId = ["rank", "dantai_nm", "sisetu_nm",　"riyoritu"];
     var align = ["center", "left", "left",　"right"];
@@ -673,7 +606,7 @@ function getAndCreateTable_ByoshoRiyorituRankList(){
 function getAndCreateTable_NyuinHitoriShuekiRankList(){
   //枠内にローダーを表示
   createTableLoading("divMainLeftBottom", "tableDivLoading7", "入院患者1人1日あたり収益による収益性ランクを作成中...");
-  val = "2020"; //document.getElementById("selTdfkSub").value;
+  val = "2020"; // 会計年度、見直し必要。
   fetch('/getNyuinHitoriShuekiRankList/' + val, {
     method: 'GET',
     'Content-Type': 'application/json'
@@ -681,7 +614,7 @@ function getAndCreateTable_NyuinHitoriShuekiRankList(){
   .then(res => res.json())
   .then(jsonData => {
     createTableDiv("divMainLeftBottom", "tableDivNyuinHitoriShuekiRankList");
-    list = JSON.parse(jsonData.data)
+    var list = JSON.parse(jsonData.data);
     var hdText = ["ランク", "団体名", "施設名",　"入院患者1人1日あたり収益(%)"];
     var propId = ["rank", "dantai_nm", "sisetu_nm",　"hitori_ichinichi_shueki"];
     var align = ["center", "left", "left",　"right"];
@@ -693,8 +626,6 @@ function getAndCreateTable_NyuinHitoriShuekiRankList(){
   .catch(error => { console.log(error); });
 }
 
-
-
 function createGraph(datalist, canvasId, labelStr){
   document.getElementById("canvasChart" + canvasId).title = labelStr;
   const ctx = document.getElementById("canvasChart" + canvasId).getContext('2d');
@@ -702,7 +633,7 @@ function createGraph(datalist, canvasId, labelStr){
   var objChart1 = new Chart(ctx, {
       type: 'line',
       data: {
-          labels: [2015,2016,2017,2018,2019,2020,2021,2022,2023,2024],
+          labels: [2015,2016,2017,2018,2019,2020,2021,2022,2023,2024], //見直し必要
           datasets: [{
               label: labelStr,
               data: data, //datalist.filter(value => value["col_index"] ==rowindex).map(item => item["val_num"]), //[12, 19, 3, 5, 2, 3],tableから取得する 
@@ -730,7 +661,7 @@ function createGraph(datalist, canvasId, labelStr){
           }
       }
   });
-  return objChart1
+  return objChart1;
 }
 
 
@@ -770,17 +701,216 @@ function createGraph(datalist, canvasId, labelStr){
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function CreateRadarChart(selectRow){
+    var dummy = "左の表から企業名を選択してください。"
+    var selectVendor = "aaaaa"; //(selectRowData == undefined ? dummy : selectRowData.vendor_nm);
+    //var ctx = document.getElementById('myChart').getContext('2d');
+    var chartData = {
+        type: 'radar',
+        data: {
+            labels: ['収益性', '短期資金力', '長期安全性', '設備効率性', '生産性', '成長性', '将来性'],
+            datasets: []
+        }, //nanajikuRadarChart.config.options.scales.r.pointLabels.font.size = 20;
+        options: {
+          animation:{
+            duration:200,
+            easing:""
+          },
+            plugins: {
+                legend: {
+                    labels: {
+                        // This more specific font property overrides the global property
+                        font: {
+                            size: 16
+                        }
+                    }
+                }
+            },
+            scales: {
+                r:{
+                  pointLabels:{
+                    font:{
+                      size:16,
+                      bold:true
+                    }
+                  }
+                }
+            },
+        }
+    };
+    //const ctx = document.getElementById("myChart").getContext('2d');
+    //nanajikuRadarChart = new Chart(ctx, chartData);
+    getRadarChartData(chartData, selectRow);
+    //getRadarChartData(chartData, "2");
+    //getRadarChartData(chartData, "3");
+}
+
+
+function getRadarChartData(chartData, selectVendor){
+    var idx = chartData.data.datasets.length;
+    if(idx==0){
+        //var ctx = $("#myChart").get(0).getContext("2d");
+        if(nanajikuRadarChart!=null){
+            nanajikuRadarChart.destroy();// = new Chart(ctx, null);
+        }
+    }
+
+    val = "2020"; // 会計年度、見直し必要。
+    fetch('/getShuekiRankList/' + val, {
+      method: 'GET',
+      'Content-Type': 'application/json'
+    })
+    .then(res => res.json())
+    .then(jsonData => {
+      chartData.data.datasets.push({
+          label: '',
+          backgroundColor: BgColor_RadarChart[idx],
+          borderColor: BdrColor_RadarChart[idx],
+          data: [],
+          borderWidth: 1
+      });
+      chartData.data.datasets[idx].label = selectVendor;//(idx == 0 ? selectVendor : selectVendor.substring(0,2));
+      var list = JSON.parse(jsonData.data);
+
+
+      if(selectVendor != "" && list.length > 0){
+        for(let i in list){
+          if(i<=6){
+            chartData.data.datasets[idx].data.push(list[i].eigyo_soneki);
+          }
+        }
+          // $.each(list, function(i, item) {
+          //     chartData.data.datasets[idx].data.push(item.shubetu1_avg);
+          //     chartData.data.datasets[idx].data.push(item.shubetu2_avg);
+          //     chartData.data.datasets[idx].data.push(item.shubetu3_avg);
+          //     chartData.data.datasets[idx].data.push(item.shubetu4_avg);
+          //     chartData.data.datasets[idx].data.push(item.shubetu5_avg);
+          //     chartData.data.datasets[idx].data.push(item.shubetu6_avg);
+          //     chartData.data.datasets[idx].data.push(item.shubetu7_avg);
+          // });
+      }
+
+      const ctx = document.getElementById("myChart").getContext('2d');
+      if(idx==0){
+        nanajikuRadarChart = new Chart(ctx, chartData);
+      }else{
+        nanajikuRadarChart.update();
+      }
+  
+  
+  
+    })
+    .catch(error => { console.log(error); });
+
+    //list = JSON.parse(json.data);
+    // if(idx==0){
+    //     if(list.length>0){
+    //         //比較選択に使うプルダウンを作る
+    //         $.getJSON("/getVendorNmList", function(json) {
+    //             list = JSON.parse(json.data);
+    //             $('#selVendorNmHikaku .dropdown-menu').empty();
+    //             $.each(list, function(i, item) {
+    //                 $('#selVendorNmHikaku .dropdown-menu').append('<li><a onclick=funcRadarHikaku("' + item.vendor_nm + '");>' + item.vendor_nm);
+    //             });
+    //             $('#selVendorNmHikaku .btn').removeAttr("disabled");
+    //         });
+    //     } else {
+    //         $('#selVendorNmHikaku .btn').attr("disabled","disabled");
+    //     }
+    // }
+    // var ctx = $("#myChart").get(0).getContext("2d");
+
+
+
+    
+}
+
+
+// function funcRadarHikaku(vendornm){
+//     if(nanajikuRadarChart.data.datasets.length > 4){
+//         alert("これ以上比較対象を追加できません。");
+//         return false;
+//     }
+//     var add = true;
+//     $.each(nanajikuRadarChart.data.datasets, function(i, item) {
+//         if(item.label==vendornm){
+//             add = false;
+//         }
+//     });
+    
+//     if(add){
+//         getRadarChartData(nanajikuRadarChart, "abcde");
+//     }
+// }
+
+
+
+
+
+
+
 // ここからは過去資料
 
 
 
-// //テーブル要素のオールクリア
-// function AllClearTable(tableDivId){
-//   var tableDiv = document.getElementById(tableDivId);
-//   while(tableDiv.lastChild){
-//     tableDiv.removeChild(tableDiv.lastChild);
-//   }
-// }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -905,7 +1035,7 @@ document.getElementById('btnExecuteCollect').addEventListener('click', function(
 //   })
 //   .then(res => res.json())
 //   .then(jsonData => {
-//     list = JSON.parse(jsonData.data)
+//     var list = JSON.parse(jsonData.data);
 //     createCitySelectOption(list);
 //     UndispLoading();
 //     return;
@@ -1068,7 +1198,7 @@ document.getElementById("inputGroupFile").addEventListener("change", function(){
 //   })
 //   .then(res => res.json())
 //   .then(jsonData => {
-//     list = JSON.parse(jsonData.data)
+//     var list = JSON.parse(jsonData.data);
 //     createCitySelectOption(list);
 //     UndispLoading();
 //     return;
@@ -1117,7 +1247,7 @@ var datalist = null;
 //   })
 //   .then(res => res.json())
 //   .then(jsonData => {
-//     list = JSON.parse(jsonData.data);
+//     var list = JSON.parse(jsonData.data);
 //     datalist = list;
 //     createTable(list);
 //     UndispLoading();
@@ -1307,7 +1437,7 @@ function getCityList(){
   })
   .then(res => res.json())
   .then(jsonData => {
-    list = JSON.parse(jsonData.data)
+    var list = JSON.parse(jsonData.data);
     createTableRightSideCityList(list);
     //createCitySelectOption(list);
     //UndispLoading();
@@ -1382,124 +1512,124 @@ function getCityList(){
 //   }
 // }
 
-function getRadarChartData(chartData, dantaiCd){
-  var idx = chartData.data.datasets.length;
-  if(idx==0){
-      if(graphHikakuChart!=null){
-          graphHikakuChart.destroy();
-      }
-  }
-  //AllClearGraphs();
-  //AllClearTable("mainTableDiv");
-  //val = document.getElementById("selCity").value;
-  fetch('/getFullRecordByDantaiCd/' + dantaiCd, {
-    method: 'GET',
-    'Content-Type': 'application/json'
-  })
-  .then(res => res.json())
-  .then(jsonData => {
-    chartData.data.datasets.push({
-        label: '',
-        backgroundColor: '', //BgColor_RadarChart[idx],
-        borderColor: '', // BdrColor_RadarChart[idx],
-        data: [],
-        borderWidth: 1
-    });
-    chartData.data.datasets[idx].label = dantaiCd;//(idx == 0 ? dantaiCd : dantaiCd.substring(0,2));
-    list = JSON.parse(jsonData.data);
-    if(list.length > 0){
-        $.each(list, function(i, item) {
-            chartData.data.datasets[idx].data.push(item.shubetu1_avg);
-            chartData.data.datasets[idx].data.push(item.shubetu2_avg);
-            chartData.data.datasets[idx].data.push(item.shubetu3_avg);
-            chartData.data.datasets[idx].data.push(item.shubetu4_avg);
-            chartData.data.datasets[idx].data.push(item.shubetu5_avg);
-            chartData.data.datasets[idx].data.push(item.shubetu6_avg);
-            chartData.data.datasets[idx].data.push(item.shubetu7_avg);
-        });
-    }
-    //createTable(list);
-    //UndispLoading();
-    return;
-    //document.querySelector('#lblFileProperty').innerHTML = "取り込み完了！"; //jsonData.data;
-    //document.getElementById('btnFileImport').classList.remove("disabled");
-  })
-  .catch(error => { console.log(error); });
-  //dispLoading();
-          // AllClearTable("mainTableDiv");
-          // val = document.getElementById("selTdfk").value;
-          // document.getElementById("selTdfkSub").value = val;
-          // fetch('/getCityListByTdfkCd/' + val, {
-          //   method: 'GET',
-          //   'Content-Type': 'application/json'
-          // })
-          // .then(res => res.json())
-          // .then(jsonData => {
-          //   list = JSON.parse(jsonData.data)
-          //   createCitySelectOption(list);
-          //   UndispLoading();
-          //   return;
-          // })
-          // .catch(error => { console.log(error); });
-          //   dispLoading();
+// function getRadarChartData(chartData, dantaiCd){
+//   var idx = chartData.data.datasets.length;
+//   if(idx==0){
+//       if(graphHikakuChart!=null){
+//           graphHikakuChart.destroy();
+//       }
+//   }
+//   //AllClearGraphs();
+//   //AllClearTable("mainTableDiv");
+//   //val = document.getElementById("selCity").value;
+//   fetch('/getFullRecordByDantaiCd/' + dantaiCd, {
+//     method: 'GET',
+//     'Content-Type': 'application/json'
+//   })
+//   .then(res => res.json())
+//   .then(jsonData => {
+//     chartData.data.datasets.push({
+//         label: '',
+//         backgroundColor: '', //BgColor_RadarChart[idx],
+//         borderColor: '', // BdrColor_RadarChart[idx],
+//         data: [],
+//         borderWidth: 1
+//     });
+//     chartData.data.datasets[idx].label = dantaiCd;//(idx == 0 ? dantaiCd : dantaiCd.substring(0,2));
+//     var list = JSON.parse(jsonData.data);
+//     if(list.length > 0){
+//         $.each(list, function(i, item) {
+//             chartData.data.datasets[idx].data.push(item.shubetu1_avg);
+//             chartData.data.datasets[idx].data.push(item.shubetu2_avg);
+//             chartData.data.datasets[idx].data.push(item.shubetu3_avg);
+//             chartData.data.datasets[idx].data.push(item.shubetu4_avg);
+//             chartData.data.datasets[idx].data.push(item.shubetu5_avg);
+//             chartData.data.datasets[idx].data.push(item.shubetu6_avg);
+//             chartData.data.datasets[idx].data.push(item.shubetu7_avg);
+//         });
+//     }
+//     //createTable(list);
+//     //UndispLoading();
+//     return;
+//     //document.querySelector('#lblFileProperty').innerHTML = "取り込み完了！"; //jsonData.data;
+//     //document.getElementById('btnFileImport').classList.remove("disabled");
+//   })
+//   .catch(error => { console.log(error); });
+//   //dispLoading();
+//           // AllClearTable("mainTableDiv");
+//           // val = document.getElementById("selTdfk").value;
+//           // document.getElementById("selTdfkSub").value = val;
+//           // fetch('/getCityListByTdfkCd/' + val, {
+//           //   method: 'GET',
+//           //   'Content-Type': 'application/json'
+//           // })
+//           // .then(res => res.json())
+//           // .then(jsonData => {
+//           //   var list = JSON.parse(jsonData.data);
+//           //   createCitySelectOption(list);
+//           //   UndispLoading();
+//           //   return;
+//           // })
+//           // .catch(error => { console.log(error); });
+//           //   dispLoading();
 
 
 
 
 
 
-  // $.ajax({
-  //     type: "GET",
-  //     url: "/getHikakuDataByDantaiCd/" + dantaiCd + ""
-  // }).done(function(json) {
-  //     chartData.data.datasets.push({
-  //         label: '',
-  //         backgroundColor: BgColor_RadarChart[idx],
-  //         borderColor: BdrColor_RadarChart[idx],
-  //         data: [],
-  //         borderWidth: 1
-  //     });
+//   // $.ajax({
+//   //     type: "GET",
+//   //     url: "/getHikakuDataByDantaiCd/" + dantaiCd + ""
+//   // }).done(function(json) {
+//   //     chartData.data.datasets.push({
+//   //         label: '',
+//   //         backgroundColor: BgColor_RadarChart[idx],
+//   //         borderColor: BdrColor_RadarChart[idx],
+//   //         data: [],
+//   //         borderWidth: 1
+//   //     });
 
-  //     chartData.data.datasets[idx].label = dantaiCd;//(idx == 0 ? dantaiCd : dantaiCd.substring(0,2));
-  //     list = JSON.parse(json.data);
-  //     if(list.length > 0){
-  //         $.each(list, function(i, item) {
-  //             chartData.data.datasets[idx].data.push(item.shubetu1_avg);
-  //             chartData.data.datasets[idx].data.push(item.shubetu2_avg);
-  //             chartData.data.datasets[idx].data.push(item.shubetu3_avg);
-  //             chartData.data.datasets[idx].data.push(item.shubetu4_avg);
-  //             chartData.data.datasets[idx].data.push(item.shubetu5_avg);
-  //             chartData.data.datasets[idx].data.push(item.shubetu6_avg);
-  //             chartData.data.datasets[idx].data.push(item.shubetu7_avg);
-  //         });
-  //     }
-  // }).fail(function(data) {
-  //     alert("エラー：" + data.statusText);
-  // }).always(function(json) {
-  //     list = JSON.parse(json.data);
-  //     if(idx==0){
-  //         if(list.length>0){
-  //             //比較選択に使うプルダウンを作る
-  //             $.getJSON("/getVendorNmList", function(json) {
-  //                 list = JSON.parse(json.data);
-  //                 $('#selVendorNmHikaku .dropdown-menu').empty();
-  //                 $.each(list, function(i, item) {
-  //                     $('#selVendorNmHikaku .dropdown-menu').append('<li><a onclick=funcRadarHikaku("' + item.vendor_nm + '");>' + item.vendor_nm);
-  //                 });
-  //                 $('#selVendorNmHikaku .btn').removeAttr("disabled");
-  //             });
-  //         } else {
-  //             $('#selVendorNmHikaku .btn').attr("disabled","disabled");
-  //         }
-  //     }
-  //     var ctx = $("#myChart").get(0).getContext("2d");
-  //     if(idx==0){
-  //         graphHikakuChart = new Chart(ctx, chartData);
-  //     }else{
-  //         graphHikakuChart.update();
-  //     }
-  // });
-}
+//   //     chartData.data.datasets[idx].label = dantaiCd;//(idx == 0 ? dantaiCd : dantaiCd.substring(0,2));
+//   //     list = JSON.parse(json.data);
+//   //     if(list.length > 0){
+//   //         $.each(list, function(i, item) {
+//   //             chartData.data.datasets[idx].data.push(item.shubetu1_avg);
+//   //             chartData.data.datasets[idx].data.push(item.shubetu2_avg);
+//   //             chartData.data.datasets[idx].data.push(item.shubetu3_avg);
+//   //             chartData.data.datasets[idx].data.push(item.shubetu4_avg);
+//   //             chartData.data.datasets[idx].data.push(item.shubetu5_avg);
+//   //             chartData.data.datasets[idx].data.push(item.shubetu6_avg);
+//   //             chartData.data.datasets[idx].data.push(item.shubetu7_avg);
+//   //         });
+//   //     }
+//   // }).fail(function(data) {
+//   //     alert("エラー：" + data.statusText);
+//   // }).always(function(json) {
+//   //     list = JSON.parse(json.data);
+//   //     if(idx==0){
+//   //         if(list.length>0){
+//   //             //比較選択に使うプルダウンを作る
+//   //             $.getJSON("/getVendorNmList", function(json) {
+//   //                 list = JSON.parse(json.data);
+//   //                 $('#selVendorNmHikaku .dropdown-menu').empty();
+//   //                 $.each(list, function(i, item) {
+//   //                     $('#selVendorNmHikaku .dropdown-menu').append('<li><a onclick=funcRadarHikaku("' + item.vendor_nm + '");>' + item.vendor_nm);
+//   //                 });
+//   //                 $('#selVendorNmHikaku .btn').removeAttr("disabled");
+//   //             });
+//   //         } else {
+//   //             $('#selVendorNmHikaku .btn').attr("disabled","disabled");
+//   //         }
+//   //     }
+//   //     var ctx = $("#myChart").get(0).getContext("2d");
+//   //     if(idx==0){
+//   //         graphHikakuChart = new Chart(ctx, chartData);
+//   //     }else{
+//   //         graphHikakuChart.update();
+//   //     }
+//   // });
+// }
 
 //ファイル取り込みモーダルを起動
 //ファイルインプットタグを初期化
@@ -1527,41 +1657,27 @@ function destroyGraph(key, gyo_num, retu_num){
 }
 
 function createGraphArea(valueArray, areaId, title){
-  //divGraphGroup
   let graphs = document.querySelectorAll("[id^='divGraphArea']"); //' #divGraphArea *');
   var max = 1;
   if(graphs.length > 0){
     for(let i =0; i<graphs.length; i++){
-    //for(let i in graphs){
       if(max < Number(graphs[i].id.replace("divGraphArea",""))){
         max = Number(graphs[i].id.replace("divGraphArea",""));
       }
     }
   }
-  
-        // %div.container-fluid#divGraphGroup
-        // %div.row#divGraphRow1
 
   var spanBadge1 = document.createElement("span");
   spanBadge1.innerText = "消去";
-  spanBadge1.classList.add("badge"); // rounded-pill bg-primary
-  spanBadge1.classList.add("rounded-pill"); //  bg-primary
-  spanBadge1.classList.add("bg-primary"); //  text-end
-  spanBadge1.classList.add("text-end"); //  
-  spanBadge1.classList.add("badge-clickable"); //
+  spanBadge1.classList.add("badge", "rounded-pill", "bg-primary", "text-end", "badge-clickable"); 
   spanBadge1.id = "divGraphArea" + (max+1) + "_deleteBtn";
   spanBadge1.addEventListener('click', function() {
     destroyGraph(spanBadge1.id, valueArray[0].gyo_num, valueArray[0].retu_num);
   });
 
-
   var spanBadge2 = document.createElement("span");
   spanBadge2.innerText = "比較";
-  spanBadge2.classList.add("badge"); // rounded-pill bg-primary
-  spanBadge2.classList.add("rounded-pill"); //  bg-primary
-  spanBadge2.classList.add("bg-primary"); //  text-end
-  spanBadge2.classList.add("text-end"); //  
-  spanBadge2.classList.add("badge-clickable"); //
+  spanBadge2.classList.add("badge", "rounded-pill", "bg-primary", "text-end", "badge-clickable"); 
   spanBadge2.id = "divGraphArea" + (max+1) + "_shosaiBtn";
   spanBadge2.addEventListener('click', function() {
     openHikakuModal(datalist, rowindex, title);
@@ -1958,7 +2074,6 @@ function graphBarValue(datalist){
 
 
 //var objChart1 = null;
-graphHikakuChart = null;
 function createGraphTest(datalist, rowindex, canvasId, labelStr){
   document.getElementById("canvasChart" + canvasId).title = labelStr;
   const ctx = document.getElementById("canvasChart" + canvasId).getContext('2d');

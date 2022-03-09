@@ -27,6 +27,7 @@ from models.vanalykigyosaiperkyusuia import VAnalyKigyosaiPerKyusuiA, VAnalyKigy
 from models.vanalykoteishokyakuritua import VAnalyKoteiShokyakurituA, VAnalyKoteiShokyakurituASchema
 from models.vanalybyoshoriyoritua import VAnalyByoshoRiyorituA, VAnalyByoshoRiyorituASchema #回転率ランクA・・・病床利用率
 from models.vanalynyuinhitorishuekia import VAnalyNyuinHitoriShuekiA, VAnalyNyuinHitoriShuekiASchema #収益性・・・入院患者１人１日あたり収益
+from models.vanalysisetu import VAnalySisetu, VAnalySisetuSchema
 
 from sqlalchemy.sql import text
 from sqlalchemy import distinct
@@ -767,6 +768,19 @@ def createSisetuMain(xl):
         
         columnId += 1
 
+
+# 
+# 団体リスト
+@app.route('/getDantaiListOfRadarChart/<nendo>')
+def getDantaiListOfRadarChart(nendo):
+    datalist = VAnalySisetu.query.filter(
+        VAnalySisetu.nendo == nendo
+      ).order_by(
+          asc(VAnalySisetu.dantai_cd), 
+          asc(VAnalySisetu.sisetu_cd)
+      ).all()
+    datalist_schema = VAnalySisetuSchema(many=True)
+    return jsonify({'data': datalist_schema.dumps(datalist, ensure_ascii=False, default=decimal_default_proc)})
 
 
 # 収益性ランキングの作成（経常収支比率の昇順）
