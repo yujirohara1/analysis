@@ -12,7 +12,7 @@ Chart.defaults.elements.point.borderWidth = 2;
 Chart.defaults.elements.line.borderWidth = 2;
 Chart.defaults.elements.point.radius = 2;
 // Chart.defaults.font.size = 10;
-// Chart.defaults.animation = false; // disables all animations
+//Chart.defaults.animation = false; // disables all animations
 // Chart.defaults.animations.colors = false; // disables animation defined by the collection of 'colors' properties
 // Chart.defaults.animations.x = false; // disables animation defined by the 'x' property
 //Chart.defaults.transitions.active.animation.duration = 0; // disables the animation for 'active' mode
@@ -732,29 +732,16 @@ function CreateRadarChart(selectRow){
             datasets: []
         }, //nanajikuRadarChart.config.options.scales.r.pointLabels.font.size = 20;
         options: {
-          layout: {
-              padding: {
-                  left: 0,
-                  right: 0,
-                  top: 0,
-                  bottom: 0
-              }
-          },
-          scale: {
-              angleLines: {
-                  display: true
-              },
-              ticks: {
-                  min: 1,
-                  max: 10
-              }
+          animation:{
+            duration:200,
+            easing:""
           },
             plugins: {
                 legend: {
                     labels: {
                         // This more specific font property overrides the global property
                         font: {
-                            size: 30
+                            size: 16
                         }
                     }
                 }
@@ -763,7 +750,8 @@ function CreateRadarChart(selectRow){
                 r:{
                   pointLabels:{
                     font:{
-                      size:20
+                      size:16,
+                      bold:true
                     }
                   }
                 }
