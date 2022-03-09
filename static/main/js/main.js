@@ -6,8 +6,8 @@ const BgColor_RadarChart =  ["rgba(2,35,199,.2)", "rgba(199,2,2,.2)", "rgba(42,1
 const BdrColor_RadarChart = ["rgba(2,35,199,1)",  "rgba(199,2,2,1)",  "rgba(42,199,2,1)",  "rgba(153,2,199,1)",  "rgba(199,120,2,1)"];
 var nanajikuRadarChart=null;
 
-Chart.defaults.color = '#4d4d4d';
-//Chart.defaults.font.weight = 'Bold';
+Chart.defaults.color = '#666666';
+Chart.defaults.font.weight = 'Bold';
 Chart.defaults.elements.point.borderWidth = 2;
 Chart.defaults.elements.line.borderWidth = 2;
 Chart.defaults.elements.point.radius = 2;
@@ -728,7 +728,17 @@ function CreateRadarChart(selectRow){
     var chartData = {
         type: 'radar',
         data: {
-            labels: ['収益性', '短期資金力', '長期安全性', '設備効率性', '生産性', '成長性', '将来性'],
+            labels: ['経常収支比率', 
+              '自己資本利益率（ROE）', 
+              '総資本利益率（ROA）', 
+              '流動比率', 
+              '自己資本比率', 
+              '固定比率', 
+              '有形固定資産償却率', 
+              '労働生産性', 
+              '経常利益成長率', 
+              '資本成長率'
+            ],
             datasets: []
         }, //nanajikuRadarChart.config.options.scales.r.pointLabels.font.size = 20;
         options: {
@@ -751,8 +761,9 @@ function CreateRadarChart(selectRow){
                   pointLabels:{
                     font:{
                       size:16,
-                      bold:true
-                    }
+                      
+                    },
+                    fontStyle: "bold",
                   }
                 }
             },
@@ -795,7 +806,7 @@ function getRadarChartData(chartData, selectVendor){
 
       if(selectVendor != "" && list.length > 0){
         for(let i in list){
-          if(i<=6){
+          if(i<=9){
             chartData.data.datasets[idx].data.push(list[i].eigyo_soneki);
           }
         }
