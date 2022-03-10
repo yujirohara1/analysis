@@ -37,7 +37,13 @@ window.onload = function(){
     getAndCreateTable_ByoshoRiyorituRankList(); //効率性ランキングテーブル（延べ年間患者数　割る　延べ病床数）
     getAndCreateTable_NyuinHitoriShuekiRankList(); //収益性ランキングテーブル（入院患者一人１日あたり収益）
 
-    //CreateRadarChart(); //行選択していないが空白のレーダーチャートを作っておく。
+    getAndCreateTable_ReturnOnEquityRankList();// # ROE
+    getAndCreateTable_ReturnOnAssetRankList();// # ROA
+    getAndCreateTable_SihonHirituRankList();// # 資本比率
+    getAndCreateTable_KoteiHirituRankList();// # 固定比率
+    getAndCreateTable_JugyoinHitoriRiekiRankList();// # 労働生産性
+    getAndCreateTable_KeijoriekiSeichorituRankList();// # 経常利益成長率
+    getAndCreateTable_SihonSeichorituRankList();// # 資本成長率
 
     getAndCreateTable_DantaiListOfRadarChart(); //レーダーチャート右の団体リスト
 
@@ -51,7 +57,7 @@ window.onload = function(){
     
     document.getElementById("btnMock2").addEventListener('click', (event) => {
       var dantaiCnt = nanajikuRadarChart.data.datasets.length;
-      getRadarChartData(nanajikuRadarChart, "b" + dantaiCnt);
+      //getRadarChartData(nanajikuRadarChart, "b" + dantaiCnt);
     });
     
 
@@ -138,6 +144,183 @@ function getAndCreateTable_ShuekiRankList(){
   .catch(error => { console.log(error); });
 }
 
+
+
+//ROEランキングテーブルを作成
+function getAndCreateTable_ReturnOnEquityRankList(){
+  //枠内にローダーを表示
+  createTableLoading("divMainCenterBottom", "tableDivLoading8", "自己資本利益率(ROE)による収益性ランクを作成中...");
+  val = "2020"; // 会計年度、見直し必要。
+  fetch('/getReturnOnEquityRankList/' + val, {
+    method: 'GET',
+    'Content-Type': 'application/json'
+  })
+  .then(res => res.json())
+  .then(jsonData => {
+    createTableDiv("divMainCenterBottom", "tableDivRoe");
+    var list = JSON.parse(jsonData.data);
+    var hdText = ["ランク", "団体名", "施設名",　"自己資本利益率(%)"];
+    var propId = ["rank", "dantai_nm", "sisetu_nm",　"roe"];
+    var align = ["center", "left", "left",　"right"];
+    createTableByJsonList(list, "divMainCenterBottom", "tableDivRoe", "自己資本利益率(ROE)による収益性ランキング", hdText, propId, align, null, 3);
+    //ローダーを削除
+    destroyTableLoading("divMainCenterBottom", "tableDivLoading8");
+    return;
+  })
+  .catch(error => { console.log(error); });
+}
+
+
+
+//ROAランキングテーブルを作成
+function getAndCreateTable_ReturnOnAssetRankList(){
+  //枠内にローダーを表示
+  createTableLoading("divMainRightBottom", "tableDivLoading9", "自己資本利益率(ROA)による収益性ランクを作成中...");
+  val = "2020"; // 会計年度、見直し必要。
+  fetch('/getReturnOnAssetRankList/' + val, {
+    method: 'GET',
+    'Content-Type': 'application/json'
+  })
+  .then(res => res.json())
+  .then(jsonData => {
+    createTableDiv("divMainRightBottom", "tableDivRoa");
+    var list = JSON.parse(jsonData.data);
+    var hdText = ["ランク", "団体名", "施設名",　"総資産利益率(%)"];
+    var propId = ["rank", "dantai_nm", "sisetu_nm",　"roa"];
+    var align = ["center", "left", "left",　"right"];
+    createTableByJsonList(list, "divMainRightBottom", "tableDivRoa", "自己資本利益率(ROA)による収益性ランキング", hdText, propId, align, null, 3);
+    //ローダーを削除
+    destroyTableLoading("divMainRightBottom", "tableDivLoading9");
+    return;
+  })
+  .catch(error => { console.log(error); });
+}
+
+
+//資本比率ランキングテーブルを作成
+function getAndCreateTable_SihonHirituRankList(){
+  //枠内にローダーを表示
+  createTableLoading("divMainLeftBottom2", "tableDivLoading10", "資本比率による収益性ランクを作成中...");
+  val = "2020"; // 会計年度、見直し必要。
+  fetch('/getSihonHirituRankList/' + val, {
+    method: 'GET',
+    'Content-Type': 'application/json'
+  })
+  .then(res => res.json())
+  .then(jsonData => {
+    createTableDiv("divMainLeftBottom2", "tableDivSihonHiritu");
+    var list = JSON.parse(jsonData.data);
+    var hdText = ["ランク", "団体名", "施設名",　"資本比率(%)"];
+    var propId = ["rank", "dantai_nm", "sisetu_nm",　"sihon_hiritu"];
+    var align = ["center", "left", "left",　"right"];
+    createTableByJsonList(list, "divMainLeftBottom2", "tableDivSihonHiritu", "資本比率による収益性ランキング", hdText, propId, align, null, 3);
+    //ローダーを削除
+    destroyTableLoading("divMainLeftBottom2", "tableDivLoading10");
+    return;
+  })
+  .catch(error => { console.log(error); });
+}
+
+//固定比率ランキングテーブルを作成
+function getAndCreateTable_KoteiHirituRankList(){
+  //枠内にローダーを表示
+  createTableLoading("divMainCenterBottom2", "tableDivLoading11", "固定比率による収益性ランクを作成中...");
+  val = "2020"; // 会計年度、見直し必要。
+  fetch('/getKoteiHirituRankList/' + val, {
+    method: 'GET',
+    'Content-Type': 'application/json'
+  })
+  .then(res => res.json())
+  .then(jsonData => {
+    createTableDiv("divMainCenterBottom2", "tableDivKoteiHiritu");
+    var list = JSON.parse(jsonData.data);
+    var hdText = ["ランク", "団体名", "施設名",　"固定比率(%)"];
+    var propId = ["rank", "dantai_nm", "sisetu_nm",　"kotei_hiritu"];
+    var align = ["center", "left", "left",　"right"];
+    createTableByJsonList(list, "divMainCenterBottom2", "tableDivKoteiHiritu", "固定比率による収益性ランキング", hdText, propId, align, null, 3);
+    //ローダーを削除
+    destroyTableLoading("divMainCenterBottom2", "tableDivLoading11");
+    return;
+  })
+  .catch(error => { console.log(error); });
+}
+
+
+//1人当たり利益ランキングテーブルを作成
+function getAndCreateTable_JugyoinHitoriRiekiRankList(){
+  //枠内にローダーを表示
+  createTableLoading("divMainRightBottom2", "tableDivLoading12", "職員1人あたり利益による生産性ランクを作成中...");
+  val = "2020"; // 会計年度、見直し必要。
+  fetch('/getJugyoinHitoriRiekiRankList/' + val, {
+    method: 'GET',
+    'Content-Type': 'application/json'
+  })
+  .then(res => res.json())
+  .then(jsonData => {
+    createTableDiv("divMainRightBottom2", "tableDivHitoriRieki");
+    var list = JSON.parse(jsonData.data);
+    var hdText = ["ランク", "団体名", "施設名",　"職員1人あたり利益(千円)"];
+    var propId = ["rank", "dantai_nm", "sisetu_nm",　"hitori_rieki"];
+    var align = ["center", "left", "left",　"right"];
+    createTableByJsonList(list, "divMainRightBottom2", "tableDivHitoriRieki", "職員1人あたり利益による生産性ランキング", hdText, propId, align, null, 3);
+    //ローダーを削除
+    destroyTableLoading("divMainRightBottom2", "tableDivLoading12");
+    return;
+  })
+  .catch(error => { console.log(error); });
+}
+
+
+//経常利益成長率ランキングテーブルを作成
+function getAndCreateTable_KeijoriekiSeichorituRankList(){
+  //枠内にローダーを表示
+  createTableLoading("divMainLeftBottom3", "tableDivLoading13", "経常利益成長率による成長性ランクを作成中...");
+  val = "2020"; // 会計年度、見直し必要。
+  fetch('/getKeijoriekiSeichorituRankList/' + val, {
+    method: 'GET',
+    'Content-Type': 'application/json'
+  })
+  .then(res => res.json())
+  .then(jsonData => {
+    createTableDiv("divMainLeftBottom3", "tableDivKeijoSeicho");
+    var list = JSON.parse(jsonData.data);
+    var hdText = ["ランク", "団体名", "施設名",　"成長率(%)"];
+    var propId = ["rank", "dantai_nm", "sisetu_nm",　"seicho_ritu"];
+    var align = ["center", "left", "left",　"right"];
+    createTableByJsonList(list, "divMainLeftBottom3", "tableDivKeijoSeicho", "経常利益成長率による成長性ランキング", hdText, propId, align, null, 3);
+    //ローダーを削除
+    destroyTableLoading("divMainLeftBottom3", "tableDivLoading13");
+    return;
+  })
+  .catch(error => { console.log(error); });
+}
+
+
+//資本成長率ランキングテーブルを作成
+function getAndCreateTable_SihonSeichorituRankList(){
+  //枠内にローダーを表示
+  createTableLoading("divMainCenterBottom3", "tableDivLoading14", "資本成長率による成長性ランクを作成中...");
+  val = "2020"; // 会計年度、見直し必要。
+  fetch('/getSihonSeichorituRankList/' + val, {
+    method: 'GET',
+    'Content-Type': 'application/json'
+  })
+  .then(res => res.json())
+  .then(jsonData => {
+    createTableDiv("divMainCenterBottom3", "tableDivSihonSeicho");
+    var list = JSON.parse(jsonData.data);
+    var hdText = ["ランク", "団体名", "施設名",　"成長率(%)"];
+    var propId = ["rank", "dantai_nm", "sisetu_nm",　"seicho_ritu"];
+    var align = ["center", "left", "left",　"right"];
+    createTableByJsonList(list, "divMainCenterBottom3", "tableDivSihonSeicho", "資本成長率による成長性ランキング", hdText, propId, align, null, 3);
+    //ローダーを削除
+    destroyTableLoading("divMainCenterBottom3", "tableDivLoading14");
+    return;
+  })
+  .catch(error => { console.log(error); });
+}
+
+
 //ローダーを削除
 function destroyTableLoading(locationId, tableDivId){
   document.getElementById(locationId).removeChild(
@@ -155,9 +338,7 @@ function createToasts(selectData){
 
   let divToast = document.createElement('div');
   divToast.classList.add("toast", "align-items-center", "face", "show");
-  divToast.setAttribute("role","alert");
-  divToast.setAttribute("roaria-livele","assertive");
-  divToast.setAttribute("aria-atomic","true");
+  setAttributes(divToast,"role,alert/roaria-livele,assertive/aria-atomic,true");
   divToast.id = "divToast";
 
   
@@ -171,9 +352,10 @@ function createToasts(selectData){
   divToastWrap.style.marginLeft = "10px";
 
   let btn = document.createElement('button');
-  btn.setAttribute("type","button");
-  btn.setAttribute("data-bs-dismiss","toast");
-  btn.setAttribute("aria-label","Close");
+  setAttributes(btn,"type,button/data-bs-dismiss,toast/aria-label,Close");
+  // btn.setAttribute("type","button");
+  // btn.setAttribute("data-bs-dismiss","toast");
+  // btn.setAttribute("aria-label","Close");
   btn.classList.add("btn", "btn-sm", "btn-secondary");
   btn.innerText = "解除";
   let span =  document.createElement('span');
@@ -278,6 +460,11 @@ function createTableByJsonList(datalist, locationId, tableDivId, caption, hdText
         createGraph(valueArray, graphId, name1);
 
       });
+    } else if(locationId == "divCompareRight"){
+      trow.addEventListener('click', (event) => {
+        //clickCompareRight(datalist[i]);
+        getRadarChartData(nanajikuRadarChart, datalist[i]);
+      });
     }
     
     tbody.appendChild(trow);
@@ -321,6 +508,37 @@ function createTableByJsonList(datalist, locationId, tableDivId, caption, hdText
   }
 }
 
+function setAttributes(dom, str){
+  var tmp = str.split("/");
+  for (let a in tmp){
+    b = tmp[a].split(",");
+    dom.setAttribute(b[0], b[1]);
+  }
+}
+
+// function clickCompareRight(data){
+//   //alert();
+//   var nendo = 2020;
+//   fetch('/aaaaa/' + nendo + '/' + data.dantai_cd + '/' + data.sisetu_cd, {
+//     method: 'GET',
+//     'Content-Type': 'application/json'
+//   })
+//   .then(res => res.json())
+//   .then(jsonData => {
+//     var list = JSON.parse(jsonData.data);
+//     console.log(list)
+//     // createTableDiv("v-pills-" + hyo_num, "tableDivHyo");
+//     // var list = JSON.parse(jsonData.data);
+//     // var hdText = ["行", "列", "項目名",　"2015",　"2016",　"2017",　"2018",　"2019",　"2020",　"2021",　"2022",　"2023",　"2024"];
+//     // var propId = ["gyo_num", "retu_num", "name1", "val_a",　"val_b", "val_c",　"val_d",　"val_e", "val_f",　"val_g",　"val_h", "val_i",　"val_j"];
+//     // var align = ["center", "center", "left",　"right",　"right",　"right",　"right",　"right",　"right",　"right",　"right",　"right",　"right"];
+//     // var width = ["", "", "40%",　"6%",　"6%",　"6%",　"6%",　"6%",　"6%",　"6%",　"6%",　"6%",　"6%"];
+//     // createTableByJsonList(list, "v-pills-" + hyo_num, "tableDivHyo", "", hdText, propId, align, width, 2.75);
+
+//     // destroyTableLoading("v-pills-" + hyo_num, "tableDivHyoLoading");
+//   })
+//   .catch(error => { console.log(error); });
+// }
 
 function moveProfileTab(key){
   try{
@@ -356,10 +574,10 @@ function createHyoVerticalNavbar(key){
       div1.classList.add("align-items-start");
 
       var divTabGroup = document.createElement("div");
-      divTabGroup.classList.add("nav");
-      divTabGroup.classList.add("flex-column");
-      divTabGroup.classList.add("nav-pills");
-      divTabGroup.classList.add("me-3");
+      divTabGroup.classList.add("nav","flex-column","nav-pills","me-3");
+      // divTabGroup.classList.add();
+      // divTabGroup.classList.add();
+      // divTabGroup.classList.add();
       divTabGroup.id = "v-pills-tab";
       divTabGroup.setAttribute("role","tablist"); //role="tablist" aria-orientation="vertical"
       divTabGroup.setAttribute("aria-orientation","vertical"); //role="tablist" aria-orientation="vertical"
@@ -771,13 +989,14 @@ function CreateRadarChart(selectRow){
     };
     //const ctx = document.getElementById("myChart").getContext('2d');
     //nanajikuRadarChart = new Chart(ctx, chartData);
-    getRadarChartData(chartData, selectRow);
+    var datalist = { dantai_cd:"dummy", sisetu_cd:"dummy", val:0, dantai_nm:"", sisetu_nm:"" };
+    getRadarChartData(chartData, datalist);
     //getRadarChartData(chartData, "2");
     //getRadarChartData(chartData, "3");
 }
 
 
-function getRadarChartData(chartData, selectVendor){
+function getRadarChartData(chartData, datalist){
     var idx = chartData.data.datasets.length;
     if(idx==0){
         //var ctx = $("#myChart").get(0).getContext("2d");
@@ -787,7 +1006,7 @@ function getRadarChartData(chartData, selectVendor){
     }
 
     val = "2020"; // 会計年度、見直し必要。
-    fetch('/getShuekiRankList/' + val, {
+    fetch('/getRadarChartData/' + val + '/' + datalist.dantai_cd + '/' + datalist.sisetu_cd, {
       method: 'GET',
       'Content-Type': 'application/json'
     })
@@ -800,15 +1019,12 @@ function getRadarChartData(chartData, selectVendor){
           data: [],
           borderWidth: 1
       });
-      chartData.data.datasets[idx].label = selectVendor;//(idx == 0 ? selectVendor : selectVendor.substring(0,2));
+      chartData.data.datasets[idx].label = datalist.sisetu_nm;//(idx == 0 ? selectVendor : selectVendor.substring(0,2));
       var list = JSON.parse(jsonData.data);
 
-
-      if(selectVendor != "" && list.length > 0){
+      if(datalist.dantai_nm != "dummy" && list.length > 0){
         for(let i in list){
-          if(i<=9){
-            chartData.data.datasets[idx].data.push(list[i].eigyo_soneki);
-          }
+          chartData.data.datasets[idx].data.push(list[i].val);
         }
           // $.each(list, function(i, item) {
           //     chartData.data.datasets[idx].data.push(item.shubetu1_avg);

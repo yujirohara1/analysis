@@ -28,6 +28,11 @@ from models.vanalykoteishokyakuritua import VAnalyKoteiShokyakurituA, VAnalyKote
 from models.vanalybyoshoriyoritua import VAnalyByoshoRiyorituA, VAnalyByoshoRiyorituASchema #回転率ランクA・・・病床利用率
 from models.vanalynyuinhitorishuekia import VAnalyNyuinHitoriShuekiA, VAnalyNyuinHitoriShuekiASchema #収益性・・・入院患者１人１日あたり収益
 from models.vanalysisetu import VAnalySisetu, VAnalySisetuSchema
+from models.vanalyjugyoinhitoririekia import VAnalyJugyoinHitoriRiekiA, VAnalyJugyoinHitoriRiekiASchema
+from models.vanalykeijoriekiseichoritua import VAnalyKeijoriekiSeichorituA, VAnalyKeijoriekiSeichorituASchema
+from models.vanalykoteihiritua import VAnalyKoteiHirituA, VAnalyKoteiHirituASchema
+from models.vanalyreturnonequitya import VAnalyReturnOnEquityA, VAnalyReturnOnEquityASchema
+from models.vanalysihonseichoritua import VAnalySihonSeichorituA, VAnalySihonSeichorituASchema
 
 from sqlalchemy.sql import text
 from sqlalchemy import distinct
@@ -136,7 +141,7 @@ def SendMail_AccountToroku():
 def load_user(user_id):
   return users.get(int(user_id))
 
-# db_uri = "postgresql://postgres:yjrhr1102@localhost:5432/delibadb" #開発用
+# db_uri = "postgresql://postgres:yjrhr1102@localhost:5432/newdb3" #開発用
 db_uri = os.environ.get('HEROKU_POSTGRESQL_COBALT_URL') #本番用HEROKU_POSTGRESQL_COBALTHEROKU_POSTGRESQL_DIANA_URL
 app.config['SQLALCHEMY_DATABASE_URI'] = db_uri 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -837,6 +842,58 @@ def getNyuinHitoriShuekiRankList(nendo):
     datalist_schema = VAnalyNyuinHitoriShuekiASchema(many=True)
     return jsonify({'data': datalist_schema.dumps(datalist, ensure_ascii=False, default=decimal_default_proc)})
 
+# ROE
+@app.route('/getReturnOnEquityRankList/<nendo>')
+def getReturnOnEquityRankList(nendo):
+    datalist = VAnalyReturnOnEquityA.query.filter(VAnalyReturnOnEquityA.nendo == nendo, VAnalyReturnOnEquityA.roe != None).order_by(desc(VAnalyReturnOnEquityA.roe)).all()
+    datalist_schema = VAnalyReturnOnEquityASchema(many=True)
+    return jsonify({'data': datalist_schema.dumps(datalist, ensure_ascii=False, default=decimal_default_proc)})
+
+# ROA
+@app.route('/getReturnOnAssetRankList/<nendo>')
+def getReturnOnAssetRankList(nendo):
+    datalist = VAnalyReturnOnEquityA.query.filter(VAnalyReturnOnEquityA.nendo == nendo, VAnalyReturnOnEquityA.roa != None).order_by(desc(VAnalyReturnOnEquityA.roa)).all()
+    datalist_schema = VAnalyReturnOnEquityASchema(many=True)
+    return jsonify({'data': datalist_schema.dumps(datalist, ensure_ascii=False, default=decimal_default_proc)})
+
+
+# 資本比率
+@app.route('/getSihonHirituRankList/<nendo>')
+def getSihonHirituRankList(nendo):
+    datalist = VAnalyReturnOnEquityA.query.filter(VAnalyReturnOnEquityA.nendo == nendo, VAnalyReturnOnEquityA.sihon_hiritu != None).order_by(desc(VAnalyReturnOnEquityA.sihon_hiritu)).all()
+    datalist_schema = VAnalyReturnOnEquityASchema(many=True)
+    return jsonify({'data': datalist_schema.dumps(datalist, ensure_ascii=False, default=decimal_default_proc)})
+
+
+# 固定比率
+@app.route('/getKoteiHirituRankList/<nendo>')
+def getKoteiHirituRankList(nendo):
+    datalist = VAnalyKoteiHirituA.query.filter(VAnalyKoteiHirituA.nendo == nendo, VAnalyKoteiHirituA.kotei_hiritu != None).order_by(desc(VAnalyKoteiHirituA.kotei_hiritu)).all()
+    datalist_schema = VAnalyKoteiHirituASchema(many=True)
+    return jsonify({'data': datalist_schema.dumps(datalist, ensure_ascii=False, default=decimal_default_proc)})
+
+# 労働生産性
+@app.route('/getJugyoinHitoriRiekiRankList/<nendo>')
+def getJugyoinHitoriRiekiRankList(nendo):
+    datalist = VAnalyJugyoinHitoriRiekiA.query.filter(VAnalyJugyoinHitoriRiekiA.nendo == nendo, VAnalyJugyoinHitoriRiekiA.hitori_rieki != None).order_by(desc(VAnalyJugyoinHitoriRiekiA.hitori_rieki)).all()
+    datalist_schema = VAnalyJugyoinHitoriRiekiASchema(many=True)
+    return jsonify({'data': datalist_schema.dumps(datalist, ensure_ascii=False, default=decimal_default_proc)})
+
+
+# 経常利益成長率
+@app.route('/getKeijoriekiSeichorituRankList/<nendo>')
+def getKeijoriekiSeichorituRankList(nendo):
+    datalist = VAnalyKeijoriekiSeichorituA.query.filter(VAnalyKeijoriekiSeichorituA.nendo == nendo, VAnalyKeijoriekiSeichorituA.seicho_ritu != None).order_by(desc(VAnalyKeijoriekiSeichorituA.seicho_ritu)).all()
+    datalist_schema = VAnalyKeijoriekiSeichorituASchema(many=True)
+    return jsonify({'data': datalist_schema.dumps(datalist, ensure_ascii=False, default=decimal_default_proc)})
+
+# 資本成長率
+@app.route('/getSihonSeichorituRankList/<nendo>')
+def getSihonSeichorituRankList(nendo):
+    datalist = VAnalySihonSeichorituA.query.filter(VAnalySihonSeichorituA.nendo == nendo, VAnalySihonSeichorituA.seicho_ritu != None).order_by(desc(VAnalySihonSeichorituA.seicho_ritu)).all()
+    datalist_schema = VAnalySihonSeichorituASchema(many=True)
+    return jsonify({'data': datalist_schema.dumps(datalist, ensure_ascii=False, default=decimal_default_proc)})
+
 
 # 基本情報タブ用の表リスト取得
 @app.route('/getHyoListForProfile/<nendo>/<gyomu_cd>/<gyoshu_cd>/<jigyo_cd>/<dantai_cd>/<sisetu_cd>')
@@ -844,6 +901,7 @@ def getHyoListForProfile(nendo, gyomu_cd, gyoshu_cd, jigyo_cd, dantai_cd, sisetu
     datalist = AnalyHyo.query.filter(AnalyHyo.nendo == nendo).order_by(asc(AnalyHyo.hyo_num)).all()
     datalist_schema = AnalyHyoSchema(many=True)
     return jsonify({'data': datalist_schema.dumps(datalist, ensure_ascii=False, default=decimal_default_proc)})
+
 
 @app.route('/getHyoData/<nendo>/<gyomu_cd>/<gyoshu_cd>/<jigyo_cd>/<dantai_cd>/<sisetu_cd>/<hyo_num>')
 def getHyoData(nendo, gyomu_cd, gyoshu_cd, jigyo_cd, dantai_cd, sisetu_cd, hyo_num):
@@ -860,12 +918,102 @@ def getHyoData(nendo, gyomu_cd, gyoshu_cd, jigyo_cd, dantai_cd, sisetu_cd, hyo_n
 
 
 
+# レーダーチャートのデータを取得
+def getValue(nendo, dantai_cd, sisetu_cd, hyo_num, gyo_num, retu_num):
+  ret = 0
+  resultset=[]
+  sql = "select sum(val_num) val from analy_main where nendo = " + str(nendo) + " and dantai_cd = '" + dantai_cd + "' and sisetu_cd = '" + sisetu_cd + "' and hyo_num = " + str(hyo_num) + " and gyo_num = " + str(gyo_num) +  " and retu_num = " + str(retu_num)
 
-@app.route('/getCityListByTdfkCd/<tdfkCd>')
-def getCityListByTdfkCd(tdfkCd):
-    vcitylist = VCity.query.filter(VCity.tdfk_cd==tdfkCd).order_by(asc(VCity.dantai_cd)).all()
-    vcitylist_schema = VCitySchema(many=True)
-    return jsonify({'data': vcitylist_schema.dumps(vcitylist, ensure_ascii=False)})
+  if db.session.execute(text(sql)).fetchone() is not None:
+    datalist = db.session.execute(text(sql))
+    if datalist is not None:
+      for row in datalist:
+        if row["val"] == None:
+          ret = 0
+        else:
+          ret = row["val"] #resultset.append({"source":tableNm[i], "val":row[columnNm[i]]})
+    else:
+      ret = 0
+  else:
+    ret = 0
+  return ret
+
+
+
+
+@app.route('/getRadarChartData/<nendo>/<dantai_cd>/<sisetu_cd>')
+def getRadarChartData(nendo, dantai_cd, sisetu_cd):
+    resultset=[]
+
+    toki_sihonkin = getValue(nendo, dantai_cd, sisetu_cd, 22, 1, 68)
+    zenki_sihonkin = getValue(int(nendo)-1, dantai_cd, sisetu_cd, 22, 1, 68)
+
+    toki_eigyo_shueki = getValue(nendo, dantai_cd, sisetu_cd, 20, 1, 2)
+    toki_eigyo_gai_shueki = getValue(nendo, dantai_cd, sisetu_cd, 20, 1, 15)
+    toki_eigyo_hiyo = getValue(nendo, dantai_cd, sisetu_cd, 20, 1, 26)
+    toki_eigyo_gai_hiyo = getValue(nendo, dantai_cd, sisetu_cd, 20, 1, 40)
+    zenki_eigyo_shueki = getValue(int(nendo)-1, dantai_cd, sisetu_cd, 20, 1, 2)
+    zenki_eigyo_gai_shueki = getValue(int(nendo)-1, dantai_cd, sisetu_cd, 20, 1, 15)
+    zenki_eigyo_hiyo = getValue(int(nendo)-1, dantai_cd, sisetu_cd, 20, 1, 26)
+    zenki_eigyo_gai_hiyo = getValue(int(nendo)-1, dantai_cd, sisetu_cd, 20, 1, 40)
+
+    toki_keijo_rieki = (toki_eigyo_shueki + toki_eigyo_gai_shueki) - (toki_eigyo_hiyo + toki_eigyo_gai_hiyo)
+    zenki_keijo_rieki = (zenki_eigyo_shueki + zenki_eigyo_gai_shueki) - (zenki_eigyo_hiyo + zenki_eigyo_gai_hiyo)
+
+
+
+    sihon_seicho_ritu = 0 
+    if zenki_sihonkin != 0:
+      sihon_seicho_ritu = round( ((toki_sihonkin - zenki_sihonkin) / zenki_sihonkin) * 100)
+    resultset.append({"source":"sihon_seicho_ritu", "val":sihon_seicho_ritu })
+
+    keijorieki_seicho_ritu = 0
+    if zenki_keijo_rieki != 0:
+      keijorieki_seicho_ritu = round( ((toki_keijo_rieki - zenki_keijo_rieki) / zenki_keijo_rieki) * 100)
+    resultset.append({"source":"keijorieki_seicho_ritu", "val":keijorieki_seicho_ritu })
+
+
+    tableNm = [
+      "v_analy_shuekisei_a",    "v_analy_jugyoin_hitori_rieki_a",
+      "v_analy_kotei_hiritu_a",
+      "v_analy_return_on_equity_a",    "v_analy_return_on_equity_a",
+      "v_analy_return_on_equity_a",
+      "v_analy_ryudo_anzensei_a",    "v_analy_kotei_shokyakuritu_a",
+    ]
+
+    columnNm = [
+      "keijo_shusi_hiritu",    "hitori_rieki",
+      "kotei_hiritu",
+      "sihon_hiritu",    "roe",
+      "roa",
+      "ryudo_hiritu",    "shokyaku_hiritu",
+    ]
+
+    for i in range(0, 8):
+      sql = "select "+ columnNm[i] + " from " + tableNm[i] + " where nendo = " + nendo + " and dantai_cd = '" + dantai_cd + "' and sisetu_cd = '" + sisetu_cd + "'"
+      if db.session.execute(text(sql)).fetchone() is not None:
+        datalist = db.session.execute(text(sql))
+        if datalist is not None:
+          for row in datalist:
+            if row[columnNm[i]] is not None:
+              resultset.append({"source":tableNm[i], "val":row[columnNm[i]]})
+            else:
+              resultset.append({"source":tableNm[i], "val":0})
+        else:
+          resultset.append({"source":tableNm[i], "val":0})
+      else:
+        resultset.append({"source":tableNm[i], "val":0})
+
+    return jsonify({'data': json.dumps(resultset,default=decimal_default_proc)})
+    # json.dumps(resultset,default=decimal_default_proc)
+    # return jsonify({'data': datalist_schema.dumps(datalist, ensure_ascii=False, default=decimal_default_proc)})
+
+
+# @app.route('/getCityListByTdfkCd/<tdfkCd>')
+# def getCityListByTdfkCd(tdfkCd):
+#     vcitylist = VCity.query.filter(VCity.tdfk_cd==tdfkCd).order_by(asc(VCity.dantai_cd)).all()
+#     vcitylist_schema = VCitySchema(many=True)
+#     return jsonify({'data': vcitylist_schema.dumps(vcitylist, ensure_ascii=False)})
 
 # @app.route('/getCityListByTdfkCd/<tdfkCd>')
 # def getCityListByTdfkCd(tdfkCd):
