@@ -14,6 +14,7 @@ select
 from
     analy_main
 where
+    nendo = 2020 and
     hyo_num = 20 and
     gyo_num = 1 and
     retu_num = 10

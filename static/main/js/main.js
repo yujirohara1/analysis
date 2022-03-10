@@ -42,8 +42,8 @@ window.onload = function(){
     getAndCreateTable_SihonHirituRankList();// # 資本比率
     getAndCreateTable_KoteiHirituRankList();// # 固定比率
     getAndCreateTable_JugyoinHitoriRiekiRankList();// # 労働生産性
-    getAndCreateTable_KeijoriekiSeichorituRankList();// # 経常利益成長率
-    getAndCreateTable_SihonSeichorituRankList();// # 資本成長率
+    //getAndCreateTable_KeijoriekiSeichorituRankList();// # 経常利益成長率
+    //getAndCreateTable_SihonSeichorituRankList();// # 資本成長率
 
     getAndCreateTable_DantaiListOfRadarChart(); //レーダーチャート右の団体リスト
 
