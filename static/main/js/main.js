@@ -1019,7 +1019,7 @@ function getRadarChartData(chartData, datalist){
           data: [],
           borderWidth: 1
       });
-      chartData.data.datasets[idx].label = datalist.sisetu_nm;//(idx == 0 ? selectVendor : selectVendor.substring(0,2));
+      chartData.data.datasets[idx].label = (datalist.dantai_nm + " " + datalist.sisetu_nm).substring(0,16); //datalist.sisetu_nm;//(idx == 0 ? selectVendor : selectVendor.substring(0,2));
       var list = JSON.parse(jsonData.data);
 
       if(datalist.dantai_nm != "dummy" && list.length > 0){
