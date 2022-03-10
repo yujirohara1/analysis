@@ -991,8 +991,6 @@ function CreateRadarChart(selectRow){
     //nanajikuRadarChart = new Chart(ctx, chartData);
     var datalist = { dantai_cd:"dummy", sisetu_cd:"dummy", val:0, dantai_nm:"", sisetu_nm:"" };
     getRadarChartData(chartData, datalist);
-    //getRadarChartData(chartData, "2");
-    //getRadarChartData(chartData, "3");
 }
 
 
@@ -1006,7 +1004,12 @@ function getRadarChartData(chartData, datalist){
     }
 
     val = "2020"; // 会計年度、見直し必要。
-    fetch('/getRadarChartData/' + val + '/' + datalist.dantai_cd + '/' + datalist.sisetu_cd, {
+    fetch('/getRadarChartData/' + val + '/' + 
+      datalist.gyomu_cd + '/' + 
+      datalist.gyoshu_cd + '/' + 
+      datalist.jigyo_cd + '/' + 
+      datalist.dantai_cd + '/' + 
+      datalist.sisetu_cd, {
       method: 'GET',
       'Content-Type': 'application/json'
     })
@@ -1024,7 +1027,14 @@ function getRadarChartData(chartData, datalist){
 
       if(datalist.dantai_nm != "dummy" && list.length > 0){
         for(let i in list){
-          chartData.data.datasets[idx].data.push(list[i].val);
+          var rate = list[i].val;
+          if(rate < 0){
+            rate = 0
+          }
+          if(rate > 100){
+            rate = 100
+          }
+          chartData.data.datasets[idx].data.push(rate);
         }
           // $.each(list, function(i, item) {
           //     chartData.data.datasets[idx].data.push(item.shubetu1_avg);
