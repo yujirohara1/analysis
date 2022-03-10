@@ -141,7 +141,7 @@ def SendMail_AccountToroku():
 def load_user(user_id):
   return users.get(int(user_id))
 
-# db_uri = "postgresql://postgres:yjrhr1102@localhost:5432/newdb3" #開発用
+# db_uri = "postgresql://postgres:yjrhr1102@localhost:5432/delibadb" #開発用
 db_uri = os.environ.get('HEROKU_POSTGRESQL_COBALT_URL') #本番用HEROKU_POSTGRESQL_COBALTHEROKU_POSTGRESQL_DIANA_URL
 app.config['SQLALCHEMY_DATABASE_URI'] = db_uri 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -919,10 +919,20 @@ def getHyoData(nendo, gyomu_cd, gyoshu_cd, jigyo_cd, dantai_cd, sisetu_cd, hyo_n
 
 
 # レーダーチャートのデータを取得
-def getValue(nendo, dantai_cd, sisetu_cd, hyo_num, gyo_num, retu_num):
+def getValue(nendo, gyomu_cd, gyoshu_cd, jigyo_cd, dantai_cd, sisetu_cd, hyo_num, gyo_num, retu_num):
   ret = 0
   resultset=[]
-  sql = "select sum(val_num) val from analy_main where nendo = " + str(nendo) + " and dantai_cd = '" + dantai_cd + "' and sisetu_cd = '" + sisetu_cd + "' and hyo_num = " + str(hyo_num) + " and gyo_num = " + str(gyo_num) +  " and retu_num = " + str(retu_num)
+  sql = ""
+  sql =  sql + "select sum(val_num) val from analy_main "
+  sql =  sql + "    where nendo = " + str(nendo) + " and "
+  sql =  sql + "          gyomu_cd = '" + gyomu_cd + "' and "
+  sql =  sql + "          gyoshu_cd = '" + gyoshu_cd + "' and "
+  sql =  sql + "          jigyo_cd = '" + jigyo_cd + "' and "
+  sql =  sql + "          dantai_cd = '" + dantai_cd + "' and "
+  sql =  sql + "          sisetu_cd = '" + sisetu_cd + "' and "
+  sql =  sql + "          hyo_num = " + str(hyo_num) + " and "
+  sql =  sql + "          gyo_num = " + str(gyo_num) +  " and "
+  sql =  sql + "          retu_num = " + str(retu_num)
 
   if db.session.execute(text(sql)).fetchone() is not None:
     datalist = db.session.execute(text(sql))
@@ -941,21 +951,21 @@ def getValue(nendo, dantai_cd, sisetu_cd, hyo_num, gyo_num, retu_num):
 
 
 
-@app.route('/getRadarChartData/<nendo>/<dantai_cd>/<sisetu_cd>')
-def getRadarChartData(nendo, dantai_cd, sisetu_cd):
+@app.route('/getRadarChartData/<nendo>/<gyomu_cd>/<gyoshu_cd>/<jigyo_cd>/<dantai_cd>/<sisetu_cd>')
+def getRadarChartData(nendo, gyomu_cd, gyoshu_cd, jigyo_cd, dantai_cd, sisetu_cd):
     resultset=[]
 
-    toki_sihonkin = getValue(nendo, dantai_cd, sisetu_cd, 22, 1, 68)
-    zenki_sihonkin = getValue(int(nendo)-1, dantai_cd, sisetu_cd, 22, 1, 68)
+    toki_sihonkin = getValue(nendo, gyomu_cd, gyoshu_cd, jigyo_cd, dantai_cd, sisetu_cd, 22, 1, 68)
+    zenki_sihonkin = getValue(int(nendo)-1, gyomu_cd, gyoshu_cd, jigyo_cd, dantai_cd, sisetu_cd, 22, 1, 68)
 
-    toki_eigyo_shueki = getValue(nendo, dantai_cd, sisetu_cd, 20, 1, 2)
-    toki_eigyo_gai_shueki = getValue(nendo, dantai_cd, sisetu_cd, 20, 1, 15)
-    toki_eigyo_hiyo = getValue(nendo, dantai_cd, sisetu_cd, 20, 1, 26)
-    toki_eigyo_gai_hiyo = getValue(nendo, dantai_cd, sisetu_cd, 20, 1, 40)
-    zenki_eigyo_shueki = getValue(int(nendo)-1, dantai_cd, sisetu_cd, 20, 1, 2)
-    zenki_eigyo_gai_shueki = getValue(int(nendo)-1, dantai_cd, sisetu_cd, 20, 1, 15)
-    zenki_eigyo_hiyo = getValue(int(nendo)-1, dantai_cd, sisetu_cd, 20, 1, 26)
-    zenki_eigyo_gai_hiyo = getValue(int(nendo)-1, dantai_cd, sisetu_cd, 20, 1, 40)
+    toki_eigyo_shueki = getValue(nendo, gyomu_cd, gyoshu_cd, jigyo_cd, dantai_cd, sisetu_cd, 20, 1, 2)
+    toki_eigyo_gai_shueki = getValue(nendo, gyomu_cd, gyoshu_cd, jigyo_cd, dantai_cd, sisetu_cd, 20, 1, 15)
+    toki_eigyo_hiyo = getValue(nendo, gyomu_cd, gyoshu_cd, jigyo_cd, dantai_cd, sisetu_cd, 20, 1, 26)
+    toki_eigyo_gai_hiyo = getValue(nendo, gyomu_cd, gyoshu_cd, jigyo_cd, dantai_cd, sisetu_cd, 20, 1, 40)
+    zenki_eigyo_shueki = getValue(int(nendo)-1, gyomu_cd, gyoshu_cd, jigyo_cd, dantai_cd, sisetu_cd, 20, 1, 2)
+    zenki_eigyo_gai_shueki = getValue(int(nendo)-1, gyomu_cd, gyoshu_cd, jigyo_cd, dantai_cd, sisetu_cd, 20, 1, 15)
+    zenki_eigyo_hiyo = getValue(int(nendo)-1, gyomu_cd, gyoshu_cd, jigyo_cd, dantai_cd, sisetu_cd, 20, 1, 26)
+    zenki_eigyo_gai_hiyo = getValue(int(nendo)-1, gyomu_cd, gyoshu_cd, jigyo_cd, dantai_cd, sisetu_cd, 20, 1, 40)
 
     toki_keijo_rieki = (toki_eigyo_shueki + toki_eigyo_gai_shueki) - (toki_eigyo_hiyo + toki_eigyo_gai_hiyo)
     zenki_keijo_rieki = (zenki_eigyo_shueki + zenki_eigyo_gai_shueki) - (zenki_eigyo_hiyo + zenki_eigyo_gai_hiyo)
@@ -990,7 +1000,14 @@ def getRadarChartData(nendo, dantai_cd, sisetu_cd):
     ]
 
     for i in range(0, 8):
-      sql = "select "+ columnNm[i] + " from " + tableNm[i] + " where nendo = " + nendo + " and dantai_cd = '" + dantai_cd + "' and sisetu_cd = '" + sisetu_cd + "'"
+      sql = ""
+      sql = sql + " select "+ columnNm[i] + " from " + tableNm[i] 
+      sql =  sql + " where nendo = " + nendo + " and "
+      sql =  sql + "          gyomu_cd = '" + gyomu_cd + "' and "
+      sql =  sql + "          gyoshu_cd = '" + gyoshu_cd + "' and "
+      sql =  sql + "          jigyo_cd = '" + jigyo_cd + "' and "
+      sql =  sql + "          dantai_cd = '" + dantai_cd + "' and "
+      sql =  sql + "          sisetu_cd = '" + sisetu_cd + "'  "
       if db.session.execute(text(sql)).fetchone() is not None:
         datalist = db.session.execute(text(sql))
         if datalist is not None:
