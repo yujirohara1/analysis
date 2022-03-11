@@ -34,6 +34,7 @@ from models.vanalykoteihiritua import VAnalyKoteiHirituA, VAnalyKoteiHirituASche
 from models.vanalyreturnonequitya import VAnalyReturnOnEquityA, VAnalyReturnOnEquityASchema
 from models.vanalysihonseichoritua import VAnalySihonSeichorituA, VAnalySihonSeichorituASchema
 from models.analykijun import AnalyKijun, AnalyKijunSchema
+from models.analyjigyo import AnalyJigyo, AnalyJigyoSchema
 
 from sqlalchemy.sql import text
 from sqlalchemy import distinct
@@ -142,7 +143,7 @@ def SendMail_AccountToroku():
 def load_user(user_id):
   return users.get(int(user_id))
 
-# db_uri = "postgresql://postgres:yjrhr1102@localhost:5432/delibadb" #開発用
+# db_uri = "postgresql://postgres:yjrhr1102@localhost:5432/newdb3" #開発用
 db_uri = os.environ.get('HEROKU_POSTGRESQL_COBALT_URL') #本番用HEROKU_POSTGRESQL_COBALTHEROKU_POSTGRESQL_DIANA_URL
 app.config['SQLALCHEMY_DATABASE_URI'] = db_uri 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -634,6 +635,14 @@ def getSihonSeichorituRankList(nendo):
 def getHyoListForProfile(nendo, gyomu_cd, gyoshu_cd, jigyo_cd, dantai_cd, sisetu_cd):
     datalist = AnalyHyo.query.filter(AnalyHyo.nendo == nendo).order_by(asc(AnalyHyo.hyo_num)).all()
     datalist_schema = AnalyHyoSchema(many=True)
+    return jsonify({'data': datalist_schema.dumps(datalist, ensure_ascii=False, default=decimal_default_proc)})
+
+
+# 業種・事業マスタ取得
+@app.route('/getAnalyJigyo/<nendo>')
+def getAnalyJigyo(nendo):
+    datalist = AnalyJigyo.query.filter(AnalyJigyo.nendo == nendo).order_by(asc(AnalyJigyo.gyoshu_cd),asc(AnalyJigyo.jigyo_cd)).all()
+    datalist_schema = AnalyJigyoSchema(many=True)
     return jsonify({'data': datalist_schema.dumps(datalist, ensure_ascii=False, default=decimal_default_proc)})
 
 

@@ -19,6 +19,12 @@ table.dataTable thead tr {
     float: none;
 }
 
+.selectGyoshuLabelVerticalGroup {
+    padding: 10px 10px 10px 10px;
+    width: 300px;
+    vertical-align: top;
+}
+
 .sihyoPopOver{
     float: left;
     padding: 0px 10px 0px 10px;
@@ -27,6 +33,10 @@ table.dataTable thead tr {
 .popover-header{
     font-size:13px;
     color:#454545;
+}
+
+.selectGyoshuLabel{
+    padding:1px 1px 1px 1px ;
 }
 
 .popover{
