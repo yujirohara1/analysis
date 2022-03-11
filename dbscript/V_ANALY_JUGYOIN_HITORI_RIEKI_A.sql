@@ -26,7 +26,7 @@ select
     , round(case 
         when (kimatu_ninzu) <= 0 
             then null 
-        else ((eigyo_shueki - eigyo_hiyo) / (kimatu_ninzu)) / 1000000 * 100
+        else ((eigyo_shueki - eigyo_hiyo) / (kimatu_ninzu)) 
         end) hitori_rieki
 from
     ( 

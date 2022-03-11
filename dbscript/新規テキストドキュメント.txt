@@ -65,7 +65,6 @@ yjrhr1102
 
 
 
-heroku pg:psql postgresql-flexible-14532 --app diana12
 
 \i 'C:\\diana12_insert\\analymain_insert_2020_24.sql'
 \i 'C:\\diana12_insert\\analymain_insert_2020_25.sql'
