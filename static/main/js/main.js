@@ -982,8 +982,11 @@ function CreateRadarChart(selectRow){
                       
                     },
                     fontStyle: "bold",
-                  }
-                }
+                  },
+                  min: 0,
+                  max: 10,
+                  stepSize: 1
+                },
             },
         }
     };
@@ -1026,16 +1029,26 @@ function getRadarChartData(chartData, datalist){
       var list = JSON.parse(jsonData.data);
 
       if(datalist.dantai_nm != "dummy" && list.length > 0){
-        for(let i in list){
-          var rate = list[i].val;
-          if(rate < 0){
-            rate = 0
-          }
-          if(rate > 100){
-            rate = 100
-          }
-          chartData.data.datasets[idx].data.push(rate);
-        }
+        chartData.data.datasets[idx].data.push(list.filter(value => value["source"] =="keijo_shusi_hiritu").map(item => item["val"])[0]);
+        chartData.data.datasets[idx].data.push(list.filter(value => value["source"] =="roe").map(item => item["val"])[0]);
+        chartData.data.datasets[idx].data.push(list.filter(value => value["source"] =="roa").map(item => item["val"])[0]);
+        chartData.data.datasets[idx].data.push(list.filter(value => value["source"] =="ryudo_hiritu").map(item => item["val"])[0]);
+        chartData.data.datasets[idx].data.push(list.filter(value => value["source"] =="sihon_hiritu").map(item => item["val"])[0]);
+        chartData.data.datasets[idx].data.push(list.filter(value => value["source"] =="kotei_hiritu").map(item => item["val"])[0]);
+        chartData.data.datasets[idx].data.push(list.filter(value => value["source"] =="shokyaku_hiritu").map(item => item["val"])[0]);
+        chartData.data.datasets[idx].data.push(list.filter(value => value["source"] =="hitori_rieki").map(item => item["val"])[0]);
+        chartData.data.datasets[idx].data.push(list.filter(value => value["source"] =="keijorieki_seicho_ritu").map(item => item["val"])[0]);
+        chartData.data.datasets[idx].data.push(list.filter(value => value["source"] =="sihon_seicho_ritu").map(item => item["val"])[0]);
+        // for(let i in list){
+        //   var rate = list[i].val;
+        //   if(rate < 0){
+        //     rate = 0
+        //   }
+        //   if(rate > 100){
+        //     rate = 100
+        //   }
+        //   chartData.data.datasets[idx].data.push(rate);
+        // }
           // $.each(list, function(i, item) {
           //     chartData.data.datasets[idx].data.push(item.shubetu1_avg);
           //     chartData.data.datasets[idx].data.push(item.shubetu2_avg);

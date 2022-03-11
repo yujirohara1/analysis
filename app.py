@@ -684,6 +684,54 @@ def getValue(nendo, gyomu_cd, gyoshu_cd, jigyo_cd, dantai_cd, sisetu_cd, hyo_num
 
 
 
+# 資本成長率
+def getKijunValue(nendo, gyomu_cd, gyoshu_cd, jigyo_cd):
+    datalist = AnalyKijun.query.filter(
+        AnalyKijun.nendo == nendo, 
+        AnalyKijun.gyomu_cd == gyomu_cd, 
+        AnalyKijun.gyoshu_cd == gyoshu_cd, 
+        AnalyKijun.jigyo_cd == jigyo_cd
+    ).all()
+    return datalist
+
+def getHensaKouryoValue(resultSet, hensaSet):
+  hyotei = 0
+  if len(hensaSet) != 0 :
+    for netRec in resultSet:
+      for hensaRec in hensaSet:
+
+        if hensaRec.average_val == None:
+          hensaRec.average_val = 0
+        if hensaRec.hensa_val == None:
+          hensaRec.hensa_val = 0
+          
+        if netRec["source"] == hensaRec.kijun_cd:
+          if hensaRec.average_val <= netRec["val"] <= (hensaRec.average_val + hensaRec.hensa_val):
+            hyotei = 5 # 平均プラス方向に１範囲
+          elif hensaRec.average_val <= netRec["val"] <= (hensaRec.average_val + (hensaRec.hensa_val*2)):
+            hyotei = 6 # 平均プラス方向に２範囲
+          elif hensaRec.average_val <= netRec["val"] <= (hensaRec.average_val + (hensaRec.hensa_val*3)):
+            hyotei = 7 # 平均プラス方向に３範囲
+          elif hensaRec.average_val <= netRec["val"] <= (hensaRec.average_val + (hensaRec.hensa_val*4)):
+            hyotei = 8 # 平均プラス方向に４範囲
+          elif hensaRec.average_val <= netRec["val"] <= (hensaRec.average_val + (hensaRec.hensa_val*5)):
+            hyotei = 9 # 平均プラス方向に５範囲
+          elif hensaRec.average_val <= netRec["val"]:
+            hyotei = 10 # 平均プラス方向に６範囲
+          elif hensaRec.average_val > netRec["val"] >= (hensaRec.average_val - (hensaRec.hensa_val)):
+            hyotei = 4 # 平均マイナス方向に１範囲
+          elif hensaRec.average_val > netRec["val"] >= (hensaRec.average_val - (hensaRec.hensa_val*2)):
+            hyotei = 3 # 平均マイナス方向に２範囲
+          elif hensaRec.average_val > netRec["val"] >= (hensaRec.average_val - (hensaRec.hensa_val*3)):
+            hyotei = 2 # 平均マイナス方向に３範囲
+          elif hensaRec.average_val > netRec["val"] >= (hensaRec.average_val - (hensaRec.hensa_val*4)):
+            hyotei = 1 # 平均マイナス方向に４範囲
+          else:
+            hyotei = 0
+
+          netRec["val"] = hyotei
+
+  return resultSet
 
 @app.route('/getRadarChartData/<nendo>/<gyomu_cd>/<gyoshu_cd>/<jigyo_cd>/<dantai_cd>/<sisetu_cd>')
 def getRadarChartData(nendo, gyomu_cd, gyoshu_cd, jigyo_cd, dantai_cd, sisetu_cd):
@@ -717,6 +765,7 @@ def getRadarChartData(nendo, gyomu_cd, gyoshu_cd, jigyo_cd, dantai_cd, sisetu_cd
     resultset.append({"source":"keijorieki_seicho_ritu", "val":keijorieki_seicho_ritu })
 
 
+
     tableNm = [
       "v_analy_shuekisei_a",    "v_analy_jugyoin_hitori_rieki_a",
       "v_analy_kotei_hiritu_a",
@@ -747,13 +796,15 @@ def getRadarChartData(nendo, gyomu_cd, gyoshu_cd, jigyo_cd, dantai_cd, sisetu_cd
         if datalist is not None:
           for row in datalist:
             if row[columnNm[i]] is not None:
-              resultset.append({"source":tableNm[i], "val":row[columnNm[i]]})
+              resultset.append({"source":columnNm[i], "val":row[columnNm[i]]})
             else:
-              resultset.append({"source":tableNm[i], "val":0})
+              resultset.append({"source":columnNm[i], "val":0})
         else:
-          resultset.append({"source":tableNm[i], "val":0})
+          resultset.append({"source":columnNm[i], "val":0})
       else:
-        resultset.append({"source":tableNm[i], "val":0})
+        resultset.append({"source":columnNm[i], "val":0})
+    
+    resultset = getHensaKouryoValue(resultset, getKijunValue(nendo, gyomu_cd, gyoshu_cd, jigyo_cd))
 
     return jsonify({'data': json.dumps(resultset,default=decimal_default_proc)})
     # json.dumps(resultset,default=decimal_default_proc)
