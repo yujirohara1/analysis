@@ -170,27 +170,6 @@ def executeFileGetAndInsert(chosaJiten, dantaiCd, dantaiNm, url, indexFrom, inde
   # return send_file('tmp/' + filename + '.csv', as_attachment=True, mimetype=XLSX_MIMETYPE, attachment_filename = filename + '.csv')
   return send_file("tmp/" + filename + ".csv", as_attachment=True)
 
-  # try:
-  #   if indexFrom == 0:
-  #     res = requests.get(url)
-  #     xl = pd.read_excel(res.content, sheet_name=None)
-  #     filename = datetime.datetime.now().strftime('%Y%m%d%H%M%S%f')
-  #     xl.to_csv('tmp/' + filename + '.csv', index=False)
-    
-  #   # wb.save('tmp/' + filename + '.xlsx')
-  #   # return send_file('tmp/' + filename + '.xlsx', as_attachment=True, mimetype=XLSX_MIMETYPE, attachment_filename = filename + '.xlsx')
-  #   nokori = createSisetuMainFromTo(xl, indexFrom, indexTo)
-    
-  #   result = "取込済"
-  # except Exception as e:
-  #   import traceback
-  #   traceback.print_exc()
-  #   result = e.args[0]
-
-  # # insertJotai(documentName, chosaJiten, dantaiCd, dantaiNm, url, result)
-
-  # return jsonify({'data': {"documentName" : documentName, "chosaJiten":chosaJiten, "dantaiCd":dantaiCd, "dantaiNm":dantaiNm, "url":url, "result":result, "nokoriKensu":nokori}})
-  # # return send_file("tmp/" + timestampStr + ".pdf", as_attachment=True)
 
 
 def insertJotai(document_name, chosa_jiten, dantai_cd, dantai_nm, file_url, jotai_message):
@@ -265,22 +244,13 @@ def csvUpload():
   indexFrom = int(request.form["indexFrom"])
   indexTo = int(request.form["indexTo"])
   queryParams = request.form["queryParams"]
-  # res = requests.get("https://www.soumu.go.jp" + xlfile)
-  csv = pd.read_csv(fi, sep=',')
-  # xl = pd.read_excel(res.content, sheet_name=None)
-  # fileshubetu = fileShubetu(xl)
+  shoriZumi = request.form["shoriZumi"] #処理済み件数 10を加算して返す
 
+  csv = pd.read_csv(fi, sep=',')
+  totalKensu = csv.shape[0]
   nokori = createSisetuMainFromTo(csv, indexFrom, indexTo)
-  # if fileshubetu=="sisetu":
-  #   createSisetuMain(xl)
-  # elif fileshubetu=="sokatu":
-  #   createSokatuMain(xl)
-  #   pass
-  # else:
-  #   pass
-  return jsonify({'data': {"startIndex" : (indexTo+1), "nokoriKensu":nokori, "queryParams":queryParams}})
-  # return "1"
-  # return send_file("tmp/" + timestampStr + ".pdf", as_attachment=True)
+  shoriZumi = int(shoriZumi) + 10
+  return jsonify({'data': {"startIndex" : (indexTo+1), "nokoriKensu":nokori,"totalKensu":totalKensu,"shoriZumi":shoriZumi, "queryParams":queryParams}})
 
 
 @app.route('/binaryTest',methods=["PUT"])

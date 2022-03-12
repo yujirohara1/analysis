@@ -582,13 +582,10 @@ function createTableByJsonList(datalist, locationId, tableDivId, caption, hdText
       } else if(propId[id]=="checkbox"){
         var chk = document.createElement("input");
         chk.type="checkbox";
-        //chk.id = "chkCollectAll";
-        
-        // chk.addEventListener("change", function(){
-        //   chk.checked = !chk.checked;
-        //   chkOnAllRow(chk.checked);
-        // });
         tdataA.appendChild(chk);
+
+      } else if(propId[id]=="sinchoku"){
+        tdataA.innerText = "未開始";
 
       }else{
         tdataA.innerHTML = datalist[i][propId[id]];
@@ -1152,51 +1149,6 @@ function getRadarChartData(chartData, datalist){
 
 
 
-document.getElementById('btnFileImport').addEventListener('click', function() {
-  var files = document.querySelector('#inputGroupFile').files
-  let formData = new FormData();
-  formData.append('excelFile', files[0]);
-
-  fetch('/binaryTest', {
-    method: 'PUT',
-    body: formData,
-  })
-  .then(res => res.json())
-  .then(jsonData => {
-    document.querySelector('#lblFileProperty').innerHTML = "取り込み完了！"; //jsonData.data;
-    document.getElementById('btnFileImport').classList.remove("disabled");
-  })
-  .catch(error => { console.log(error); });
-  document.getElementById('btnFileImport').classList.add("disabled");
-});
-    
-// $.ajax({
-//     type: "GET",
-//     url: "/getCsvData/" + viewnm + "/"  + nentuki + "/" + groupkb + "/" + tanto + ""
-// }).done(function(data) {
-//     let bom  = new Uint8Array([0xEF, 0xBB, 0xBF]);
-//     //let blob = new Blob([bom, data], {type: 'text/csv'});
-//     // encoding.js
-//     // var str_array = Encoding.stringToCode(data);
-//     // var sjis_array = Encoding.convert(str_array, "SJIS", "UTF8");
-//     // var uint8_array = new Uint8Array(sjis_array);
-//     //var blob = new Blob([uint8_array], { type: "text/csv;" });
-
-//     var blob=new Blob([bom, data], {type: "text/csv"});//
-//     var link = document.createElement('a');
-//     link.href = window.URL.createObjectURL(blob);
-//     link.download = "" + Math.random().toString(32).substring(2) + ".csv";
-//     link.click();
-// }).fail(function(data) {
-//     alert("エラー：" + data.statusText);
-// }).always(function(data) {
-// });
-
-
-
-
-
-
 
 
 
@@ -1224,13 +1176,7 @@ document.getElementById('btnExecuteImport').addEventListener('click', function()
     var chk = tablerows[Number(i)].cells[0].querySelector("input[type='checkbox']");
     if(chk!=null){
       if(chk.checked){
-        // var query_params = new URLSearchParams({
-        //   documentName:tablerows[Number(i)].cells[1].innerText,
-        //   chosaJiten:tablerows[Number(i)].cells[2].innerText,
-        //   dantaiCd:tablerows[Number(i)].cells[3].innerText,
-        //   dantaiNm:tablerows[Number(i)].cells[4].innerText,
-        //   url: tablerows[Number(i)].cells[5].innerText.split("/").join("|")    // encodeURIComponent(tablerows[Number(i)].cells[5].innerText)
-        // }); 
+        tablerows[Number(i)].cells[6].innerHTML = "<p font='orange'>(計算中)</p>";
         var query_params = 
           tablerows[Number(i)].cells[1].innerText + "/" + 
           tablerows[Number(i)].cells[2].innerText + "/" + 
@@ -1242,12 +1188,13 @@ document.getElementById('btnExecuteImport').addEventListener('click', function()
         .then(csvFile => {
           
 
-          var saiki = function (csvFile, indexFrom, indexTo, query_params){
+          var saiki = function (csvFile, indexFrom, indexTo, query_params, shoriZumi){
 
             let formData = new FormData();
             formData.append('csvFile', csvFile);
             formData.append('indexFrom', indexFrom);
             formData.append('indexTo', indexTo);
+            formData.append('shoriZumi', shoriZumi);
             formData.append('queryParams', query_params);
   
             fetch('/csvUpload', {
@@ -1256,35 +1203,23 @@ document.getElementById('btnExecuteImport').addEventListener('click', function()
             })
             .then(res => res.json())
             .then(jsonData => {
+              //jsonData.data.totalKensu
+              //
               if(jsonData.data.nokoriKensu>0){
-                saiki(csvFile, jsonData.data.startIndex, (jsonData.data.startIndex*1+10), query_params);
+                updateSinthoku(jsonData.data);
+                saiki(csvFile, jsonData.data.startIndex, (jsonData.data.startIndex*1+10), query_params, jsonData.data.shoriZumi);
+                updateSinthoku(jsonData.data);
               } else {
                 updateJotaiResult(jsonData.data.queryParams);
                 return;
               }
-              //document.querySelector('#lblFileProperty').innerHTML = "取り込み完了！"; //jsonData.data;
-              //document.getElementById('btnFileImport').classList.remove("disabled");
             })
             .catch(error => { console.log(error); });
 
           }
 
-          saiki(csvFile, 0, 10, query_params);
+          saiki(csvFile, 0, 10, query_params, 0);
           
-          // //updateJotaiResult(jsonData.data);
-          // //CreateFileCollectTable(jsonData.data);
-          
-          // var nokoriKensu = jsonData.data.nokoriKensu;
-          // var totalKensu = 101+jsonData.data.nokoriKensu;
-          // for(let i = 1; i<= Math.ceil(nokoriKensu/100); i++)  {
-          //   fetch('/executeFileGetAndInsert/' + query_params + "/" + ((i*100)*1+1) + "/" + ((i+1)*100) + "")
-          //   .then(res => res.json())
-          //   .then(jsonData => {
-          //     //updateJotaiResult(jsonData.data);
-          //     console.log(i);
-          //     //CreateFileCollectTable(jsonData.data);
-          //   })
-          // }
         })
         .catch(error => { 
           console.log(error); 
@@ -1300,36 +1235,21 @@ document.getElementById('btnExecuteImport').addEventListener('click', function()
   document.getElementById('btnExecuteImport').classList.remove("disabled");
 });
 
-// function executeFileGetAndInsert(rowIndex){
-//   var i = rowindex;
-//   var tablerows = document.getElementById("tableFileCollect").rows;
-//   var chk = tablerows[Number(i)].cells[0].querySelector("input[type='checkbox']");
-//   if(chk!=null){
-//     if(chk.checked){
-//       var query_params = new URLSearchParams({
-//         documentName:tablerows[Number(i)].cells[1].innerText,
-//         chosaJiten:tablerows[Number(i)].cells[2].innerText,
-//         dantaiCd:tablerows[Number(i)].cells[3].innerText,
-//         dantaiNm:tablerows[Number(i)].cells[4].innerText,
-//         url:tablerows[Number(i)].cells[5].innerText    // encodeURIComponent(tablerows[Number(i)].cells[5].innerText)
-//       }); 
-//       fetch('/executeFileGetAndInsert?' + query_params)
-//       .then(res => res.json())
-//       .then(jsonData => {
-//         updateJotaiResult(jsonData.data);
-//         executeFileGetAndInsert(rowIndex++);
-//       })
-//       .catch(error => { 
-//         console.log(error); 
-//       });
-//     }
-//   }
-// }
+function updateSinthoku(list){
 
-// document.getElementById('btnExecuteImport').addEventListener('click', function() {
-//   executeFileGetAndInsert(1);
-// });
+  var resultArray = list.queryParams.split("/");
+  var tablerows = document.getElementById("tableFileCollect").querySelector("table").rows;
+    for(let i=0; i<tablerows.length; i++){
+      if (tablerows[i].cells[1].innerText == resultArray[0] &&
+        tablerows[i].cells[2].innerText == resultArray[1] &&
+        tablerows[i].cells[3].innerText == resultArray[2]){
+          tablerows[i].cells[6].innerText = list.shoriZumi + "/" + list.totalKensu;
+          //tablerows[i].cells[6].classList.remove("loading-ss");
+          //tablerows[Number(i)].cells[0].innerHTML = "";
+        }
+    }
 
+}
 
 function updateJotaiResult(result){
   var resultArray = result.split("/");
@@ -1352,6 +1272,8 @@ function updateJotaiResult(result){
 document.getElementById('btnExecuteCollect').addEventListener('click', function() {
   createTableLoading("tableFileCollectDiv", "abcdeLoading", "政府統計をクローリングしています...");
   document.getElementById('btnExecuteCollect').classList.add("disabled");
+  document.getElementById('btnExecuteImport').classList.add("disabled");
+
   var filePattern = "dummy"; //getSelectedFilePatternNm();
   fetch('/executeFileCollect/' + filePattern, {
     method: 'GET',
@@ -1361,13 +1283,14 @@ document.getElementById('btnExecuteCollect').addEventListener('click', function(
   .then(jsonData => {
     createTableDiv("tableFileCollectDiv", "tableFileCollect");
     //CreateFileCollectTable(jsonData.data);
-    var hdText = ["対象", "決算年度", "法適用区分","表番号", "検出URL", "状態"];
-    var propId = ["checkbox", "year", "dantai", "text", "url", "jotai"];
-    var align = ["left", "left", "left", "left", "left"];
+    var hdText = ["対象", "決算年度", "法適用区分","表番号", "検出URL", "状態","進捗"];
+    var propId = ["checkbox", "year", "dantai", "text", "url", "jotai","sinchoku"];
+    var align = ["left", "left", "left", "left", "left", "center"];
     createTableByJsonList(jsonData.data, "tableFileCollectDiv", "tableFileCollect", "ファイル取り込み状況", hdText, propId, align, null, 1.5);
     document.getElementById('btnExecuteCollect').classList.remove("disabled");
     document.getElementById('btnExecuteImport').classList.remove("disabled");
     destroyTableLoading("tableFileCollectDiv", "abcdeLoading");
+    document.getElementById('btnExecuteImport').classList.remove("disabled");
 })
   .catch(error => { 
     console.log(error); 
@@ -1377,139 +1300,10 @@ document.getElementById('btnExecuteCollect').addEventListener('click', function(
 });
 
 
-
-
-// document.getElementById("selTdfk").addEventListener("change", function(){
-//   //AllClearGraphs();
-//   AllClearTable();
-//   val = document.getElementById("selTdfk").value;
-//   fetch('/getCityListByTdfkCd/' + val, {
-//     method: 'GET',
-//     'Content-Type': 'application/json'
-//   })
-//   .then(res => res.json())
-//   .then(jsonData => {
-//     var list = JSON.parse(jsonData.data);
-//     createCitySelectOption(list);
-//     UndispLoading();
-//     return;
-//     //document.querySelector('#lblFileProperty').innerHTML = "取り込み完了！"; //jsonData.data;
-//     //document.getElementById('btnFileImport').classList.remove("disabled");
-//   })
-
-
-
-
-function CreateFileCollectTable(datalist){
-  var tableDiv = document.getElementById("tableFileCollectDiv");
-  while(tableDiv.lastChild){
-    tableDiv.removeChild(tableDiv.lastChild);
-  }
-
-  let table = document.createElement("table");
-  let thead = document.createElement('thead');
-  let tbody = document.createElement('tbody');
-
-
-  var trow = document.createElement('tr');
-
-  let tdataA = document.createElement('th');
-  var chk = document.createElement("input");
-  chk.type="checkbox";
-  //chk.id = "chkCollectAll";
-  
-  chk.addEventListener("change", function(){
-    chk.checked = !chk.checked;
-    chkOnAllRow(chk.checked);
-  });
-  tdataA.appendChild(chk);
-  let tdataB = document.createElement('th');
-  tdataB.innerText = "資料の種類";
-  let tdataC = document.createElement('th');
-  tdataC.innerText = "調査時点";
-  let tdataD = document.createElement('th');
-  tdataD.innerText = "団体コード";
-  let tdataE = document.createElement('th');
-  tdataE.innerText = "団体名";
-  let tdataF = document.createElement('th');
-  tdataF.innerText = "ファイルURL";
-  let tdataG = document.createElement('th');
-  tdataG.innerText = "状態";
-  trow.appendChild(tdataA);
-  trow.appendChild(tdataB);
-  trow.appendChild(tdataC);
-  trow.appendChild(tdataD);
-  trow.appendChild(tdataE);
-  trow.appendChild(tdataF);
-  trow.appendChild(tdataG);
-  thead.appendChild(trow);
-
-
-  for(let i in datalist){
-    var trow = document.createElement('tr');
-
-    let tdataA = document.createElement('td');
-
-    let tdataB = document.createElement('td');
-    tdataB.innerText = datalist[i].document;
-    let tdataC = document.createElement('td');
-    tdataC.innerText = datalist[i].year;
-    let tdataD = document.createElement('td');
-    tdataD.innerText = datalist[i].dantai;
-    let tdataE = document.createElement('td');
-    tdataE.innerText = datalist[i].text;
-    let tdataF = document.createElement('td');
-    tdataF.innerText = datalist[i].url;
-    let tdataG = document.createElement('td');
-    tdataG.innerText = datalist[i].jotai;
-
-    if(datalist[i].jotai == "未取込"){
-      var chk = document.createElement("input");
-      chk.type="checkbox";
-      tdataA.appendChild(chk);
-    }
-
-    trow.appendChild(tdataA);
-    trow.appendChild(tdataB);
-    trow.appendChild(tdataC);
-    trow.appendChild(tdataD);
-    trow.appendChild(tdataE);
-    trow.appendChild(tdataF);
-    trow.appendChild(tdataG);
-    tbody.appendChild(trow);
-  }
-
-  table.appendChild(thead);
-  table.appendChild(tbody);
-  table.classList.add("table");
-  table.classList.add("table-bordered");
-  table.classList.add("table_sticky");
-  table.classList.add("table-hover");
-  table.classList.add("fs-7"); //text-end
-  table.id = "tableFileCollect";
-  document.getElementById('tableFileCollectDiv').appendChild(table);
-  //table = new DataTable(mainTable);
-  
-}
-
-
-
-function chkOnAllRow(isChecked){
-  var tablerows = document.getElementById("tableFileCollect").rows;
-  for(let i=0; i<tablerows.length; i++){
-    var chk = tablerows[Number(i)].cells[0].querySelector("input[type='checkbox']");
-    if(chk!=null){
-      chk.checked = isChecked;
-    }
-  }
-}
-
 //ファイル取り込みモーダルを起動
 //ファイルインプットタグを初期化
 //
 document.getElementById('modalExcelUpload').addEventListener('show.bs.modal', function () {
-  document.getElementById('inputGroupFile').value="";
-  document.getElementById("lblFileProperty").innerHTML = "";
   document.getElementById('btnFileImport').classList.add("disabled");
   document.getElementById('btnExecuteImport').classList.add("disabled");
   AllClearTable("tableFileCollectDiv");
@@ -1517,49 +1311,6 @@ document.getElementById('modalExcelUpload').addEventListener('show.bs.modal', fu
   //document.getElementById('btnExecuteCollect').classList.add("disabled");
 });
 
-
-
-document.getElementById("inputGroupFile").addEventListener("change", function(){
-  let nBytes = 0,
-      oFiles = this.files,
-      nFiles = oFiles.length;
-
-  for (let nFileId = 0; nFileId < nFiles; nFileId++) {
-    nBytes += oFiles[nFileId].size;
-  }
-  let sOutput = nBytes + " bytes";
-  // 倍数近似のための任意のコード
-  const aMultiples = ["KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
-  for (nMultiple = 0, nApprox = nBytes / 1024; nApprox > 1; nApprox /= 1024, nMultiple++) {
-    sOutput = nApprox.toFixed(3) + " " + aMultiples[nMultiple] + " (" + nBytes + " bytes)";
-  }
-  // 任意コードの末尾
-  if(nFiles==1){
-    document.getElementById("lblFileProperty").innerHTML = sOutput;
-    document.getElementById('btnFileImport').classList.remove("disabled");
-  }
-}, false);
-
-
-// document.getElementById("selTdfk").addEventListener("change", function(){
-//   //AllClearGraphs();
-//   AllClearTable("mainTableDiv");
-//   val = document.getElementById("selTdfk").value;
-//   document.getElementById("selTdfkSub").value = val;
-//   fetch('/getCityListByTdfkCd/' + val, {
-//     method: 'GET',
-//     'Content-Type': 'application/json'
-//   })
-//   .then(res => res.json())
-//   .then(jsonData => {
-//     var list = JSON.parse(jsonData.data);
-//     createCitySelectOption(list);
-//     UndispLoading();
-//     return;
-//   })
-//   .catch(error => { console.log(error); });
-//     dispLoading();
-// });
 
 
 function AllClearGraphs(){
@@ -1580,38 +1331,7 @@ function AllClearTable(tableDivId){
 
 
 
-// document.getElementById("selFilePattern").addEventListener("change", function(){
-//   if(document.getElementById("selFilePattern").value==0){
-//     document.getElementById('btnExecuteCollect').classList.add("disabled");
-//   }else{
-//     document.getElementById('btnExecuteCollect').classList.remove("disabled");
-//   }
-// });
-
-
 var datalist = null;
-
-// document.getElementById("selCity").addEventListener("change", function(){
-//   //AllClearGraphs();
-//   AllClearTable("mainTableDiv");
-//   val = document.getElementById("selCity").value;
-//   fetch('/getFullRecordByDantaiCd/' + val, {
-//     method: 'GET',
-//     'Content-Type': 'application/json'
-//   })
-//   .then(res => res.json())
-//   .then(jsonData => {
-//     var list = JSON.parse(jsonData.data);
-//     datalist = list;
-//     createTable(list);
-//     UndispLoading();
-//     return;
-//     //document.querySelector('#lblFileProperty').innerHTML = "取り込み完了！"; //jsonData.data;
-//     //document.getElementById('btnFileImport').classList.remove("disabled");
-//   })
-//   .catch(error => { console.log(error); });
-//   dispLoading();
-// });
 
 function createTable(datalist){
   var tableDiv = document.getElementById("mainTableDiv");
