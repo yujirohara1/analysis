@@ -277,6 +277,7 @@ function getAndCreateTable_ShuekiRankList(){
     var hdText = ["ランク", "団体名", "施設名",　"経常収支比率(%)"];
     var propId = ["rank", "dantai_nm", "sisetu_nm",　"keijo_shusi_hiritu"];
     var align = ["center", "left", "left",　"right"];
+    var width = ["10%", "40%", "40%", "20%"];
     createTableByJsonList(list, "divMainLeftTop", "tableDivShueki", "経常収支比率による収益性ランキング", hdText, propId, align, null, 3);
     //ローダーを削除
     destroyTableLoading("divMainLeftTop", "tableDivLoading1");
@@ -304,6 +305,7 @@ function getAndCreateTable_ReturnOnEquityRankList(){
     var hdText = ["ランク", "団体名", "施設名",　"自己資本利益率(%)"];
     var propId = ["rank", "dantai_nm", "sisetu_nm",　"roe"];
     var align = ["center", "left", "left",　"right"];
+    var width = ["10%", "40%", "40%", "20%"];
     createTableByJsonList(list, "divMainCenterBottom", "tableDivRoe", "自己資本利益率(ROE)による収益性ランキング", hdText, propId, align, null, 3);
     //ローダーを削除
     destroyTableLoading("divMainCenterBottom", "tableDivLoading8");
@@ -331,6 +333,7 @@ function getAndCreateTable_ReturnOnAssetRankList(){
     var hdText = ["ランク", "団体名", "施設名",　"総資産利益率(%)"];
     var propId = ["rank", "dantai_nm", "sisetu_nm",　"roa"];
     var align = ["center", "left", "left",　"right"];
+    var width = ["10%", "40%", "40%", "20%"];
     createTableByJsonList(list, "divMainRightBottom", "tableDivRoa", "自己資本利益率(ROA)による収益性ランキング", hdText, propId, align, null, 3);
     //ローダーを削除
     destroyTableLoading("divMainRightBottom", "tableDivLoading9");
@@ -357,6 +360,7 @@ function getAndCreateTable_SihonHirituRankList(){
     var hdText = ["ランク", "団体名", "施設名",　"資本比率(%)"];
     var propId = ["rank", "dantai_nm", "sisetu_nm",　"sihon_hiritu"];
     var align = ["center", "left", "left",　"right"];
+    var width = ["10%", "40%", "40%", "20%"];
     createTableByJsonList(list, "divMainLeftBottom2", "tableDivSihonHiritu", "資本比率による収益性ランキング", hdText, propId, align, null, 3);
     //ローダーを削除
     destroyTableLoading("divMainLeftBottom2", "tableDivLoading10");
@@ -382,6 +386,7 @@ function getAndCreateTable_KoteiHirituRankList(){
     var hdText = ["ランク", "団体名", "施設名",　"固定比率(%)"];
     var propId = ["rank", "dantai_nm", "sisetu_nm",　"kotei_hiritu"];
     var align = ["center", "left", "left",　"right"];
+    var width = ["10%", "40%", "40%", "20%"];
     createTableByJsonList(list, "divMainCenterBottom2", "tableDivKoteiHiritu", "固定比率による収益性ランキング", hdText, propId, align, null, 3);
     //ローダーを削除
     destroyTableLoading("divMainCenterBottom2", "tableDivLoading11");
@@ -408,6 +413,7 @@ function getAndCreateTable_JugyoinHitoriRiekiRankList(){
     var hdText = ["ランク", "団体名", "施設名",　"職員1人あたり利益(千円)"];
     var propId = ["rank", "dantai_nm", "sisetu_nm",　"hitori_rieki"];
     var align = ["center", "left", "left",　"right"];
+    var width = ["10%", "40%", "40%", "20%"];
     createTableByJsonList(list, "divMainRightBottom2", "tableDivHitoriRieki", "職員1人あたり利益による生産性ランキング", hdText, propId, align, null, 3);
     //ローダーを削除
     destroyTableLoading("divMainRightBottom2", "tableDivLoading12");
@@ -434,6 +440,7 @@ function getAndCreateTable_KeijoriekiSeichorituRankList(){
     var hdText = ["ランク", "団体名", "施設名",　"成長率(%)"];
     var propId = ["rank", "dantai_nm", "sisetu_nm",　"seicho_ritu"];
     var align = ["center", "left", "left",　"right"];
+    var width = ["10%", "40%", "40%", "20%"];
     createTableByJsonList(list, "divMainLeftBottom3", "tableDivKeijoSeicho", "経常利益成長率による成長性ランキング", hdText, propId, align, null, 3);
     //ローダーを削除
     destroyTableLoading("divMainLeftBottom3", "tableDivLoading13");
@@ -460,6 +467,7 @@ function getAndCreateTable_SihonSeichorituRankList(){
     var hdText = ["ランク", "団体名", "施設名",　"成長率(%)"];
     var propId = ["rank", "dantai_nm", "sisetu_nm",　"seicho_ritu"];
     var align = ["center", "left", "left",　"right"];
+    var width = ["10%", "40%", "40%", "20%"];
     createTableByJsonList(list, "divMainCenterBottom3", "tableDivSihonSeicho", "資本成長率による成長性ランキング", hdText, propId, align, null, 3);
     //ローダーを削除
     destroyTableLoading("divMainCenterBottom3", "tableDivLoading14");
@@ -525,13 +533,16 @@ function createToasts(selectData){
 
 
 //テーブルの見出し行を作成する。戻したDOMはtheadにappendされる想定。
-function createTableHeader(hdText){
+function createTableHeader(hdText,width){
   let trow = document.createElement('tr');
   for (let hd in hdText){
     var thA = document.createElement('th');
     thA.innerHTML = hdText[hd];
     thA.style.textAlign = "center";
     thA.style.verticalAlign = "middle";
+    if(width!=null){
+      try{thA.style.width=width[hd];}catch(e){}
+    }
     trow.appendChild(thA);
   }
   return trow;
@@ -554,7 +565,7 @@ function createTableByJsonList(datalist, locationId, tableDivId, caption, hdText
   let trow = document.createElement('tr');
 
   //見出し行作成
-  thead.appendChild(createTableHeader(hdText));
+  thead.appendChild(createTableHeader(hdText, width));
   
   for(let i in datalist){
     trow = document.createElement('tr');
@@ -620,6 +631,7 @@ function createTableByJsonList(datalist, locationId, tableDivId, caption, hdText
   table.style.height = "calc(100vh/" + height + ")";
   table.id = tableDivId.replace("Div","");  ;//"tableHikakuCityList";
   document.getElementById(tableDivId).appendChild(table);
+  document.getElementById(tableDivId).style.width = "100%";
 
   if(locationId!=""){
     var popLabel = "";
@@ -819,7 +831,8 @@ function getAndCreateTable_AnzenRankList(){
     var hdText = ["ランク", "団体名", "施設名",　"流動比率(%)"];
     var propId = ["rank", "dantai_nm", "sisetu_nm",　"ryudo_hiritu"];
     var align = ["center", "left", "left",　"right"];
-    createTableByJsonList(list, "divMainCenterTop", "tableDivAnzen", "流動比率による安全性ランキング", hdText, propId, align, null, 3);
+    var width = ["10%", "40%", "40%", "20%"];
+    createTableByJsonList(list, "divMainCenterTop", "tableDivAnzen", "流動比率による安全性ランキング", hdText, propId, align, width, 3);
 
     //ローダーを削除
     destroyTableLoading("divMainCenterTop", "tableDivLoading");
@@ -850,6 +863,7 @@ function getAndCreateTable_RuisekiKessonRankList(){
     var hdText = ["ランク", "団体名", "施設名",　"累積欠損比率(%)"];
     var propId = ["rank", "dantai_nm", "sisetu_nm",　"ruiseki_kesson_hiritu"];
     var align = ["center", "left", "left",　"right"];
+    var width = ["10%", "40%", "40%", "20%"];
     createTableByJsonList(list, "divMainRightTop", "tableDivRuisekiKesson", "累積欠損比率による健全性ランキング", hdText, propId, align, null, 3);
     //ローダーを削除
     destroyTableLoading("divMainRightTop", "tableDivLoading2");
@@ -877,6 +891,7 @@ function getAndCreateTable_KigyosaiKyusuiRankList(){
     var hdText = ["ランク", "団体名", "施設名",　"企業債残高対給水収益比率(%)"];
     var propId = ["rank", "dantai_nm", "sisetu_nm",　"kigyosai_shueki_hiritu"];
     var align = ["center", "left", "left",　"right"];
+    var width = ["10%", "40%", "40%", "20%"];
     createTableByJsonList(list, "divMainLeftMiddle", "tableDivKigyosaiKyusuiRankList", "企業債残高対給水収益比率による健全性ランキング", hdText, propId, align, null, 3);
     //ローダーを削除
     destroyTableLoading("divMainLeftMiddle", "tableDivLoading4");
@@ -904,6 +919,7 @@ function getAndCreateTable_KoteiShokyakurituRankList(){
     var hdText = ["ランク", "団体名", "施設名",　"有形固定資産償却率(%)"];
     var propId = ["rank", "dantai_nm", "sisetu_nm",　"shokyaku_hiritu"];
     var align = ["center", "left", "left",　"right"];
+    var width = ["10%", "40%", "40%", "20%"];
     createTableByJsonList(list, "divMainCenterMiddle", "tableDivKoteiShokyakurituRankList", "有形固定資産償却率による健全性ランキング", hdText, propId, align, null, 3);
     //ローダーを削除
     destroyTableLoading("divMainCenterMiddle", "tableDivLoading5");
@@ -930,6 +946,7 @@ function getAndCreateTable_ByoshoRiyorituRankList(){
     var hdText = ["ランク", "団体名", "施設名",　"病床利用率(%)"];
     var propId = ["rank", "dantai_nm", "sisetu_nm",　"riyoritu"];
     var align = ["center", "left", "left",　"right"];
+    var width = ["10%", "40%", "40%", "20%"];
     createTableByJsonList(list, "divMainRightMiddle", "tableDivByoshoRiyorituRankList", "病床利用率による効率性ランキング", hdText, propId, align, null, 3);
     //ローダーを削除
     destroyTableLoading("divMainRightMiddle", "tableDivLoading6");
@@ -956,6 +973,7 @@ function getAndCreateTable_NyuinHitoriShuekiRankList(){
     var hdText = ["ランク", "団体名", "施設名",　"入院患者1人1日あたり収益(%)"];
     var propId = ["rank", "dantai_nm", "sisetu_nm",　"hitori_ichinichi_shueki"];
     var align = ["center", "left", "left",　"right"];
+    var width = ["10%", "40%", "40%", "20%"];
     createTableByJsonList(list, "divMainLeftBottom", "tableDivNyuinHitoriShuekiRankList", "入院患者1人1日あたり収益による収益性ランキング", hdText, propId, align, null, 3);
     //ローダーを削除
     destroyTableLoading("divMainLeftBottom", "tableDivLoading7");
