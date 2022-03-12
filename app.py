@@ -158,8 +158,8 @@ def favicon():
     return app.send_static_file("favicon.ico")
 
 
-@app.route('/executeFileGetAndInsert/<documentName>/<chosaJiten>/<dantaiCd>/<dantaiNm>/<url>/<indexFrom>/<indexTo>')
-def executeFileGetAndInsert(documentName, chosaJiten, dantaiCd, dantaiNm, url, indexFrom, indexTo):
+@app.route('/executeFileGetAndInsert/<chosaJiten>/<dantaiCd>/<dantaiNm>/<url>/<indexFrom>/<indexTo>')
+def executeFileGetAndInsert(chosaJiten, dantaiCd, dantaiNm, url, indexFrom, indexTo):
   url = url.replace("|","/").replace("@","?")
 
   res = requests.get(url)
@@ -215,16 +215,20 @@ def insertJotai(document_name, chosa_jiten, dantai_cd, dantai_nm, file_url, jota
 @app.route('/executeFileCollect/<filePattern>',methods=["GET"])
 def executeFileCollect(filePattern):
   link_list =[]
-  for nen in ["r01"]:
-    # https://www.e-stat.go.jp/stat-search/files?page=1&layout=datalist&toukei=00200251&kikan=00200&tstat=000001125335&cycle=7&year=20210&month=0&tclass1=000001125336&tclass2=000001125337&result_back=1&result_page=1&tclass3val=0
-    res = requests.get("https://www.e-stat.go.jp/stat-search/files?page=1&layout=datalist&toukei=00200251&kikan=00200&tstat=000001125335&cycle=7&year=20210&month=0&tclass1=000001125336&tclass2=000001125337&result_back=1&result_page=1&tclass3val=0")
+  hou = ""
+  for nen in range(2014, 2022):
+    res = requests.get("https://www.e-stat.go.jp/stat-search/files?page=1&layout=datalist&toukei=00200251&kikan=00200&tstat=000001125335&cycle=7&year=" + str(nen) +  "0&month=0&tclass1=000001125336&tclass2=000001125337&result_back=1&result_page=1&tclass3val=0")
     soup = BeautifulSoup(res.content, 'html.parser')
-    # result = soup.select("a[data-file_type=EXCEL]") #soup.select("a[href]")
     articles = soup.select("article")
     for article in articles:
       for ul in article.select("ul"):
         if len(ul.select('span:contains("表番号")')) != 0 :
           hyoBango = ul.select('span:contains("表番号") ~ span')[0].text
+          if len(ul.select('a:contains("法適用")')) == 1:
+            hou = "法適用"
+          if len(ul.select('a:contains("法非適用")')) == 1:
+            hou = "法非適用"
+
           if len(ul.select("a[data-file_type=EXCEL]")) == 1:
             link = ul.select("a[data-file_type=EXCEL]")[0]
             href = link.get("href")
@@ -233,8 +237,8 @@ def executeFileCollect(filePattern):
             #   tdfk = tdfkCodeByName(text)
             #   if tdfk != "":
             link_list.append({"document":"filePattern", 
-                              "year":"nen", 
-                              "dantai":"tdfk", 
+                              "year":nen, 
+                              "dantai":hou, 
                               "text":hyoBango, 
                               "url" :"https://www.e-stat.go.jp" + href.replace("https://www.e-stat.go.jp",""),
                               "jotai" : getJotai("財政状況資料_都道府県", "nen", "tdfk")})
@@ -260,6 +264,7 @@ def csvUpload():
   fi = request.files['csvFile']
   indexFrom = int(request.form["indexFrom"])
   indexTo = int(request.form["indexTo"])
+  queryParams = request.form["queryParams"]
   # res = requests.get("https://www.soumu.go.jp" + xlfile)
   csv = pd.read_csv(fi, sep=',')
   # xl = pd.read_excel(res.content, sheet_name=None)
@@ -273,7 +278,7 @@ def csvUpload():
   #   pass
   # else:
   #   pass
-  return jsonify({'data': {"startIndex" : (indexTo+1), "nokoriKensu":nokori}})
+  return jsonify({'data': {"startIndex" : (indexTo+1), "nokoriKensu":nokori, "queryParams":queryParams}})
   # return "1"
   # return send_file("tmp/" + timestampStr + ".pdf", as_attachment=True)
 

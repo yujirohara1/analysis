@@ -579,6 +579,17 @@ function createTableByJsonList(datalist, locationId, tableDivId, caption, hdText
           tdataA.appendChild(createRankingCup(r));
           tdataA.classList.add("rank_number");
         }
+      } else if(propId[id]=="checkbox"){
+        var chk = document.createElement("input");
+        chk.type="checkbox";
+        //chk.id = "chkCollectAll";
+        
+        // chk.addEventListener("change", function(){
+        //   chk.checked = !chk.checked;
+        //   chkOnAllRow(chk.checked);
+        // });
+        tdataA.appendChild(chk);
+
       }else{
         tdataA.innerHTML = datalist[i][propId[id]];
         //divMain から始まる場合のみ。つまりはダイジェストタブで利用される場合のみ。
@@ -1208,7 +1219,7 @@ document.getElementById('btnFileImport').addEventListener('click', function() {
 document.getElementById('btnExecuteImport').addEventListener('click', function() {
   document.getElementById('btnExecuteCollect').classList.add("disabled");
   document.getElementById('btnExecuteImport').classList.add("disabled");
-  var tablerows = document.getElementById("tableFileCollect").rows;
+  var tablerows = document.getElementById("tableFileCollect").querySelector("table").rows;
   for(let i=1; i<tablerows.length; i++){
     var chk = tablerows[Number(i)].cells[0].querySelector("input[type='checkbox']");
     if(chk!=null){
@@ -1224,20 +1235,20 @@ document.getElementById('btnExecuteImport').addEventListener('click', function()
           tablerows[Number(i)].cells[1].innerText + "/" + 
           tablerows[Number(i)].cells[2].innerText + "/" + 
           tablerows[Number(i)].cells[3].innerText + "/" + 
-          tablerows[Number(i)].cells[4].innerText + "/" + 
-          tablerows[Number(i)].cells[5].innerText.split("/").join("|").split("?").join("@");
+          tablerows[Number(i)].cells[4].innerText.split("/").join("|").split("?").join("@");
 
         fetch('/executeFileGetAndInsert/' + query_params + "/0/100")
         .then(res => res.blob())
         .then(csvFile => {
           
 
-          var saiki = function (csvFile, indexFrom, indexTo){
+          var saiki = function (csvFile, indexFrom, indexTo, query_params){
 
             let formData = new FormData();
             formData.append('csvFile', csvFile);
             formData.append('indexFrom', indexFrom);
             formData.append('indexTo', indexTo);
+            formData.append('queryParams', query_params);
   
             fetch('/csvUpload', {
               method: 'PUT',
@@ -1245,9 +1256,10 @@ document.getElementById('btnExecuteImport').addEventListener('click', function()
             })
             .then(res => res.json())
             .then(jsonData => {
-              if(jsonData.data.nokoriKensu>=0){
-                saiki(csvFile, jsonData.data.startIndex, (jsonData.data.startIndex*1+100));
+              if(jsonData.data.nokoriKensu>0){
+                saiki(csvFile, jsonData.data.startIndex, (jsonData.data.startIndex*1+100), query_params);
               } else {
+                updateJotaiResult(jsonData.data.queryParams);
                 return;
               }
               //document.querySelector('#lblFileProperty').innerHTML = "取り込み完了！"; //jsonData.data;
@@ -1257,7 +1269,7 @@ document.getElementById('btnExecuteImport').addEventListener('click', function()
 
           }
 
-          saiki(csvFile, 0, 100);
+          saiki(csvFile, 0, 100, query_params);
           
           // //updateJotaiResult(jsonData.data);
           // //CreateFileCollectTable(jsonData.data);
@@ -1279,8 +1291,8 @@ document.getElementById('btnExecuteImport').addEventListener('click', function()
         });
         //break;
         
-        tablerows[Number(i)].cells[6].classList.add("loading-ss");
-        tablerows[Number(i)].cells[6].innerText = "";
+        tablerows[Number(i)].cells[5].classList.add("loading-ss");
+        tablerows[Number(i)].cells[5].innerText = "";
       }
     }
   }
@@ -1319,14 +1331,17 @@ document.getElementById('btnExecuteImport').addEventListener('click', function()
 // });
 
 
-function updateJotaiResult(resultJson){
-  var tablerows = document.getElementById("tableFileCollect").rows;
+function updateJotaiResult(result){
+  var resultArray = result.split("/");
+  var tablerows = document.getElementById("tableFileCollect").querySelector("table").rows;
+  //var tablerows = document.getElementById("tableFileCollect").rows;
     for(let i=0; i<tablerows.length; i++){
-      if (tablerows[i].cells[1].innerText == resultJson.documentName &&
-        tablerows[i].cells[2].innerText == resultJson.chosaJiten &&
-        tablerows[i].cells[3].innerText == resultJson.dantaiCd){
-          tablerows[i].cells[6].innerText = resultJson.result;
-          tablerows[i].cells[6].classList.remove("loading-ss");
+      //"2014/法適用/64/https:||www.e-stat.go.jp|stat-search|file-download@statInfId=000031815646&fileKind=0"
+      if (tablerows[i].cells[1].innerText == resultArray[0] &&
+        tablerows[i].cells[2].innerText == resultArray[1] &&
+        tablerows[i].cells[3].innerText == resultArray[2]){
+          tablerows[i].cells[5].innerText = "完了！";
+          tablerows[i].cells[5].classList.remove("loading-ss");
           //var chk = tablerows[Number(i)].cells[0].querySelector("input[type='checkbox']");
           tablerows[Number(i)].cells[0].innerHTML = "";
         }
@@ -1335,18 +1350,24 @@ function updateJotaiResult(resultJson){
 }
 
 document.getElementById('btnExecuteCollect').addEventListener('click', function() {
+  createTableLoading("tableFileCollectDiv", "abcdeLoading", "政府統計をクローリングしています...");
   document.getElementById('btnExecuteCollect').classList.add("disabled");
-  var filePattern = getSelectedFilePatternNm();
+  var filePattern = "dummy"; //getSelectedFilePatternNm();
   fetch('/executeFileCollect/' + filePattern, {
     method: 'GET',
     'Content-Type': 'application/json'
   })
   .then(res => res.json())
   .then(jsonData => {
-    AllClearTable("tableFileCollectDiv");
-    CreateFileCollectTable(jsonData.data);
+    createTableDiv("tableFileCollectDiv", "tableFileCollect");
+    //CreateFileCollectTable(jsonData.data);
+    var hdText = ["対象", "決算年度", "法適用区分","表番号", "検出URL", "状態"];
+    var propId = ["checkbox", "year", "dantai", "text", "url", "jotai"];
+    var align = ["left", "left", "left", "left", "left"];
+    createTableByJsonList(jsonData.data, "tableFileCollectDiv", "tableFileCollect", "ファイル取り込み状況", hdText, propId, align, null, 1.5);
     document.getElementById('btnExecuteCollect').classList.remove("disabled");
     document.getElementById('btnExecuteImport').classList.remove("disabled");
+    destroyTableLoading("tableFileCollectDiv", "abcdeLoading");
 })
   .catch(error => { 
     console.log(error); 
@@ -1492,7 +1513,7 @@ document.getElementById('modalExcelUpload').addEventListener('show.bs.modal', fu
   document.getElementById('btnFileImport').classList.add("disabled");
   document.getElementById('btnExecuteImport').classList.add("disabled");
   AllClearTable("tableFileCollectDiv");
-  document.getElementById('selFilePattern').selectedIndex = 0;
+  //document.getElementById('selFilePattern').selectedIndex = 0;
   //document.getElementById('btnExecuteCollect').classList.add("disabled");
 });
 
@@ -1559,13 +1580,13 @@ function AllClearTable(tableDivId){
 
 
 
-document.getElementById("selFilePattern").addEventListener("change", function(){
-  if(document.getElementById("selFilePattern").value==0){
-    document.getElementById('btnExecuteCollect').classList.add("disabled");
-  }else{
-    document.getElementById('btnExecuteCollect').classList.remove("disabled");
-  }
-});
+// document.getElementById("selFilePattern").addEventListener("change", function(){
+//   if(document.getElementById("selFilePattern").value==0){
+//     document.getElementById('btnExecuteCollect').classList.add("disabled");
+//   }else{
+//     document.getElementById('btnExecuteCollect').classList.remove("disabled");
+//   }
+// });
 
 
 var datalist = null;

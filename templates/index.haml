@@ -109,14 +109,10 @@
     %div.modal-content
       %div.modal-header
         %display-6.modal-title#modalExcelUploadLabel
-          地方財政に関する統計ファイルを収集してデータを取り込みます。
+          政府統計から公営企業の決算ファイルを収集します。
       %div.modal-body
         %div.row
-          %div.col-4
-            %select#selFilePattern.form-select.form-select-sm(aria-label=".form-select-sm example")
-              %option(selected value="0")
-                （資料の種類を選択）
-          %div.col-4
+          %div.col-8
             %button.btn.btn-sm.btn-primary#btnExecuteCollect(type="button")
               クロール開始
           %div.col-4
@@ -125,7 +121,7 @@
         %div.row
           &nbsp;
         %div.row
-          %div.container-fluid.table-responsive#tableFileCollectDiv
+          %div.loadableTable#tableFileCollectDiv
 
         %div.row
           &nbsp;
