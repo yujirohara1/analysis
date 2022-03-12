@@ -523,111 +523,160 @@ def getDantaiListOfRadarChart(nendo):
     return jsonify({'data': datalist_schema.dumps(datalist, ensure_ascii=False, default=decimal_default_proc)})
 
 
+
+
+
+# レーダーチャートのデータを取得
+def getRankList(nendo, joken, table_nm, rank_col):
+  ret = 0
+  resultset=[]
+  filters = joken.split(",")
+
+  sql = ""
+
+  #条件なし全体ランキング
+  if filters[0] == "dummy" and len(filters) == 1 :
+    sql =  "select * from " + table_nm + " where nendo = " + str(nendo) + " and gyomu_cd = '46' and " + rank_col + " is not null order by " + rank_col + " desc "
+
+  else:
+    # 条件あり　unionしていく
+    for filtWhere in filters:
+      if filtWhere != "dummy":
+        if sql != "":
+          sql =  sql + " union all  "
+
+        sql = sql + " select * from " + table_nm + " where nendo = " + str(nendo) + " and"
+        sql = sql + "          gyomu_cd = '" + "46" + "' and "
+        sql = sql + "          gyoshu_cd = '" + str(int(filtWhere.split("-")[0])) + "' and "
+        sql = sql + "          jigyo_cd = '" + str(int(filtWhere.split("-")[1])) + "' and " + rank_col + " is not null "
+
+    sql = sql + " order by " + rank_col + " desc "
+
+  datalist = []
+  if db.session.execute(text(sql)).fetchone() is not None:
+    datalist = db.session.execute(text(sql))
+
+  return datalist
+
+
+
 # 収益性ランキングの作成（経常収支比率の昇順）
-@app.route('/getShuekiRankList/<nendo>')
-def getShuekiRankList(nendo):
-    datalist = VAnalyShuekiseiA.query.filter(VAnalyShuekiseiA.nendo == nendo, VAnalyShuekiseiA.keijo_shusi_hiritu != None).order_by(desc(VAnalyShuekiseiA.keijo_shusi_hiritu)).all()
-    datalist_schema = VAnalyShuekiseiASchema(many=True)
-    return jsonify({'data': datalist_schema.dumps(datalist, ensure_ascii=False, default=decimal_default_proc)})
+@app.route('/getShuekiRankList/<nendo>/<joken>')
+def getShuekiRankList(nendo, joken):
+  datalist = getRankList(nendo, joken, "v_analy_shuekisei_a", "keijo_shusi_hiritu")
+  datalist_schema = VAnalyShuekiseiASchema(many=True)
+  return jsonify({'data': datalist_schema.dumps(datalist, ensure_ascii=False, default=decimal_default_proc)})
 
 # 安全性ランキングの作成（流動比率の昇順）
-@app.route('/getAnzenRankList/<nendo>')
-def getAnzenRankList(nendo):
-    datalist = VAnalyRyudoAnzenseiA.query.filter(VAnalyRyudoAnzenseiA.nendo == nendo, VAnalyRyudoAnzenseiA.ryudo_hiritu != None).order_by(desc(VAnalyRyudoAnzenseiA.ryudo_hiritu)).all()
-    datalist_schema = VAnalyRyudoAnzenseiASchema(many=True)
-    return jsonify({'data': datalist_schema.dumps(datalist, ensure_ascii=False, default=decimal_default_proc)})
+@app.route('/getAnzenRankList/<nendo>/<joken>')
+def getAnzenRankList(nendo, joken):
+  datalist = getRankList(nendo, joken, "v_analy_ryudo_anzensei_a", "ryudo_hiritu")
+  datalist_schema = VAnalyRyudoAnzenseiASchema(many=True)
+  return jsonify({'data': datalist_schema.dumps(datalist, ensure_ascii=False, default=decimal_default_proc)})
 
 
 # 累積欠損金比率ランキングの作成（流動比率の昇順）
-@app.route('/getRuisekiKessonRankList/<nendo>')
-def getRuisekiKessonRankList(nendo):
-    datalist = VAnalyRuisekiKessonA.query.filter(VAnalyRuisekiKessonA.nendo == nendo, VAnalyRuisekiKessonA.ruiseki_kesson_hiritu != None).order_by(desc(VAnalyRuisekiKessonA.ruiseki_kesson_hiritu)).all()
-    datalist_schema = VAnalyRuisekiKessonASchema(many=True)
-    return jsonify({'data': datalist_schema.dumps(datalist, ensure_ascii=False, default=decimal_default_proc)})
+@app.route('/getRuisekiKessonRankList/<nendo>/<joken>')
+def getRuisekiKessonRankList(nendo, joken):
+  datalist = getRankList(nendo, joken, "v_analy_ruiseki_kesson_a", "ruiseki_kesson_hiritu")
+  # datalist = VAnalyRuisekiKessonA.query.filter(VAnalyRuisekiKessonA.nendo == nendo, VAnalyRuisekiKessonA.ruiseki_kesson_hiritu != None).order_by(desc(VAnalyRuisekiKessonA.ruiseki_kesson_hiritu)).all()
+  datalist_schema = VAnalyRuisekiKessonASchema(many=True)
+  return jsonify({'data': datalist_schema.dumps(datalist, ensure_ascii=False, default=decimal_default_proc)})
 
 
 # 企業債残高対給水収益比率（％）
-@app.route('/getKigyosaiKyusuiRankList/<nendo>')
-def getKigyosaiKyusuiRankList(nendo):
-    datalist =VAnalyKigyosaiPerKyusuiA.query.filter(VAnalyKigyosaiPerKyusuiA.nendo == nendo, VAnalyKigyosaiPerKyusuiA.kigyosai_shueki_hiritu != None).order_by(desc(VAnalyKigyosaiPerKyusuiA.kigyosai_shueki_hiritu)).all()
-    datalist_schema = VAnalyKigyosaiPerKyusuiASchema(many=True)
-    return jsonify({'data': datalist_schema.dumps(datalist, ensure_ascii=False, default=decimal_default_proc)})
+@app.route('/getKigyosaiKyusuiRankList/<nendo>/<joken>')
+def getKigyosaiKyusuiRankList(nendo, joken):
+  datalist = getRankList(nendo, joken, "v_analy_kigyosai_per_kyusui_a", "kigyosai_shueki_hiritu")
+  # datalist =VAnalyKigyosaiPerKyusuiA.query.filter(VAnalyKigyosaiPerKyusuiA.nendo == nendo, VAnalyKigyosaiPerKyusuiA.kigyosai_shueki_hiritu != None).order_by(desc(VAnalyKigyosaiPerKyusuiA.kigyosai_shueki_hiritu)).all()
+  datalist_schema = VAnalyKigyosaiPerKyusuiASchema(many=True)
+  return jsonify({'data': datalist_schema.dumps(datalist, ensure_ascii=False, default=decimal_default_proc)})
 
 
 
 # 有形固定資産減価償却率 ※減価償却累計　割る（簿価＋減価償却累計）
-@app.route('/getKoteiShokyakurituRankList/<nendo>')
-def getKoteiShokyakurituRankList(nendo):
-    datalist =VAnalyKoteiShokyakurituA.query.filter(VAnalyKoteiShokyakurituA.nendo == nendo, VAnalyKoteiShokyakurituA.shokyaku_hiritu != None).order_by(desc(VAnalyKoteiShokyakurituA.shokyaku_hiritu)).all()
-    datalist_schema = VAnalyKoteiShokyakurituASchema(many=True)
-    return jsonify({'data': datalist_schema.dumps(datalist, ensure_ascii=False, default=decimal_default_proc)})
+@app.route('/getKoteiShokyakurituRankList/<nendo>/<joken>')
+def getKoteiShokyakurituRankList(nendo, joken):
+  datalist = getRankList(nendo, joken, "v_analy_kotei_shokyakuritu_a", "shokyaku_hiritu")
+  # datalist =VAnalyKoteiShokyakurituA.query.filter(VAnalyKoteiShokyakurituA.nendo == nendo, VAnalyKoteiShokyakurituA.shokyaku_hiritu != None).order_by(desc(VAnalyKoteiShokyakurituA.shokyaku_hiritu)).all()
+  datalist_schema = VAnalyKoteiShokyakurituASchema(many=True)
+  return jsonify({'data': datalist_schema.dumps(datalist, ensure_ascii=False, default=decimal_default_proc)})
 
 # 病床利用率
-@app.route('/getByoshoRiyorituRankList/<nendo>')
-def getByoshoRiyorituRankList(nendo):
-    datalist = VAnalyByoshoRiyorituA.query.filter(VAnalyByoshoRiyorituA.nendo == nendo, VAnalyByoshoRiyorituA.riyoritu != None).order_by(desc(VAnalyByoshoRiyorituA.riyoritu)).all()
-    datalist_schema = VAnalyByoshoRiyorituASchema(many=True)
-    return jsonify({'data': datalist_schema.dumps(datalist, ensure_ascii=False, default=decimal_default_proc)})
+@app.route('/getByoshoRiyorituRankList/<nendo>/<joken>')
+def getByoshoRiyorituRankList(nendo, joken):
+  datalist = getRankList(nendo, joken, "v_analy_byosho_riyoritu_a", "riyoritu")
+  # datalist = VAnalyByoshoRiyorituA.query.filter(VAnalyByoshoRiyorituA.nendo == nendo, VAnalyByoshoRiyorituA.riyoritu != None).order_by(desc(VAnalyByoshoRiyorituA.riyoritu)).all()
+  datalist_schema = VAnalyByoshoRiyorituASchema(many=True)
+  return jsonify({'data': datalist_schema.dumps(datalist, ensure_ascii=False, default=decimal_default_proc)})
 
 
 # 入院患者一人１日あたり収益
-@app.route('/getNyuinHitoriShuekiRankList/<nendo>')
-def getNyuinHitoriShuekiRankList(nendo):
-    datalist = VAnalyNyuinHitoriShuekiA.query.filter(VAnalyNyuinHitoriShuekiA.nendo == nendo, VAnalyNyuinHitoriShuekiA.hitori_ichinichi_shueki != None).order_by(desc(VAnalyNyuinHitoriShuekiA.hitori_ichinichi_shueki)).all()
-    datalist_schema = VAnalyNyuinHitoriShuekiASchema(many=True)
-    return jsonify({'data': datalist_schema.dumps(datalist, ensure_ascii=False, default=decimal_default_proc)})
+@app.route('/getNyuinHitoriShuekiRankList/<nendo>/<joken>')
+def getNyuinHitoriShuekiRankList(nendo, joken):
+  datalist = getRankList(nendo, joken, "v_analy_nyuin_hitori_shueki_a", "hitori_ichinichi_shueki")
+  # datalist = VAnalyNyuinHitoriShuekiA.query.filter(VAnalyNyuinHitoriShuekiA.nendo == nendo, VAnalyNyuinHitoriShuekiA.hitori_ichinichi_shueki != None).order_by(desc(VAnalyNyuinHitoriShuekiA.hitori_ichinichi_shueki)).all()
+  datalist_schema = VAnalyNyuinHitoriShuekiASchema(many=True)
+  return jsonify({'data': datalist_schema.dumps(datalist, ensure_ascii=False, default=decimal_default_proc)})
 
 # ROE
-@app.route('/getReturnOnEquityRankList/<nendo>')
-def getReturnOnEquityRankList(nendo):
-    datalist = VAnalyReturnOnEquityA.query.filter(VAnalyReturnOnEquityA.nendo == nendo, VAnalyReturnOnEquityA.roe != None).order_by(desc(VAnalyReturnOnEquityA.roe)).all()
-    datalist_schema = VAnalyReturnOnEquityASchema(many=True)
-    return jsonify({'data': datalist_schema.dumps(datalist, ensure_ascii=False, default=decimal_default_proc)})
+@app.route('/getReturnOnEquityRankList/<nendo>/<joken>')
+def getReturnOnEquityRankList(nendo, joken):
+  datalist = getRankList(nendo, joken, "v_analy_return_on_equity_a", "roe")
+  # datalist = VAnalyReturnOnEquityA.query.filter(VAnalyReturnOnEquityA.nendo == nendo, VAnalyReturnOnEquityA.roe != None).order_by(desc(VAnalyReturnOnEquityA.roe)).all()
+  datalist_schema = VAnalyReturnOnEquityASchema(many=True)
+  return jsonify({'data': datalist_schema.dumps(datalist, ensure_ascii=False, default=decimal_default_proc)})
 
 # ROA
-@app.route('/getReturnOnAssetRankList/<nendo>')
-def getReturnOnAssetRankList(nendo):
-    datalist = VAnalyReturnOnEquityA.query.filter(VAnalyReturnOnEquityA.nendo == nendo, VAnalyReturnOnEquityA.roa != None).order_by(desc(VAnalyReturnOnEquityA.roa)).all()
-    datalist_schema = VAnalyReturnOnEquityASchema(many=True)
-    return jsonify({'data': datalist_schema.dumps(datalist, ensure_ascii=False, default=decimal_default_proc)})
+@app.route('/getReturnOnAssetRankList/<nendo>/<joken>')
+def getReturnOnAssetRankList(nendo, joken):
+  datalist = getRankList(nendo, joken, "v_analy_return_on_equity_a", "roa")
+  datalist = VAnalyReturnOnEquityA.query.filter(VAnalyReturnOnEquityA.nendo == nendo, VAnalyReturnOnEquityA.roa != None).order_by(desc(VAnalyReturnOnEquityA.roa)).all()
+  datalist_schema = VAnalyReturnOnEquityASchema(many=True)
+  return jsonify({'data': datalist_schema.dumps(datalist, ensure_ascii=False, default=decimal_default_proc)})
 
 
 # 資本比率
-@app.route('/getSihonHirituRankList/<nendo>')
-def getSihonHirituRankList(nendo):
-    datalist = VAnalyReturnOnEquityA.query.filter(VAnalyReturnOnEquityA.nendo == nendo, VAnalyReturnOnEquityA.sihon_hiritu != None).order_by(desc(VAnalyReturnOnEquityA.sihon_hiritu)).all()
-    datalist_schema = VAnalyReturnOnEquityASchema(many=True)
-    return jsonify({'data': datalist_schema.dumps(datalist, ensure_ascii=False, default=decimal_default_proc)})
+@app.route('/getSihonHirituRankList/<nendo>/<joken>')
+def getSihonHirituRankList(nendo, joken):
+  datalist = getRankList(nendo, joken, "v_analy_return_on_equity_a", "sihon_hiritu")
+  # datalist = VAnalyReturnOnEquityA.query.filter(VAnalyReturnOnEquityA.nendo == nendo, VAnalyReturnOnEquityA.sihon_hiritu != None).order_by(desc(VAnalyReturnOnEquityA.sihon_hiritu)).all()
+  datalist_schema = VAnalyReturnOnEquityASchema(many=True)
+  return jsonify({'data': datalist_schema.dumps(datalist, ensure_ascii=False, default=decimal_default_proc)})
 
 
 # 固定比率
-@app.route('/getKoteiHirituRankList/<nendo>')
-def getKoteiHirituRankList(nendo):
-    datalist = VAnalyKoteiHirituA.query.filter(VAnalyKoteiHirituA.nendo == nendo, VAnalyKoteiHirituA.kotei_hiritu != None).order_by(desc(VAnalyKoteiHirituA.kotei_hiritu)).all()
-    datalist_schema = VAnalyKoteiHirituASchema(many=True)
-    return jsonify({'data': datalist_schema.dumps(datalist, ensure_ascii=False, default=decimal_default_proc)})
+@app.route('/getKoteiHirituRankList/<nendo>/<joken>')
+def getKoteiHirituRankList(nendo, joken):
+  datalist = getRankList(nendo, joken, "v_analy_kotei_hiritu_a", "kotei_hiritu")
+  # datalist = VAnalyKoteiHirituA.query.filter(VAnalyKoteiHirituA.nendo == nendo, VAnalyKoteiHirituA.kotei_hiritu != None).order_by(desc(VAnalyKoteiHirituA.kotei_hiritu)).all()
+  datalist_schema = VAnalyKoteiHirituASchema(many=True)
+  return jsonify({'data': datalist_schema.dumps(datalist, ensure_ascii=False, default=decimal_default_proc)})
 
 # 労働生産性
-@app.route('/getJugyoinHitoriRiekiRankList/<nendo>')
-def getJugyoinHitoriRiekiRankList(nendo):
-    datalist = VAnalyJugyoinHitoriRiekiA.query.filter(VAnalyJugyoinHitoriRiekiA.nendo == nendo, VAnalyJugyoinHitoriRiekiA.hitori_rieki != None).order_by(desc(VAnalyJugyoinHitoriRiekiA.hitori_rieki)).all()
-    datalist_schema = VAnalyJugyoinHitoriRiekiASchema(many=True)
-    return jsonify({'data': datalist_schema.dumps(datalist, ensure_ascii=False, default=decimal_default_proc)})
+@app.route('/getJugyoinHitoriRiekiRankList/<nendo>/<joken>')
+def getJugyoinHitoriRiekiRankList(nendo, joken):
+  datalist = getRankList(nendo, joken, "v_analy_jugyoin_hitori_rieki_a", "hitori_rieki")
+  # datalist = VAnalyJugyoinHitoriRiekiA.query.filter(VAnalyJugyoinHitoriRiekiA.nendo == nendo, VAnalyJugyoinHitoriRiekiA.hitori_rieki != None).order_by(desc(VAnalyJugyoinHitoriRiekiA.hitori_rieki)).all()
+  datalist_schema = VAnalyJugyoinHitoriRiekiASchema(many=True)
+  return jsonify({'data': datalist_schema.dumps(datalist, ensure_ascii=False, default=decimal_default_proc)})
 
 
 # 経常利益成長率
-@app.route('/getKeijoriekiSeichorituRankList/<nendo>')
-def getKeijoriekiSeichorituRankList(nendo):
-    datalist = VAnalyKeijoriekiSeichorituA.query.filter(VAnalyKeijoriekiSeichorituA.nendo == nendo, VAnalyKeijoriekiSeichorituA.seicho_ritu != None).order_by(desc(VAnalyKeijoriekiSeichorituA.seicho_ritu)).all()
-    datalist_schema = VAnalyKeijoriekiSeichorituASchema(many=True)
-    return jsonify({'data': datalist_schema.dumps(datalist, ensure_ascii=False, default=decimal_default_proc)})
+@app.route('/getKeijoriekiSeichorituRankList/<nendo>/<joken>')
+def getKeijoriekiSeichorituRankList(nendo, joken):
+  datalist = getRankList(nendo, joken, "v_analy_keijorieki_seichoritu_a", "seicho_ritu")
+  # datalist = VAnalyKeijoriekiSeichorituA.query.filter(VAnalyKeijoriekiSeichorituA.nendo == nendo, VAnalyKeijoriekiSeichorituA.seicho_ritu != None).order_by(desc(VAnalyKeijoriekiSeichorituA.seicho_ritu)).all()
+  datalist_schema = VAnalyKeijoriekiSeichorituASchema(many=True)
+  return jsonify({'data': datalist_schema.dumps(datalist, ensure_ascii=False, default=decimal_default_proc)})
 
 # 資本成長率
-@app.route('/getSihonSeichorituRankList/<nendo>')
-def getSihonSeichorituRankList(nendo):
-    datalist = VAnalySihonSeichorituA.query.filter(VAnalySihonSeichorituA.nendo == nendo, VAnalySihonSeichorituA.seicho_ritu != None).order_by(desc(VAnalySihonSeichorituA.seicho_ritu)).all()
-    datalist_schema = VAnalySihonSeichorituASchema(many=True)
-    return jsonify({'data': datalist_schema.dumps(datalist, ensure_ascii=False, default=decimal_default_proc)})
+@app.route('/getSihonSeichorituRankList/<nendo>/<joken>')
+def getSihonSeichorituRankList(nendo, joken):
+  datalist = getRankList(nendo, joken, "v_analy_sihon_seichoritu_a", "seicho_ritu")
+  # datalist = VAnalySihonSeichorituA.query.filter(VAnalySihonSeichorituA.nendo == nendo, VAnalySihonSeichorituA.seicho_ritu != None).order_by(desc(VAnalySihonSeichorituA.seicho_ritu)).all()
+  datalist_schema = VAnalySihonSeichorituASchema(many=True)
+  return jsonify({'data': datalist_schema.dumps(datalist, ensure_ascii=False, default=decimal_default_proc)})
 
 
 # 基本情報タブ用の表リスト取得

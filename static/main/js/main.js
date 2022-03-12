@@ -5,6 +5,7 @@
 const BgColor_RadarChart =  ["rgba(2,35,199,.2)", "rgba(199,2,2,.2)", "rgba(42,199,2,.2)", "rgba(153,2,199,.2)", "rgba(199,120,2,.2)"];
 const BdrColor_RadarChart = ["rgba(2,35,199,1)",  "rgba(199,2,2,1)",  "rgba(42,199,2,1)",  "rgba(153,2,199,1)",  "rgba(199,120,2,1)"];
 var nanajikuRadarChart=null;
+var gyoshuSelectStauts = null;
 
 Chart.defaults.color = '#666666';
 Chart.defaults.font.weight = 'Bold';
@@ -51,24 +52,55 @@ window.onload = function(){
 
     CreateRadarChart("");
     
-    document.getElementById("btnMock1").addEventListener('click', (event) => {
-      CreateRadarChart("a");
-      //var dantaiCnt = nanajikuRadarChart.data.datasets.length;
-      //getRadarChartData(nanajikuRadarChart, "a" + dantaiCnt);
-    });
-    
-    document.getElementById("btnMock2").addEventListener('click', (event) => {
-      var dantaiCnt = nanajikuRadarChart.data.datasets.length;
-      //getRadarChartData(nanajikuRadarChart, "b" + dantaiCnt);
-    });
-    
-
   }catch(e){
     console.log(e.message);
   }
   return;
 }
 
+document.getElementById("selectGyoshuDigestTab").addEventListener('shown.bs.popover', function () {
+  if(gyoshuSelectStauts!=null){
+    for(let i in gyoshuSelectStauts){
+      document.getElementById(gyoshuSelectStauts[i].id).checked = isCheckON(gyoshuSelectStauts[i]);
+    }
+  }
+});
+
+function isCheckON(elem){
+  try{
+    if(elem.checked){
+      return true;
+    }
+  }catch(e){
+    return false;
+  }
+  return false;
+}
+
+document.getElementById("selectGyoshuDigestTab").addEventListener('hide.bs.popover', function () {
+  gyoshuSelectStauts = document.querySelectorAll(".btn-check");
+  var selected = "";
+  for (let i in gyoshuSelectStauts){
+    if(gyoshuSelectStauts[i].checked){
+      selected = selected + "," + gyoshuSelectStauts[i].nextSibling.querySelectorAll("span")[1].innerText.substring(0,4);//gyoshuSelectStauts[i].querySelector("span").innerText;
+    }
+  }
+  document.getElementById("selectedGyoshuTxt").innerText = selected.substring(1,100).trim();
+
+  getAndCreateTable_ShuekiRankList();//収益性ランキングテーブルを作成
+  getAndCreateTable_AnzenRankList();//安全性ランキングテーブルを作成
+  getAndCreateTable_RuisekiKessonRankList(); //健全性ランキングテーブル（累積欠損比率）
+  getAndCreateTable_KigyosaiKyusuiRankList(); //健全性ランキングテーブル（起債 割る 給水収益）
+  getAndCreateTable_KoteiShokyakurituRankList(); //健全性ランキングテーブル（減価償却累計 割る 簿価＋減価償却累計）
+  getAndCreateTable_ByoshoRiyorituRankList(); //効率性ランキングテーブル（延べ年間患者数　割る　延べ病床数）
+  getAndCreateTable_NyuinHitoriShuekiRankList(); //収益性ランキングテーブル（入院患者一人１日あたり収益）
+
+  getAndCreateTable_ReturnOnEquityRankList();// # ROE
+  getAndCreateTable_ReturnOnAssetRankList();// # ROA
+  getAndCreateTable_SihonHirituRankList();// # 資本比率
+  getAndCreateTable_KoteiHirituRankList();// # 固定比率
+  getAndCreateTable_JugyoinHitoriRiekiRankList();// # 労働生産性
+});
 
 // 業種選択ポップオーバーを作成
 function createSelectGyoshuPopOver(){
@@ -84,69 +116,14 @@ function createSelectGyoshuPopOver(){
 
       var b = new bootstrap.Popover(a,{
         html: true,
-        content: getElementSelectGyoshu(list),
+        content: createElementSelectGyoshu(list),
         sanitize: false,
-        container:"body"
+        container:"body",
+        animation:false,
+        delay:0
       });
     })
     .catch(error => { console.log(error); });
-
-    function getElementSelectGyoshu(list){
-      var mainDiv = document.createElement('div');
-      var subDivA = document.createElement('div');
-      var subDivB = document.createElement('div');
-      var subDivC = document.createElement('div');
-      subDivA.classList.add("btn-group-vertical","selectGyoshuLabelVerticalGroup");
-      subDivB.classList.add("btn-group-vertical","selectGyoshuLabelVerticalGroup");
-      subDivC.classList.add("btn-group-vertical","selectGyoshuLabelVerticalGroup");
-      setAttributes(mainDiv, "role,group/aria-label,Basic checkbox toggle button group");
-      for (let i in list){
-        var chk = document.createElement('input');
-        chk.classList.add("btn-check");
-        chk.id = "btnCheck" + i;
-        setAttributes(chk,"type,checkbox/autocomplete,off");
-
-        var lbl = document.createElement('label');
-        lbl.classList.add("btn","btn-outline-primary","selectGyoshuLabel");
-        setAttributes(lbl,"for,btnCheck" + i);
-        lbl.style.textAlign = "left";
-        lbl.style.paddingLeft = "10px";
-
-        var badge = document.createElement('span');
-        badge.classList.add("badge"); //,"text-dark");
-        badge.style.fontFamily = "monospace";
-        badge.style.fontWeight = 100;
-        badge.style.backgroundColor = "#666666";
-        badge.innerText = gyoshu2to3(list[i].gyoshu_nm);
-
-        lbl.appendChild(badge);
-        
-        var txt = document.createElement('span');
-        txt.innerText = list[i].jigyo_nm;
-        txt.style.paddingLeft = "10px";
-        txt.style.fontSize="0.9rem";
-        lbl.appendChild(txt);
-        //lbl.appendChild(badge);
-        //lbl.innerText = list[i].jigyo_nm;
-
-
-        if("01" <= list[i].gyoshu_cd && list[i].gyoshu_cd <= "06"){
-          subDivA.appendChild(chk);
-          subDivA.appendChild(lbl);
-        } else if("07" <= list[i].gyoshu_cd && list[i].gyoshu_cd <= "16"){
-          subDivB.appendChild(chk);
-          subDivB.appendChild(lbl);
-        } else{
-          subDivC.appendChild(chk);
-          subDivC.appendChild(lbl);
-        }
-      }
-
-      mainDiv.appendChild(subDivA);
-      mainDiv.appendChild(subDivB);
-      mainDiv.appendChild(subDivC);
-      return mainDiv.outerHTML
-    }
 }
 
 function gyoshu2to3(gyoshu_nm){
@@ -158,34 +135,65 @@ function gyoshu2to3(gyoshu_nm){
 }
 
 
-/* <span class="badge bg-primary">Primary</span>
-<span class="badge bg-secondary">Secondary</span>
-<span class="badge bg-success">Success</span>
-<span class="badge bg-danger">Danger</span>
-<span class="badge bg-warning text-dark">Warning</span>
-<span class="badge bg-info text-dark">Info</span>
-<span class="badge bg-light text-dark">Light</span>
-<span class="badge bg-dark">Dark</span> */
-/* <div class="btn-group" role="group" aria-label="Basic checkbox toggle button group">
-  <input type="checkbox" class="btn-check" id="btncheck1" autocomplete="off">
-  <label class="btn btn-outline-primary" for="btncheck1">Checkbox 1</label>
+function createElementSelectGyoshu(list){
+  var mainDiv = document.createElement('div');
+  var subDivA = document.createElement('div');
+  var subDivB = document.createElement('div');
+  var subDivC = document.createElement('div');
+  subDivA.classList.add("btn-group-vertical","selectGyoshuLabelVerticalGroup");
+  subDivB.classList.add("btn-group-vertical","selectGyoshuLabelVerticalGroup");
+  subDivC.classList.add("btn-group-vertical","selectGyoshuLabelVerticalGroup");
+  setAttributes(mainDiv, "role,group/aria-label,Basic checkbox toggle button group");
+  for (let i in list){
+    var chk = document.createElement('input');
+    chk.classList.add("btn-check");
+    chk.id = "btnCheck_" + list[i].gyoshu_cd + "_" + list[i].jigyo_cd;
+    setAttributes(chk,"type,checkbox/autocomplete,off");
+    chk.title = list[i].gyoshu_cd + "-" + list[i].jigyo_cd;
 
-  <input type="checkbox" class="btn-check" id="btncheck2" autocomplete="off">
-  <label class="btn btn-outline-primary" for="btncheck2">Checkbox 2</label>
+    var lbl = document.createElement('label');
+    lbl.classList.add("btn","btn-outline-primary","selectGyoshuLabel");
+    setAttributes(lbl,"for,btnCheck_" + list[i].gyoshu_cd + "_" + list[i].jigyo_cd);
+    lbl.style.textAlign = "left";
+    lbl.style.paddingLeft = "10px";
 
-  <input type="checkbox" class="btn-check" id="btncheck3" autocomplete="off">
-  <label class="btn btn-outline-primary" for="btncheck3">Checkbox 3</label>
-</div> */
-// <div class="btn-group" role="group" aria-label="Basic checkbox toggle button group">
-//   <input type="checkbox" class="btn-check" id="btncheck1" autocomplete="off">
-//   <label class="btn btn-outline-primary" for="btncheck1">Checkbox 1</label>
+    var badge = document.createElement('span');
+    badge.classList.add("badge"); //,"text-dark");
+    badge.style.fontFamily = "monospace";
+    badge.style.fontWeight = 100;
+    badge.style.backgroundColor = "#666666";
+    badge.innerText = gyoshu2to3(list[i].gyoshu_nm);
 
-//   <input type="checkbox" class="btn-check" id="btncheck2" autocomplete="off">
-//   <label class="btn btn-outline-primary" for="btncheck2">Checkbox 2</label>
+    lbl.appendChild(badge);
+    
+    var txt = document.createElement('span');
+    txt.innerText = list[i].jigyo_nm;
+    txt.style.paddingLeft = "10px";
+    txt.style.fontSize="0.9rem";
+    //setAttributes(txt,"for,btnCheck_" + list[i].gyoshu_cd + "_" + list[i].jigyo_cd);
+    lbl.appendChild(txt);
+    //lbl.appendChild(badge);
+    //lbl.innerText = list[i].jigyo_nm;
 
-//   <input type="checkbox" class="btn-check" id="btncheck3" autocomplete="off">
-//   <label class="btn btn-outline-primary" for="btncheck3">Checkbox 3</label>
-// </div>
+
+    if("01" <= list[i].gyoshu_cd && list[i].gyoshu_cd <= "06"){
+      subDivA.appendChild(chk);
+      subDivA.appendChild(lbl);
+    } else if("07" <= list[i].gyoshu_cd && list[i].gyoshu_cd <= "16"){
+      subDivB.appendChild(chk);
+      subDivB.appendChild(lbl);
+    } else{
+      subDivC.appendChild(chk);
+      subDivC.appendChild(lbl);
+    }
+  }
+
+  mainDiv.appendChild(subDivA);
+  mainDiv.appendChild(subDivB);
+  mainDiv.appendChild(subDivC);
+  return mainDiv.outerHTML;
+}
+
 
 //レーダーチャート右の団体リスト
 function getAndCreateTable_DantaiListOfRadarChart(){
@@ -240,12 +248,25 @@ function createTableLoading(locationId, tableDivId, messageLabel){
   document.getElementById(locationId).appendChild(tableDiv);
 }
 
+//業種条件を作る
+function getGyoshuJoken(){
+  var joken = "dummy";
+  for (let i in gyoshuSelectStauts){
+    if(gyoshuSelectStauts[i].checked){
+      gyoshuSelectStauts[i].title
+      joken = joken + "," + gyoshuSelectStauts[i].title;
+    }
+  }
+  return joken;
+}
+
 //収益性ランキングテーブルを作成
 function getAndCreateTable_ShuekiRankList(){
   //枠内にローダーを表示
   createTableLoading("divMainLeftTop", "tableDivLoading1", "経常収支比率による収益性ランクを作成中...");
-  val = "2020"; // 会計年度、見直し必要。
-  fetch('/getShuekiRankList/' + val, {
+  var val = "2020"; // 会計年度、見直し必要。
+  var joken = getGyoshuJoken();
+  fetch('/getShuekiRankList/' + val + "/" + joken, {
     method: 'GET',
     'Content-Type': 'application/json'
   })
@@ -271,7 +292,8 @@ function getAndCreateTable_ReturnOnEquityRankList(){
   //枠内にローダーを表示
   createTableLoading("divMainCenterBottom", "tableDivLoading8", "自己資本利益率(ROE)による収益性ランクを作成中...");
   val = "2020"; // 会計年度、見直し必要。
-  fetch('/getReturnOnEquityRankList/' + val, {
+  var joken = getGyoshuJoken();
+  fetch('/getReturnOnEquityRankList/' + val + "/" + joken, {
     method: 'GET',
     'Content-Type': 'application/json'
   })
@@ -297,7 +319,8 @@ function getAndCreateTable_ReturnOnAssetRankList(){
   //枠内にローダーを表示
   createTableLoading("divMainRightBottom", "tableDivLoading9", "自己資本利益率(ROA)による収益性ランクを作成中...");
   val = "2020"; // 会計年度、見直し必要。
-  fetch('/getReturnOnAssetRankList/' + val, {
+  var joken = getGyoshuJoken();
+  fetch('/getReturnOnAssetRankList/' + val + "/" + joken, {
     method: 'GET',
     'Content-Type': 'application/json'
   })
@@ -322,7 +345,8 @@ function getAndCreateTable_SihonHirituRankList(){
   //枠内にローダーを表示
   createTableLoading("divMainLeftBottom2", "tableDivLoading10", "資本比率による収益性ランクを作成中...");
   val = "2020"; // 会計年度、見直し必要。
-  fetch('/getSihonHirituRankList/' + val, {
+  var joken = getGyoshuJoken();
+  fetch('/getSihonHirituRankList/' + val + "/" + joken, {
     method: 'GET',
     'Content-Type': 'application/json'
   })
@@ -346,7 +370,8 @@ function getAndCreateTable_KoteiHirituRankList(){
   //枠内にローダーを表示
   createTableLoading("divMainCenterBottom2", "tableDivLoading11", "固定比率による収益性ランクを作成中...");
   val = "2020"; // 会計年度、見直し必要。
-  fetch('/getKoteiHirituRankList/' + val, {
+  var joken = getGyoshuJoken();
+  fetch('/getKoteiHirituRankList/' + val + "/" + joken, {
     method: 'GET',
     'Content-Type': 'application/json'
   })
@@ -371,7 +396,8 @@ function getAndCreateTable_JugyoinHitoriRiekiRankList(){
   //枠内にローダーを表示
   createTableLoading("divMainRightBottom2", "tableDivLoading12", "職員1人あたり利益による生産性ランクを作成中...");
   val = "2020"; // 会計年度、見直し必要。
-  fetch('/getJugyoinHitoriRiekiRankList/' + val, {
+  var joken = getGyoshuJoken();
+  fetch('/getJugyoinHitoriRiekiRankList/' + val + "/" + joken, {
     method: 'GET',
     'Content-Type': 'application/json'
   })
@@ -396,7 +422,8 @@ function getAndCreateTable_KeijoriekiSeichorituRankList(){
   //枠内にローダーを表示
   createTableLoading("divMainLeftBottom3", "tableDivLoading13", "経常利益成長率による成長性ランクを作成中...");
   val = "2020"; // 会計年度、見直し必要。
-  fetch('/getKeijoriekiSeichorituRankList/' + val, {
+  var joken = getGyoshuJoken();
+  fetch('/getKeijoriekiSeichorituRankList/' + val + "/" + joken, {
     method: 'GET',
     'Content-Type': 'application/json'
   })
@@ -421,7 +448,8 @@ function getAndCreateTable_SihonSeichorituRankList(){
   //枠内にローダーを表示
   createTableLoading("divMainCenterBottom3", "tableDivLoading14", "資本成長率による成長性ランクを作成中...");
   val = "2020"; // 会計年度、見直し必要。
-  fetch('/getSihonSeichorituRankList/' + val, {
+  var joken = getGyoshuJoken();
+  fetch('/getSihonSeichorituRankList/' + val + "/" + joken, {
     method: 'GET',
     'Content-Type': 'application/json'
   })
@@ -779,7 +807,8 @@ function getAndCreateTable_AnzenRankList(){
   createTableLoading("divMainCenterTop", "tableDivLoading", "流動比率による安全性ランクを作成中...");
 
   val = "2020"; // 会計年度、見直し必要。
-  fetch('/getAnzenRankList/' + val, {
+  var joken = getGyoshuJoken();
+  fetch('/getAnzenRankList/' + val + "/" + joken, {
     method: 'GET',
     'Content-Type': 'application/json'
   })
@@ -809,7 +838,8 @@ function getAndCreateTable_RuisekiKessonRankList(){
   //枠内にローダーを表示
   createTableLoading("divMainRightTop", "tableDivLoading2", "累積欠損比率による健全性ランクを作成中...");
   val = "2020"; // 会計年度、見直し必要。
-  fetch('/getRuisekiKessonRankList/' + val, {
+  var joken = getGyoshuJoken();
+  fetch('/getRuisekiKessonRankList/' + val + "/" + joken, {
     method: 'GET',
     'Content-Type': 'application/json'
   })
@@ -835,7 +865,8 @@ function getAndCreateTable_KigyosaiKyusuiRankList(){
   //枠内にローダーを表示
   createTableLoading("divMainLeftMiddle", "tableDivLoading4", "企業債残高対給水収益比率による健全性ランクを作成中...");
   val = "2020"; // 会計年度、見直し必要。
-  fetch('/getKigyosaiKyusuiRankList/' + val, {
+  var joken = getGyoshuJoken();
+  fetch('/getKigyosaiKyusuiRankList/' + val + "/" + joken, {
     method: 'GET',
     'Content-Type': 'application/json'
   })
@@ -861,7 +892,8 @@ function getAndCreateTable_KoteiShokyakurituRankList(){
   //枠内にローダーを表示
   createTableLoading("divMainCenterMiddle", "tableDivLoading5", "有形固定資産償却率による健全性ランクを作成中...");
   val = "2020"; // 会計年度、見直し必要。
-  fetch('/getKoteiShokyakurituRankList/' + val, {
+  var joken = getGyoshuJoken();
+  fetch('/getKoteiShokyakurituRankList/' + val + "/" + joken, {
     method: 'GET',
     'Content-Type': 'application/json'
   })
@@ -886,7 +918,8 @@ function getAndCreateTable_ByoshoRiyorituRankList(){
   //枠内にローダーを表示
   createTableLoading("divMainRightMiddle", "tableDivLoading6", "病床利用率による効率性ランクを作成中...");
   val = "2020"; // 会計年度、見直し必要。
-  fetch('/getByoshoRiyorituRankList/' + val, {
+  var joken = getGyoshuJoken();
+  fetch('/getByoshoRiyorituRankList/' + val + "/" + joken, {
     method: 'GET',
     'Content-Type': 'application/json'
   })
@@ -911,7 +944,8 @@ function getAndCreateTable_NyuinHitoriShuekiRankList(){
   //枠内にローダーを表示
   createTableLoading("divMainLeftBottom", "tableDivLoading7", "入院患者1人1日あたり収益による収益性ランクを作成中...");
   val = "2020"; // 会計年度、見直し必要。
-  fetch('/getNyuinHitoriShuekiRankList/' + val, {
+  var joken = getGyoshuJoken();
+  fetch('/getNyuinHitoriShuekiRankList/' + val + "/" + joken, {
     method: 'GET',
     'Content-Type': 'application/json'
   })
