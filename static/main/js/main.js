@@ -1257,7 +1257,7 @@ document.getElementById('btnExecuteImport').addEventListener('click', function()
             .then(res => res.json())
             .then(jsonData => {
               if(jsonData.data.nokoriKensu>0){
-                saiki(csvFile, jsonData.data.startIndex, (jsonData.data.startIndex*1+100), query_params);
+                saiki(csvFile, jsonData.data.startIndex, (jsonData.data.startIndex*1+10), query_params);
               } else {
                 updateJotaiResult(jsonData.data.queryParams);
                 return;
@@ -1269,7 +1269,7 @@ document.getElementById('btnExecuteImport').addEventListener('click', function()
 
           }
 
-          saiki(csvFile, 0, 100, query_params);
+          saiki(csvFile, 0, 10, query_params);
           
           // //updateJotaiResult(jsonData.data);
           // //CreateFileCollectTable(jsonData.data);
