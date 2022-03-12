@@ -1176,7 +1176,8 @@ document.getElementById('btnExecuteImport').addEventListener('click', function()
     var chk = tablerows[Number(i)].cells[0].querySelector("input[type='checkbox']");
     if(chk!=null){
       if(chk.checked){
-        tablerows[Number(i)].cells[6].innerHTML = "<p font='orange'>(計算中)</p>";
+        tablerows[Number(i)].cells[6].innerHTML = "<span style='color:orange'>(計算中)</span>";
+        tablerows[Number(i)].cells[0].innerHTML = "";
         var query_params = 
           tablerows[Number(i)].cells[1].innerText + "/" + 
           tablerows[Number(i)].cells[2].innerText + "/" + 
@@ -1210,7 +1211,7 @@ document.getElementById('btnExecuteImport').addEventListener('click', function()
                 saiki(csvFile, jsonData.data.startIndex, (jsonData.data.startIndex*1+10), query_params, jsonData.data.shoriZumi);
                 updateSinthoku(jsonData.data);
               } else {
-                updateJotaiResult(jsonData.data.queryParams);
+                updateJotaiResult(jsonData.data);
                 return;
               }
             })
@@ -1237,30 +1238,36 @@ document.getElementById('btnExecuteImport').addEventListener('click', function()
 
 function updateSinthoku(list){
 
-  var resultArray = list.queryParams.split("/");
+  //var resultArray = clientSideQueryParams.split("/");
   var tablerows = document.getElementById("tableFileCollect").querySelector("table").rows;
     for(let i=0; i<tablerows.length; i++){
-      if (tablerows[i].cells[1].innerText == resultArray[0] &&
-        tablerows[i].cells[2].innerText == resultArray[1] &&
-        tablerows[i].cells[3].innerText == resultArray[2]){
+      if (tablerows[i].cells[1].innerText == list.nendo &&
+        tablerows[i].cells[2].innerText == getHoutekiOrHouHiteki(list.gyomu_cd) &&
+        tablerows[i].cells[3].innerText == list.hyo_num){
           tablerows[i].cells[6].innerText = list.shoriZumi + "/" + list.totalKensu;
           //tablerows[i].cells[6].classList.remove("loading-ss");
           //tablerows[Number(i)].cells[0].innerHTML = "";
         }
     }
-
 }
 
-function updateJotaiResult(result){
-  var resultArray = result.split("/");
+function getHoutekiOrHouHiteki(cd){
+  if(cd==46){
+    return "法適用";
+  }else{
+    return "法非適用";
+  }
+}
+
+function updateJotaiResult(list){
   var tablerows = document.getElementById("tableFileCollect").querySelector("table").rows;
   //var tablerows = document.getElementById("tableFileCollect").rows;
     for(let i=0; i<tablerows.length; i++){
-      //"2014/法適用/64/https:||www.e-stat.go.jp|stat-search|file-download@statInfId=000031815646&fileKind=0"
-      if (tablerows[i].cells[1].innerText == resultArray[0] &&
-        tablerows[i].cells[2].innerText == resultArray[1] &&
-        tablerows[i].cells[3].innerText == resultArray[2]){
+      if (tablerows[i].cells[1].innerText == list.nendo &&
+        tablerows[i].cells[2].innerText == getHoutekiOrHouHiteki(list.gyomu_cd) &&
+        tablerows[i].cells[3].innerText == list.hyo_num){
           tablerows[i].cells[5].innerText = "完了！";
+          tablerows[i].cells[6].innerText = "100%";
           tablerows[i].cells[5].classList.remove("loading-ss");
           //var chk = tablerows[Number(i)].cells[0].querySelector("input[type='checkbox']");
           tablerows[Number(i)].cells[0].innerHTML = "";
@@ -1304,7 +1311,7 @@ document.getElementById('btnExecuteCollect').addEventListener('click', function(
 //ファイルインプットタグを初期化
 //
 document.getElementById('modalExcelUpload').addEventListener('show.bs.modal', function () {
-  document.getElementById('btnFileImport').classList.add("disabled");
+  //document.getElementById('btnFileImport').classList.add("disabled");
   document.getElementById('btnExecuteImport').classList.add("disabled");
   AllClearTable("tableFileCollectDiv");
   //document.getElementById('selFilePattern').selectedIndex = 0;
