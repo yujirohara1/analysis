@@ -55,6 +55,7 @@ from bs4 import BeautifulSoup
 import pandas as pd
 import math
 from decimal import Decimal
+import openpyxl
 
 DELIMIT = "@|@|@"
 
@@ -157,34 +158,39 @@ def favicon():
     return app.send_static_file("favicon.ico")
 
 
-@app.route('/executeFileGetAndInsert/<documentName>/<chosaJiten>/<dantaiCd>/<dantaiNm>/<url>')
-def executeFileGetAndInsert(documentName, chosaJiten, dantaiCd, dantaiNm, url):
-  url = url.replace("|","/")
-  result = ""
+@app.route('/executeFileGetAndInsert/<documentName>/<chosaJiten>/<dantaiCd>/<dantaiNm>/<url>/<indexFrom>/<indexTo>')
+def executeFileGetAndInsert(documentName, chosaJiten, dantaiCd, dantaiNm, url, indexFrom, indexTo):
+  url = url.replace("|","/").replace("@","?")
 
-  try:
-    res = requests.get(url)
-    xl = pd.read_excel(res.content, sheet_name=None)
-    fileshubetu = fileShubetu(xl)
-
-    if fileshubetu=="sisetu":
-      createSisetuMain(xl)
-    elif fileshubetu=="sokatu":
-      createSokatuMain(xl)
-      pass
-    else:
-      pass
+  res = requests.get(url)
+  xl = pd.read_excel(res.content, sheet_name=0)
+  filename = datetime.datetime.now().strftime('%Y%m%d%H%M%S%f') + "_" + str(xl.shape[0])
+  xl.to_csv('tmp/' + filename + '.csv', index=False)
     
-    result = "取込済"
-  except Exception as e:
-    import traceback
-    traceback.print_exc()
-    result = e.args[0]
+  # return send_file('tmp/' + filename + '.csv', as_attachment=True, mimetype=XLSX_MIMETYPE, attachment_filename = filename + '.csv')
+  return send_file("tmp/" + filename + ".csv", as_attachment=True)
 
-  insertJotai(documentName, chosaJiten, dantaiCd, dantaiNm, url, result)
+  # try:
+  #   if indexFrom == 0:
+  #     res = requests.get(url)
+  #     xl = pd.read_excel(res.content, sheet_name=None)
+  #     filename = datetime.datetime.now().strftime('%Y%m%d%H%M%S%f')
+  #     xl.to_csv('tmp/' + filename + '.csv', index=False)
+    
+  #   # wb.save('tmp/' + filename + '.xlsx')
+  #   # return send_file('tmp/' + filename + '.xlsx', as_attachment=True, mimetype=XLSX_MIMETYPE, attachment_filename = filename + '.xlsx')
+  #   nokori = createSisetuMainFromTo(xl, indexFrom, indexTo)
+    
+  #   result = "取込済"
+  # except Exception as e:
+  #   import traceback
+  #   traceback.print_exc()
+  #   result = e.args[0]
 
-  return jsonify({'data': {"documentName" : documentName, "chosaJiten":chosaJiten, "dantaiCd":dantaiCd, "dantaiNm":dantaiNm, "url":url, "result":result}})
-  # return send_file("tmp/" + timestampStr + ".pdf", as_attachment=True)
+  # # insertJotai(documentName, chosaJiten, dantaiCd, dantaiNm, url, result)
+
+  # return jsonify({'data': {"documentName" : documentName, "chosaJiten":chosaJiten, "dantaiCd":dantaiCd, "dantaiNm":dantaiNm, "url":url, "result":result, "nokoriKensu":nokori}})
+  # # return send_file("tmp/" + timestampStr + ".pdf", as_attachment=True)
 
 
 def insertJotai(document_name, chosa_jiten, dantai_cd, dantai_nm, file_url, jotai_message):
@@ -209,36 +215,67 @@ def insertJotai(document_name, chosa_jiten, dantai_cd, dantai_nm, file_url, jota
 @app.route('/executeFileCollect/<filePattern>',methods=["GET"])
 def executeFileCollect(filePattern):
   link_list =[]
-  for nen in ["h22","h23","h24","h25","h26","h27","h28","h29","h30", "r01"]:
-    res = requests.get("https://www.soumu.go.jp/iken/zaisei/jyoukyou_shiryou/" + nen + "/index.html")
+  for nen in ["r01"]:
+    # https://www.e-stat.go.jp/stat-search/files?page=1&layout=datalist&toukei=00200251&kikan=00200&tstat=000001125335&cycle=7&year=20210&month=0&tclass1=000001125336&tclass2=000001125337&result_back=1&result_page=1&tclass3val=0
+    res = requests.get("https://www.e-stat.go.jp/stat-search/files?page=1&layout=datalist&toukei=00200251&kikan=00200&tstat=000001125335&cycle=7&year=20210&month=0&tclass1=000001125336&tclass2=000001125337&result_back=1&result_page=1&tclass3val=0")
     soup = BeautifulSoup(res.content, 'html.parser')
-    result = soup.select("a[href]")
-    for link in result:
-      href = link.get("href")
-      text = link.text[1:]
-      if href.endswith('xlsx') or href.endswith('xls'):
-        tdfk = tdfkCodeByName(text)
-        if tdfk != "":
-          link_list.append({"document":filePattern, 
-                            "year":nen, 
-                            "dantai":tdfk, 
-                            "text":text, 
-                            "url" :"https://www.soumu.go.jp" + href.replace("https://www.soumu.go.jp",""),
-                            "jotai" : getJotai("財政状況資料_都道府県", nen, tdfk)})
+    # result = soup.select("a[data-file_type=EXCEL]") #soup.select("a[href]")
+    articles = soup.select("article")
+    for article in articles:
+      for ul in article.select("ul"):
+        if len(ul.select('span:contains("表番号")')) != 0 :
+          hyoBango = ul.select('span:contains("表番号") ~ span')[0].text
+          if len(ul.select("a[data-file_type=EXCEL]")) == 1:
+            link = ul.select("a[data-file_type=EXCEL]")[0]
+            href = link.get("href")
+            text = link.text[1:]
+            # if href.endswith('xlsx') or href.endswith('xls'):
+            #   tdfk = tdfkCodeByName(text)
+            #   if tdfk != "":
+            link_list.append({"document":"filePattern", 
+                              "year":"nen", 
+                              "dantai":"tdfk", 
+                              "text":hyoBango, 
+                              "url" :"https://www.e-stat.go.jp" + href.replace("https://www.e-stat.go.jp",""),
+                              "jotai" : getJotai("財政状況資料_都道府県", "nen", "tdfk")})
 
   return jsonify({'data': link_list})
   # return send_file("tmp/" + timestampStr + ".pdf", as_attachment=True)
 
 def getJotai(document_name, chosa_jiten, dantai_cd):
-    jotailist = Jotai.query.filter(Jotai.document_name==document_name,
-      Jotai.chosa_jiten==chosa_jiten, Jotai.dantai_cd==dantai_cd).all()
-    if jotailist == None:
-      return "未取込"
+  return "未取込"
+    # jotailist = Jotai.query.filter(Jotai.document_name==document_name,
+    #   Jotai.chosa_jiten==chosa_jiten, Jotai.dantai_cd==dantai_cd).all()
+    # if jotailist == None:
+    #   return "未取込"
     
-    if len(jotailist) == 1:
-      return jotailist[0].jotai_message
-    else:
-      return "未取込"
+    # if len(jotailist) == 1:
+    #   return jotailist[0].jotai_message
+    # else:
+    #   return "未取込"
+
+
+@app.route('/csvUpload',methods=["PUT"])
+def csvUpload():
+  fi = request.files['csvFile']
+  indexFrom = int(request.form["indexFrom"])
+  indexTo = int(request.form["indexTo"])
+  # res = requests.get("https://www.soumu.go.jp" + xlfile)
+  csv = pd.read_csv(fi, sep=',')
+  # xl = pd.read_excel(res.content, sheet_name=None)
+  # fileshubetu = fileShubetu(xl)
+
+  nokori = createSisetuMainFromTo(csv, indexFrom, indexTo)
+  # if fileshubetu=="sisetu":
+  #   createSisetuMain(xl)
+  # elif fileshubetu=="sokatu":
+  #   createSokatuMain(xl)
+  #   pass
+  # else:
+  #   pass
+  return jsonify({'data': {"startIndex" : (indexTo+1), "nokoriKensu":nokori}})
+  # return "1"
+  # return send_file("tmp/" + timestampStr + ".pdf", as_attachment=True)
 
 
 @app.route('/binaryTest',methods=["PUT"])
@@ -463,13 +500,14 @@ def isLeftNumeric(val):
 
   return False
 
-def createSisetuMain(xl):
+def createSisetuMainFromTo(csv, indexFrom, indexTo):
   timestamp = datetime.datetime.now()
   timestampStr = timestamp.strftime('%Y%m%d%H%M%S%f')
-  dictJuchu = {}
-  for sh in xl:
-    for row in xl[sh].itertuples():
+  
+  rowcount = csv.shape[0]
+  for row in csv.itertuples():
 
+    if int(indexFrom) <= row.Index and row.Index <= int(indexTo):
       columnId = 1
       for cell in row[19:117]:
         
@@ -507,6 +545,11 @@ def createSisetuMain(xl):
           traceback.print_exc()
         
         columnId += 1
+      
+    elif int(indexTo) < row.Index:
+      return rowcount - row.Index
+
+  return 0
 
 
 # 

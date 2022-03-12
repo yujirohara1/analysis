@@ -46,10 +46,10 @@
         %div.container-fluid#topPain
           %div.row
             %div.col-2
-              %button.btn.btn-sm.btn-warning#selectGyoshuDigestTab(data-bs-toggle="popover" title="" data-bs-original-title="業種を選択してください")
-                <i class="bi bi-chat-square-text">&nbsp;&nbsp;</i>業種を選択してください
+              %button.btn.btn-sm.btn-warning#selectGyoshuDigestTab(data-bs-toggle="popover" title="" data-bs-original-title="業種を選択してください" style="width:100%")
+                <i class="bi bi-chat-square-text">&nbsp;&nbsp;</i>ココで業種を選択してください
             %div.col-10
-              %div#selectedGyoshuTxt(style="font-size:1.0rem;")
+              %div#selectedGyoshuTxt(style="font-size:0.9rem;")
 
           %div.row
             %div.col-12
@@ -118,7 +118,7 @@
                 （資料の種類を選択）
           %div.col-4
             %button.btn.btn-sm.btn-primary#btnExecuteCollect(type="button")
-              収集実行
+              クロール開始
           %div.col-4
             %button.btn.btn-sm.btn-primary.float-end#btnExecuteImport(type="button")
               取込実行
