@@ -1269,12 +1269,25 @@ function updateJotaiResult(list){
           tablerows[i].cells[5].innerText = "完了！";
           tablerows[i].cells[6].innerText = "100%";
           tablerows[i].cells[5].classList.remove("loading-ss");
-          //var chk = tablerows[Number(i)].cells[0].querySelector("input[type='checkbox']");
           tablerows[Number(i)].cells[0].innerHTML = "";
+          updateStatus(list.nendo, list.gyomu_cd, list.hyo_num, 0);
         }
     }
 
 }
+
+function updateStatus(nendo, gyomu_cd, hyo_num, hyo_num_sub){
+  fetch('/updateImportStatus/' + nendo + "/" + gyomu_cd + "/" + hyo_num+ "/" + hyo_num_sub, {
+    method: 'GET',
+    'Content-Type': 'application/json'
+  })
+  .then(res => res.json())
+  .then(jsonData => {
+    var list = JSON.parse(jsonData.data);
+  })
+  .catch(error => { console.log(error); });
+}
+
 
 document.getElementById('btnExecuteCollect').addEventListener('click', function() {
   createTableLoading("tableFileCollectDiv", "abcdeLoading", "政府統計をクローリングしています...");
@@ -1294,6 +1307,7 @@ document.getElementById('btnExecuteCollect').addEventListener('click', function(
     var propId = ["checkbox", "year", "dantai", "text", "url", "jotai","sinchoku"];
     var align = ["left", "left", "left", "left", "left", "center"];
     createTableByJsonList(jsonData.data, "tableFileCollectDiv", "tableFileCollect", "ファイル取り込み状況", hdText, propId, align, null, 1.5);
+    customizeFileImportTable();
     document.getElementById('btnExecuteCollect').classList.remove("disabled");
     document.getElementById('btnExecuteImport').classList.remove("disabled");
     destroyTableLoading("tableFileCollectDiv", "abcdeLoading");
@@ -1306,6 +1320,16 @@ document.getElementById('btnExecuteCollect').addEventListener('click', function(
   //document.getElementById('btnFileImport').classList.add("disabled");
 });
 
+
+function customizeFileImportTable(){
+  var tablerows = document.getElementById("tableFileCollect").querySelector("table").rows;
+    for(let i=0; i<tablerows.length; i++){
+      if (tablerows[i].cells[5].innerText == "取込済"){
+        tablerows[i].cells[0].innerText = "";
+        tablerows[i].cells[6].innerText = "";
+      }
+    }
+}
 
 //ファイル取り込みモーダルを起動
 //ファイルインプットタグを初期化

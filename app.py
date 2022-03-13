@@ -35,6 +35,7 @@ from models.vanalyreturnonequitya import VAnalyReturnOnEquityA, VAnalyReturnOnEq
 from models.vanalysihonseichoritua import VAnalySihonSeichorituA, VAnalySihonSeichorituASchema
 from models.analykijun import AnalyKijun, AnalyKijunSchema
 from models.analyjigyo import AnalyJigyo, AnalyJigyoSchema
+from models.analyimport import AnalyImport, AnalyImportSchema
 
 from sqlalchemy.sql import text
 from sqlalchemy import distinct
@@ -220,23 +221,42 @@ def executeFileCollect(filePattern):
                               "dantai":hou, 
                               "text":hyoBango, 
                               "url" :"https://www.e-stat.go.jp" + href.replace("https://www.e-stat.go.jp",""),
-                              "jotai" : getJotai("財政状況資料_都道府県", "nen", "tdfk")})
+                              "jotai" : getJotai((nen-1), hou, hyoBango)})
 
   return jsonify({'data': link_list})
   # return send_file("tmp/" + timestampStr + ".pdf", as_attachment=True)
 
-def getJotai(document_name, chosa_jiten, dantai_cd):
-  return "未取込"
-    # jotailist = Jotai.query.filter(Jotai.document_name==document_name,
-    #   Jotai.chosa_jiten==chosa_jiten, Jotai.dantai_cd==dantai_cd).all()
-    # if jotailist == None:
-    #   return "未取込"
-    
-    # if len(jotailist) == 1:
-    #   return jotailist[0].jotai_message
-    # else:
-    #   return "未取込"
+def getHoutekiorHouHiteki(gyomuCdNm):
+  if gyomuCdNm == '法適用':
+    return 46
+  elif gyomuCdNm == '法非適用':
+    return 47
+  else:
+    return 0
 
+def getJotai(nendo, hou_nm, hyo_num):
+  tmp = hyo_num.split("-")
+  if len(tmp) == 2:
+    hyo1 = tmp[0]
+    hyo2 = tmp[1]
+  else:
+    hyo1 = hyo_num
+    hyo2 = 0
+
+  jotailist = AnalyImport.query.filter(
+    AnalyImport.nendo==int(nendo),
+    AnalyImport.gyomu_cd==str(getHoutekiorHouHiteki(hou_nm)),
+    AnalyImport.hyo_num == int(hyo1),
+    AnalyImport.hyo_num_sub == int(hyo2)
+  ).all()
+
+  if jotailist == None:
+    return "未取込"
+  
+  if len(jotailist) == 1:
+    return "取込済"
+  else:
+    return "未取込"
 
 @app.route('/csvUpload',methods=["PUT"])
 def csvUpload():
@@ -490,46 +510,51 @@ def createSisetuMainFromTo(csv, indexFrom, indexTo):
   ret = {"nendo":0, "gyomu_cd":0, "hyo_num":0, "nokori_kensu":0}
   for row in csv.itertuples():
 
+    if row.Index == 0 and indexFrom == 0 :
+      AnalyMain.query.filter(AnalyMain.nendo==int(row.決算年度), AnalyMain.gyomu_cd==str(row.業務コード), AnalyMain.hyo_num==int(row.表番号)).delete()
+
+
     if int(indexFrom) <= row.Index and row.Index <= int(indexTo):
       columnId = 1
       for cell in row[19:117]:
-        try:
-          ret["nendo"] = int(row.決算年度)
-          ret["gyomu_cd"] = row.業務コード
-          ret["hyo_num"] = row.表番号
+        if str(cell) != 'nan':
+          try:
+            ret["nendo"] = int(row.決算年度)
+            ret["gyomu_cd"] = row.業務コード
+            ret["hyo_num"] = row.表番号
 
-          analyMain = AnalyMain()
-          analyMain.nendo = int(row.決算年度)
-          analyMain.gyomu_cd = row.業務コード
-          analyMain.gyoshu_cd = row.業種コード
-          analyMain.jigyo_cd = row.事業コード
-          analyMain.sisetu_cd = row.施設コード
-          analyMain.sisetu_nm = row.施設名
-          analyMain.dantai_cd = row.団体コード
-          analyMain.dantai_nm = row.団体名
-          analyMain.hyo_num = row.表番号
-          analyMain.gyo_num = row.行番号
-          analyMain.joken_1 = row.条件1
-          analyMain.joken_2 = row.条件2
-          analyMain.joken_3 = row.条件3
-          analyMain.joken_4 = row.条件4
-          analyMain.joken_5 = row.条件5
-          analyMain.joken_6 = row.条件6
-          analyMain.joken_7 = row.条件7
-          analyMain.joken_8 = row.条件8
-          analyMain.retu_num = columnId
-          if isfloat(str(cell)):
-            analyMain.val_num = float(cell)
-          else:
-            analyMain.val_char = str(cell)
-          db.session.add(analyMain)
-          db.session.commit()
+            analyMain = AnalyMain()
+            analyMain.nendo = int(row.決算年度)
+            analyMain.gyomu_cd = row.業務コード
+            analyMain.gyoshu_cd = row.業種コード
+            analyMain.jigyo_cd = row.事業コード
+            analyMain.sisetu_cd = row.施設コード
+            analyMain.sisetu_nm = row.施設名
+            analyMain.dantai_cd = row.団体コード
+            analyMain.dantai_nm = row.団体名
+            analyMain.hyo_num = row.表番号
+            analyMain.gyo_num = row.行番号
+            analyMain.joken_1 = row.条件1
+            analyMain.joken_2 = row.条件2
+            analyMain.joken_3 = row.条件3
+            analyMain.joken_4 = row.条件4
+            analyMain.joken_5 = row.条件5
+            analyMain.joken_6 = row.条件6
+            analyMain.joken_7 = row.条件7
+            analyMain.joken_8 = row.条件8
+            analyMain.retu_num = columnId
+            if isfloat(str(cell)):
+              analyMain.val_num = float(cell)
+            else:
+              analyMain.val_char = str(cell)
+            db.session.add(analyMain)
+            db.session.commit()
 
-          # ret = [analyMain.nendo, analyMain.gyomu_cd, analyMain.hyo_num]
-        except:
-          # 何もしない
-          import traceback
-          traceback.print_exc()
+            # ret = [analyMain.nendo, analyMain.gyomu_cd, analyMain.hyo_num]
+          except:
+            # 何もしない
+            import traceback
+            traceback.print_exc()
         
         columnId += 1
       
@@ -727,6 +752,28 @@ def getAnalyJigyo(nendo):
     datalist = AnalyJigyo.query.filter(AnalyJigyo.nendo == nendo).order_by(asc(AnalyJigyo.gyoshu_cd),asc(AnalyJigyo.jigyo_cd)).all()
     datalist_schema = AnalyJigyoSchema(many=True)
     return jsonify({'data': datalist_schema.dumps(datalist, ensure_ascii=False, default=decimal_default_proc)})
+
+
+# ファイル取り込み状況テーブルの更新
+@app.route('/updateImportStatus/<nendo>/<gyomu_cd>/<hyo_num>/<hyo_num_sub>')
+def updateImportStatus(nendo, gyomu_cd, hyo_num, hyo_num_sub):
+  AnalyImport.query.filter(
+    AnalyImport.nendo==int(nendo), 
+    AnalyImport.gyomu_cd==str(gyomu_cd), 
+    AnalyImport.hyo_num==int(hyo_num), 
+    AnalyImport.hyo_num_sub==int(hyo_num_sub)
+  ).delete()
+
+  imp = AnalyImport()
+  imp.nendo = int(nendo)
+  imp.gyomu_cd = str(gyomu_cd)
+  imp.hyo_num = int(hyo_num)
+  imp.hyo_num_sub = int(hyo_num_sub)
+  imp.status = 1
+  db.session.add(imp)
+  db.session.commit()
+
+  return jsonify({'data': 1})
 
 
 @app.route('/getHyoData/<nendo>/<gyomu_cd>/<gyoshu_cd>/<jigyo_cd>/<dantai_cd>/<sisetu_cd>/<hyo_num>')
