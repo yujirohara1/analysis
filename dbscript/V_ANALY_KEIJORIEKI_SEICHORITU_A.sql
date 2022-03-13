@@ -10,7 +10,11 @@ select
     , a.dantai_cd
     , a.dantai_nm
     , a.sisetu_cd
-    , a.sisetu_nm
+    , case 
+        when a.sisetu_nm = 'NaN' 
+            then c.jigyo_nm 
+        else a.sisetu_nm 
+        end
     , a.joken_1
     , a.joken_2
     , a.joken_3
@@ -143,5 +147,7 @@ from
         and a.gyoshu_cd = b.gyoshu_cd 
         and a.jigyo_cd = b.jigyo_cd 
         and a.dantai_cd = b.dantai_cd 
-        and a.sisetu_cd = b.sisetu_cd;
-
+        and a.sisetu_cd = b.sisetu_cd join analy_jigyo c 
+            on a.nendo = c.nendo 
+            and a.gyoshu_cd = c.gyoshu_cd 
+            and a.jigyo_cd = c.jigyo_cd;

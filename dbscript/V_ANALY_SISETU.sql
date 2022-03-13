@@ -3,27 +3,32 @@ drop view V_ANALY_SISETU;
 create 
 or replace view V_ANALY_SISETU as 
 select
-    max(nendo) nendo
-    , gyomu_cd
-    , gyoshu_cd
-    , jigyo_cd
-    , lpad(trim(dantai_cd),6,'0') dantai_cd
-    , min(dantai_nm) dantai_nm
-    , sisetu_cd
-    , min(sisetu_nm) sisetu_nm
+    max(a.nendo) nendo
+    , a.gyomu_cd
+    , a.gyoshu_cd
+    , a.jigyo_cd
+    , lpad(trim(a.dantai_cd),6,'0') dantai_cd
+    , min(a.dantai_nm) dantai_nm
+    , a.sisetu_cd
+    , min(case when a.sisetu_nm = 'NaN' then b.jigyo_nm else a.sisetu_nm end) sisetu_nm 
 from
-    analy_main
+    analy_main a
+    join analy_jigyo b
+on
+    a.nendo = b.nendo and
+    a.gyoshu_cd = b.gyoshu_cd and
+    a.jigyo_cd = b.jigyo_cd
 where
-    nendo = 2020 and
-    hyo_num = 20 and
-    gyo_num = 1 and
-    retu_num = 10
+    a.nendo = 2020 and
+    a.hyo_num = 20 and
+    a.gyo_num = 1 and
+    a.retu_num = 10
 group by
-     gyomu_cd
-    , gyoshu_cd
-    , jigyo_cd
-    , dantai_cd
-    , sisetu_cd
+     a.gyomu_cd
+    , a.gyoshu_cd
+    , a.jigyo_cd
+    , a.dantai_cd
+    , a.sisetu_cd
 ;
 
 

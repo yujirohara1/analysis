@@ -690,7 +690,7 @@ def getReturnOnEquityRankList(nendo, joken):
 @app.route('/getReturnOnAssetRankList/<nendo>/<joken>')
 def getReturnOnAssetRankList(nendo, joken):
   datalist = getRankList(nendo, joken, "v_analy_return_on_equity_a", "roa")
-  datalist = VAnalyReturnOnEquityA.query.filter(VAnalyReturnOnEquityA.nendo == nendo, VAnalyReturnOnEquityA.roa != None).order_by(desc(VAnalyReturnOnEquityA.roa)).all()
+  # datalist = VAnalyReturnOnEquityA.query.filter(VAnalyReturnOnEquityA.nendo == nendo, VAnalyReturnOnEquityA.roa != None).order_by(desc(VAnalyReturnOnEquityA.roa)).all()
   datalist_schema = VAnalyReturnOnEquityASchema(many=True)
   return jsonify({'data': datalist_schema.dumps(datalist, ensure_ascii=False, default=decimal_default_proc)})
 

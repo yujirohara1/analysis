@@ -21,19 +21,20 @@ ALTER TABLE ONLY analy_jigyo
 
     
 
+delete from analy_jigyo;
 
 
-insert into analy_jigyo values(2020,'01','…“¹',       '0','ã…“¹',null,null,null);
-insert into analy_jigyo values(2020,'01','…“¹',       '1','ŠÈˆÕ…“¹',null,null,null);
-insert into analy_jigyo values(2020,'02','…“¹',       '2','H‹Æ—p…“¹',null,null,null);
-insert into analy_jigyo values(2020,'03','Œğ’Ê',       '1','˜H–Ê“dÔ',null,null,null);
-insert into analy_jigyo values(2020,'03','Œğ’Ê',       '3','©“®Ô‰^‘—',null,null,null);
-insert into analy_jigyo values(2020,'03','Œğ’Ê',       '5','“ss‚‘¬“S“¹',null,null,null);
-insert into analy_jigyo values(2020,'03','Œğ’Ê',       '6','Œœ‚“dÔ“™',null,null,null);
-insert into analy_jigyo values(2020,'03','Œğ’Ê',       '7','‘D”•‰^q',null,null,null);
-insert into analy_jigyo values(2020,'04','“d‹C',       '0','“d‹C',null,null,null);
-insert into analy_jigyo values(2020,'05','ƒKƒX',       '0','ƒKƒX',null,null,null);
-insert into analy_jigyo values(2020,'06','•a‰@',       '0','•a‰@',null,null,null);
+insert into analy_jigyo values(2020,'1','…“¹',        '0','ã…“¹',null,null,null);
+insert into analy_jigyo values(2020,'1','…“¹',        '1','ŠÈˆÕ…“¹',null,null,null);
+insert into analy_jigyo values(2020,'2','…“¹',        '2','H‹Æ—p…“¹',null,null,null);
+insert into analy_jigyo values(2020,'3','Œğ’Ê',        '1','˜H–Ê“dÔ',null,null,null);
+insert into analy_jigyo values(2020,'3','Œğ’Ê',        '3','©“®Ô‰^‘—',null,null,null);
+insert into analy_jigyo values(2020,'3','Œğ’Ê',        '5','“ss‚‘¬“S“¹',null,null,null);
+insert into analy_jigyo values(2020,'3','Œğ’Ê',        '6','Œœ‚“dÔ“™',null,null,null);
+insert into analy_jigyo values(2020,'3','Œğ’Ê',        '7','‘D”•‰^q',null,null,null);
+insert into analy_jigyo values(2020,'4','“d‹C',        '0','“d‹C',null,null,null);
+insert into analy_jigyo values(2020,'5','ƒKƒX',        '0','ƒKƒX',null,null,null);
+insert into analy_jigyo values(2020,'6','•a‰@',        '0','•a‰@',null,null,null);
 insert into analy_jigyo values(2020,'17','‰º…“¹1',    '1','Œö‹¤‰º…“¹',null,null,null);
 insert into analy_jigyo values(2020,'17','‰º…“¹1',    '2','“Á’èŒö‹¤‰º…“¹',null,null,null);
 insert into analy_jigyo values(2020,'17','‰º…“¹1',    '3','—¬ˆæ‰º…“¹',null,null,null);
@@ -45,8 +46,8 @@ insert into analy_jigyo values(2020,'17','‰º…“¹1',    '8','ŠÈˆÕ”r…{İ',null,n
 insert into analy_jigyo values(2020,'17','‰º…“¹1',    '9','¬‹K–Í”r…ˆ—{İ',null,null,null);
 insert into analy_jigyo values(2020,'18','‰º…“¹2',    '0','“Á’è”r…ˆ—{İ',null,null,null);
 insert into analy_jigyo values(2020,'18','‰º…“¹2',    '1','ŒÂ•Ê”r…ˆ—{İ',null,null,null);
-insert into analy_jigyo values(2020,'08','`˜p',       '0','`˜p',null,null,null);
-insert into analy_jigyo values(2020,'09','sê',       '0','sê',null,null,null);
+insert into analy_jigyo values(2020,'8','`˜p',        '0','`˜p',null,null,null);
+insert into analy_jigyo values(2020,'9','sê',        '0','sê',null,null,null);
 insert into analy_jigyo values(2020,'10','‚Æ’{ê',     '0','‚Æ’{ê',null,null,null);
 insert into analy_jigyo values(2020,'11','ŠÏŒõ',       '1','‹x—{h”‘',null,null,null);
 insert into analy_jigyo values(2020,'11','ŠÏŒõ',       '2','õ“¹',null,null,null);
@@ -62,20 +63,17 @@ commit;
 
 
 
-
-
-
-insert into analy_jigyo values(2019,'01','…“¹',       '0','ã…“¹',null,null,null);
-insert into analy_jigyo values(2019,'01','…“¹',       '1','ŠÈˆÕ…“¹',null,null,null);
-insert into analy_jigyo values(2019,'02','…“¹',       '2','H‹Æ—p…“¹',null,null,null);
-insert into analy_jigyo values(2019,'03','Œğ’Ê',       '1','˜H–Ê“dÔ',null,null,null);
-insert into analy_jigyo values(2019,'03','Œğ’Ê',       '3','©“®Ô‰^‘—',null,null,null);
-insert into analy_jigyo values(2019,'03','Œğ’Ê',       '5','“ss‚‘¬“S“¹',null,null,null);
-insert into analy_jigyo values(2019,'03','Œğ’Ê',       '6','Œœ‚“dÔ“™',null,null,null);
-insert into analy_jigyo values(2019,'03','Œğ’Ê',       '7','‘D”•‰^q',null,null,null);
-insert into analy_jigyo values(2019,'04','“d‹C',       '0','“d‹C',null,null,null);
-insert into analy_jigyo values(2019,'05','ƒKƒX',       '0','ƒKƒX',null,null,null);
-insert into analy_jigyo values(2019,'06','•a‰@',       '0','•a‰@',null,null,null);
+insert into analy_jigyo values(2019,'1','…“¹',        '0','ã…“¹',null,null,null);
+insert into analy_jigyo values(2019,'1','…“¹',        '1','ŠÈˆÕ…“¹',null,null,null);
+insert into analy_jigyo values(2019,'2','…“¹',        '2','H‹Æ—p…“¹',null,null,null);
+insert into analy_jigyo values(2019,'3','Œğ’Ê',        '1','˜H–Ê“dÔ',null,null,null);
+insert into analy_jigyo values(2019,'3','Œğ’Ê',        '3','©“®Ô‰^‘—',null,null,null);
+insert into analy_jigyo values(2019,'3','Œğ’Ê',        '5','“ss‚‘¬“S“¹',null,null,null);
+insert into analy_jigyo values(2019,'3','Œğ’Ê',        '6','Œœ‚“dÔ“™',null,null,null);
+insert into analy_jigyo values(2019,'3','Œğ’Ê',        '7','‘D”•‰^q',null,null,null);
+insert into analy_jigyo values(2019,'4','“d‹C',        '0','“d‹C',null,null,null);
+insert into analy_jigyo values(2019,'5','ƒKƒX',        '0','ƒKƒX',null,null,null);
+insert into analy_jigyo values(2019,'6','•a‰@',        '0','•a‰@',null,null,null);
 insert into analy_jigyo values(2019,'17','‰º…“¹1',    '1','Œö‹¤‰º…“¹',null,null,null);
 insert into analy_jigyo values(2019,'17','‰º…“¹1',    '2','“Á’èŒö‹¤‰º…“¹',null,null,null);
 insert into analy_jigyo values(2019,'17','‰º…“¹1',    '3','—¬ˆæ‰º…“¹',null,null,null);
@@ -87,8 +85,8 @@ insert into analy_jigyo values(2019,'17','‰º…“¹1',    '8','ŠÈˆÕ”r…{İ',null,n
 insert into analy_jigyo values(2019,'17','‰º…“¹1',    '9','¬‹K–Í”r…ˆ—{İ',null,null,null);
 insert into analy_jigyo values(2019,'18','‰º…“¹2',    '0','“Á’è”r…ˆ—{İ',null,null,null);
 insert into analy_jigyo values(2019,'18','‰º…“¹2',    '1','ŒÂ•Ê”r…ˆ—{İ',null,null,null);
-insert into analy_jigyo values(2019,'08','`˜p',       '0','`˜p',null,null,null);
-insert into analy_jigyo values(2019,'09','sê',       '0','sê',null,null,null);
+insert into analy_jigyo values(2019,'8','`˜p',        '0','`˜p',null,null,null);
+insert into analy_jigyo values(2019,'9','sê',        '0','sê',null,null,null);
 insert into analy_jigyo values(2019,'10','‚Æ’{ê',     '0','‚Æ’{ê',null,null,null);
 insert into analy_jigyo values(2019,'11','ŠÏŒõ',       '1','‹x—{h”‘',null,null,null);
 insert into analy_jigyo values(2019,'11','ŠÏŒõ',       '2','õ“¹',null,null,null);
@@ -103,17 +101,18 @@ insert into analy_jigyo values(2019,'16','‰îŒì',       '0','‰îŒìƒT[ƒrƒX',null,n
 commit;
 
 
-insert into analy_jigyo values(2018,'01','…“¹',       '0','ã…“¹',null,null,null);
-insert into analy_jigyo values(2018,'01','…“¹',       '1','ŠÈˆÕ…“¹',null,null,null);
-insert into analy_jigyo values(2018,'02','…“¹',       '2','H‹Æ—p…“¹',null,null,null);
-insert into analy_jigyo values(2018,'03','Œğ’Ê',       '1','˜H–Ê“dÔ',null,null,null);
-insert into analy_jigyo values(2018,'03','Œğ’Ê',       '3','©“®Ô‰^‘—',null,null,null);
-insert into analy_jigyo values(2018,'03','Œğ’Ê',       '5','“ss‚‘¬“S“¹',null,null,null);
-insert into analy_jigyo values(2018,'03','Œğ’Ê',       '6','Œœ‚“dÔ“™',null,null,null);
-insert into analy_jigyo values(2018,'03','Œğ’Ê',       '7','‘D”•‰^q',null,null,null);
-insert into analy_jigyo values(2018,'04','“d‹C',       '0','“d‹C',null,null,null);
-insert into analy_jigyo values(2018,'05','ƒKƒX',       '0','ƒKƒX',null,null,null);
-insert into analy_jigyo values(2018,'06','•a‰@',       '0','•a‰@',null,null,null);
+
+insert into analy_jigyo values(2018,'1','…“¹',        '0','ã…“¹',null,null,null);
+insert into analy_jigyo values(2018,'1','…“¹',        '1','ŠÈˆÕ…“¹',null,null,null);
+insert into analy_jigyo values(2018,'2','…“¹',        '2','H‹Æ—p…“¹',null,null,null);
+insert into analy_jigyo values(2018,'3','Œğ’Ê',        '1','˜H–Ê“dÔ',null,null,null);
+insert into analy_jigyo values(2018,'3','Œğ’Ê',        '3','©“®Ô‰^‘—',null,null,null);
+insert into analy_jigyo values(2018,'3','Œğ’Ê',        '5','“ss‚‘¬“S“¹',null,null,null);
+insert into analy_jigyo values(2018,'3','Œğ’Ê',        '6','Œœ‚“dÔ“™',null,null,null);
+insert into analy_jigyo values(2018,'3','Œğ’Ê',        '7','‘D”•‰^q',null,null,null);
+insert into analy_jigyo values(2018,'4','“d‹C',        '0','“d‹C',null,null,null);
+insert into analy_jigyo values(2018,'5','ƒKƒX',        '0','ƒKƒX',null,null,null);
+insert into analy_jigyo values(2018,'6','•a‰@',        '0','•a‰@',null,null,null);
 insert into analy_jigyo values(2018,'17','‰º…“¹1',    '1','Œö‹¤‰º…“¹',null,null,null);
 insert into analy_jigyo values(2018,'17','‰º…“¹1',    '2','“Á’èŒö‹¤‰º…“¹',null,null,null);
 insert into analy_jigyo values(2018,'17','‰º…“¹1',    '3','—¬ˆæ‰º…“¹',null,null,null);
@@ -125,8 +124,8 @@ insert into analy_jigyo values(2018,'17','‰º…“¹1',    '8','ŠÈˆÕ”r…{İ',null,n
 insert into analy_jigyo values(2018,'17','‰º…“¹1',    '9','¬‹K–Í”r…ˆ—{İ',null,null,null);
 insert into analy_jigyo values(2018,'18','‰º…“¹2',    '0','“Á’è”r…ˆ—{İ',null,null,null);
 insert into analy_jigyo values(2018,'18','‰º…“¹2',    '1','ŒÂ•Ê”r…ˆ—{İ',null,null,null);
-insert into analy_jigyo values(2018,'08','`˜p',       '0','`˜p',null,null,null);
-insert into analy_jigyo values(2018,'09','sê',       '0','sê',null,null,null);
+insert into analy_jigyo values(2018,'8','`˜p',        '0','`˜p',null,null,null);
+insert into analy_jigyo values(2018,'9','sê',        '0','sê',null,null,null);
 insert into analy_jigyo values(2018,'10','‚Æ’{ê',     '0','‚Æ’{ê',null,null,null);
 insert into analy_jigyo values(2018,'11','ŠÏŒõ',       '1','‹x—{h”‘',null,null,null);
 insert into analy_jigyo values(2018,'11','ŠÏŒõ',       '2','õ“¹',null,null,null);
@@ -141,19 +140,17 @@ insert into analy_jigyo values(2018,'16','‰îŒì',       '0','‰îŒìƒT[ƒrƒX',null,n
 commit;
 
 
-
-
-insert into analy_jigyo values(2017,'01','…“¹',       '0','ã…“¹',null,null,null);
-insert into analy_jigyo values(2017,'01','…“¹',       '1','ŠÈˆÕ…“¹',null,null,null);
-insert into analy_jigyo values(2017,'02','…“¹',       '2','H‹Æ—p…“¹',null,null,null);
-insert into analy_jigyo values(2017,'03','Œğ’Ê',       '1','˜H–Ê“dÔ',null,null,null);
-insert into analy_jigyo values(2017,'03','Œğ’Ê',       '3','©“®Ô‰^‘—',null,null,null);
-insert into analy_jigyo values(2017,'03','Œğ’Ê',       '5','“ss‚‘¬“S“¹',null,null,null);
-insert into analy_jigyo values(2017,'03','Œğ’Ê',       '6','Œœ‚“dÔ“™',null,null,null);
-insert into analy_jigyo values(2017,'03','Œğ’Ê',       '7','‘D”•‰^q',null,null,null);
-insert into analy_jigyo values(2017,'04','“d‹C',       '0','“d‹C',null,null,null);
-insert into analy_jigyo values(2017,'05','ƒKƒX',       '0','ƒKƒX',null,null,null);
-insert into analy_jigyo values(2017,'06','•a‰@',       '0','•a‰@',null,null,null);
+insert into analy_jigyo values(2017,'1','…“¹',        '0','ã…“¹',null,null,null);
+insert into analy_jigyo values(2017,'1','…“¹',        '1','ŠÈˆÕ…“¹',null,null,null);
+insert into analy_jigyo values(2017,'2','…“¹',        '2','H‹Æ—p…“¹',null,null,null);
+insert into analy_jigyo values(2017,'3','Œğ’Ê',        '1','˜H–Ê“dÔ',null,null,null);
+insert into analy_jigyo values(2017,'3','Œğ’Ê',        '3','©“®Ô‰^‘—',null,null,null);
+insert into analy_jigyo values(2017,'3','Œğ’Ê',        '5','“ss‚‘¬“S“¹',null,null,null);
+insert into analy_jigyo values(2017,'3','Œğ’Ê',        '6','Œœ‚“dÔ“™',null,null,null);
+insert into analy_jigyo values(2017,'3','Œğ’Ê',        '7','‘D”•‰^q',null,null,null);
+insert into analy_jigyo values(2017,'4','“d‹C',        '0','“d‹C',null,null,null);
+insert into analy_jigyo values(2017,'5','ƒKƒX',        '0','ƒKƒX',null,null,null);
+insert into analy_jigyo values(2017,'6','•a‰@',        '0','•a‰@',null,null,null);
 insert into analy_jigyo values(2017,'17','‰º…“¹1',    '1','Œö‹¤‰º…“¹',null,null,null);
 insert into analy_jigyo values(2017,'17','‰º…“¹1',    '2','“Á’èŒö‹¤‰º…“¹',null,null,null);
 insert into analy_jigyo values(2017,'17','‰º…“¹1',    '3','—¬ˆæ‰º…“¹',null,null,null);
@@ -165,8 +162,8 @@ insert into analy_jigyo values(2017,'17','‰º…“¹1',    '8','ŠÈˆÕ”r…{İ',null,n
 insert into analy_jigyo values(2017,'17','‰º…“¹1',    '9','¬‹K–Í”r…ˆ—{İ',null,null,null);
 insert into analy_jigyo values(2017,'18','‰º…“¹2',    '0','“Á’è”r…ˆ—{İ',null,null,null);
 insert into analy_jigyo values(2017,'18','‰º…“¹2',    '1','ŒÂ•Ê”r…ˆ—{İ',null,null,null);
-insert into analy_jigyo values(2017,'08','`˜p',       '0','`˜p',null,null,null);
-insert into analy_jigyo values(2017,'09','sê',       '0','sê',null,null,null);
+insert into analy_jigyo values(2017,'8','`˜p',        '0','`˜p',null,null,null);
+insert into analy_jigyo values(2017,'9','sê',        '0','sê',null,null,null);
 insert into analy_jigyo values(2017,'10','‚Æ’{ê',     '0','‚Æ’{ê',null,null,null);
 insert into analy_jigyo values(2017,'11','ŠÏŒõ',       '1','‹x—{h”‘',null,null,null);
 insert into analy_jigyo values(2017,'11','ŠÏŒõ',       '2','õ“¹',null,null,null);
@@ -181,20 +178,17 @@ insert into analy_jigyo values(2017,'16','‰îŒì',       '0','‰îŒìƒT[ƒrƒX',null,n
 commit;
 
 
-
-
-
-insert into analy_jigyo values(2016,'01','…“¹',       '0','ã…“¹',null,null,null);
-insert into analy_jigyo values(2016,'01','…“¹',       '1','ŠÈˆÕ…“¹',null,null,null);
-insert into analy_jigyo values(2016,'02','…“¹',       '2','H‹Æ—p…“¹',null,null,null);
-insert into analy_jigyo values(2016,'03','Œğ’Ê',       '1','˜H–Ê“dÔ',null,null,null);
-insert into analy_jigyo values(2016,'03','Œğ’Ê',       '3','©“®Ô‰^‘—',null,null,null);
-insert into analy_jigyo values(2016,'03','Œğ’Ê',       '5','“ss‚‘¬“S“¹',null,null,null);
-insert into analy_jigyo values(2016,'03','Œğ’Ê',       '6','Œœ‚“dÔ“™',null,null,null);
-insert into analy_jigyo values(2016,'03','Œğ’Ê',       '7','‘D”•‰^q',null,null,null);
-insert into analy_jigyo values(2016,'04','“d‹C',       '0','“d‹C',null,null,null);
-insert into analy_jigyo values(2016,'05','ƒKƒX',       '0','ƒKƒX',null,null,null);
-insert into analy_jigyo values(2016,'06','•a‰@',       '0','•a‰@',null,null,null);
+insert into analy_jigyo values(2016,'1','…“¹',        '0','ã…“¹',null,null,null);
+insert into analy_jigyo values(2016,'1','…“¹',        '1','ŠÈˆÕ…“¹',null,null,null);
+insert into analy_jigyo values(2016,'2','…“¹',        '2','H‹Æ—p…“¹',null,null,null);
+insert into analy_jigyo values(2016,'3','Œğ’Ê',        '1','˜H–Ê“dÔ',null,null,null);
+insert into analy_jigyo values(2016,'3','Œğ’Ê',        '3','©“®Ô‰^‘—',null,null,null);
+insert into analy_jigyo values(2016,'3','Œğ’Ê',        '5','“ss‚‘¬“S“¹',null,null,null);
+insert into analy_jigyo values(2016,'3','Œğ’Ê',        '6','Œœ‚“dÔ“™',null,null,null);
+insert into analy_jigyo values(2016,'3','Œğ’Ê',        '7','‘D”•‰^q',null,null,null);
+insert into analy_jigyo values(2016,'4','“d‹C',        '0','“d‹C',null,null,null);
+insert into analy_jigyo values(2016,'5','ƒKƒX',        '0','ƒKƒX',null,null,null);
+insert into analy_jigyo values(2016,'6','•a‰@',        '0','•a‰@',null,null,null);
 insert into analy_jigyo values(2016,'17','‰º…“¹1',    '1','Œö‹¤‰º…“¹',null,null,null);
 insert into analy_jigyo values(2016,'17','‰º…“¹1',    '2','“Á’èŒö‹¤‰º…“¹',null,null,null);
 insert into analy_jigyo values(2016,'17','‰º…“¹1',    '3','—¬ˆæ‰º…“¹',null,null,null);
@@ -206,8 +200,8 @@ insert into analy_jigyo values(2016,'17','‰º…“¹1',    '8','ŠÈˆÕ”r…{İ',null,n
 insert into analy_jigyo values(2016,'17','‰º…“¹1',    '9','¬‹K–Í”r…ˆ—{İ',null,null,null);
 insert into analy_jigyo values(2016,'18','‰º…“¹2',    '0','“Á’è”r…ˆ—{İ',null,null,null);
 insert into analy_jigyo values(2016,'18','‰º…“¹2',    '1','ŒÂ•Ê”r…ˆ—{İ',null,null,null);
-insert into analy_jigyo values(2016,'08','`˜p',       '0','`˜p',null,null,null);
-insert into analy_jigyo values(2016,'09','sê',       '0','sê',null,null,null);
+insert into analy_jigyo values(2016,'8','`˜p',        '0','`˜p',null,null,null);
+insert into analy_jigyo values(2016,'9','sê',        '0','sê',null,null,null);
 insert into analy_jigyo values(2016,'10','‚Æ’{ê',     '0','‚Æ’{ê',null,null,null);
 insert into analy_jigyo values(2016,'11','ŠÏŒõ',       '1','‹x—{h”‘',null,null,null);
 insert into analy_jigyo values(2016,'11','ŠÏŒõ',       '2','õ“¹',null,null,null);
@@ -223,19 +217,17 @@ commit;
 
 
 
-
-
-insert into analy_jigyo values(2015,'01','…“¹',       '0','ã…“¹',null,null,null);
-insert into analy_jigyo values(2015,'01','…“¹',       '1','ŠÈˆÕ…“¹',null,null,null);
-insert into analy_jigyo values(2015,'02','…“¹',       '2','H‹Æ—p…“¹',null,null,null);
-insert into analy_jigyo values(2015,'03','Œğ’Ê',       '1','˜H–Ê“dÔ',null,null,null);
-insert into analy_jigyo values(2015,'03','Œğ’Ê',       '3','©“®Ô‰^‘—',null,null,null);
-insert into analy_jigyo values(2015,'03','Œğ’Ê',       '5','“ss‚‘¬“S“¹',null,null,null);
-insert into analy_jigyo values(2015,'03','Œğ’Ê',       '6','Œœ‚“dÔ“™',null,null,null);
-insert into analy_jigyo values(2015,'03','Œğ’Ê',       '7','‘D”•‰^q',null,null,null);
-insert into analy_jigyo values(2015,'04','“d‹C',       '0','“d‹C',null,null,null);
-insert into analy_jigyo values(2015,'05','ƒKƒX',       '0','ƒKƒX',null,null,null);
-insert into analy_jigyo values(2015,'06','•a‰@',       '0','•a‰@',null,null,null);
+insert into analy_jigyo values(2015,'1','…“¹',        '0','ã…“¹',null,null,null);
+insert into analy_jigyo values(2015,'1','…“¹',        '1','ŠÈˆÕ…“¹',null,null,null);
+insert into analy_jigyo values(2015,'2','…“¹',        '2','H‹Æ—p…“¹',null,null,null);
+insert into analy_jigyo values(2015,'3','Œğ’Ê',        '1','˜H–Ê“dÔ',null,null,null);
+insert into analy_jigyo values(2015,'3','Œğ’Ê',        '3','©“®Ô‰^‘—',null,null,null);
+insert into analy_jigyo values(2015,'3','Œğ’Ê',        '5','“ss‚‘¬“S“¹',null,null,null);
+insert into analy_jigyo values(2015,'3','Œğ’Ê',        '6','Œœ‚“dÔ“™',null,null,null);
+insert into analy_jigyo values(2015,'3','Œğ’Ê',        '7','‘D”•‰^q',null,null,null);
+insert into analy_jigyo values(2015,'4','“d‹C',        '0','“d‹C',null,null,null);
+insert into analy_jigyo values(2015,'5','ƒKƒX',        '0','ƒKƒX',null,null,null);
+insert into analy_jigyo values(2015,'6','•a‰@',        '0','•a‰@',null,null,null);
 insert into analy_jigyo values(2015,'17','‰º…“¹1',    '1','Œö‹¤‰º…“¹',null,null,null);
 insert into analy_jigyo values(2015,'17','‰º…“¹1',    '2','“Á’èŒö‹¤‰º…“¹',null,null,null);
 insert into analy_jigyo values(2015,'17','‰º…“¹1',    '3','—¬ˆæ‰º…“¹',null,null,null);
@@ -247,8 +239,8 @@ insert into analy_jigyo values(2015,'17','‰º…“¹1',    '8','ŠÈˆÕ”r…{İ',null,n
 insert into analy_jigyo values(2015,'17','‰º…“¹1',    '9','¬‹K–Í”r…ˆ—{İ',null,null,null);
 insert into analy_jigyo values(2015,'18','‰º…“¹2',    '0','“Á’è”r…ˆ—{İ',null,null,null);
 insert into analy_jigyo values(2015,'18','‰º…“¹2',    '1','ŒÂ•Ê”r…ˆ—{İ',null,null,null);
-insert into analy_jigyo values(2015,'08','`˜p',       '0','`˜p',null,null,null);
-insert into analy_jigyo values(2015,'09','sê',       '0','sê',null,null,null);
+insert into analy_jigyo values(2015,'8','`˜p',        '0','`˜p',null,null,null);
+insert into analy_jigyo values(2015,'9','sê',        '0','sê',null,null,null);
 insert into analy_jigyo values(2015,'10','‚Æ’{ê',     '0','‚Æ’{ê',null,null,null);
 insert into analy_jigyo values(2015,'11','ŠÏŒõ',       '1','‹x—{h”‘',null,null,null);
 insert into analy_jigyo values(2015,'11','ŠÏŒõ',       '2','õ“¹',null,null,null);

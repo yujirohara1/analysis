@@ -3,14 +3,14 @@ drop view V_ANALY_RUISEKI_KESSON_A;
 create 
 or replace view V_ANALY_RUISEKI_KESSON_A as 
 select
-    nendo
-    , gyomu_cd
-    , gyoshu_cd
-    , jigyo_cd
-    , dantai_cd
-    , dantai_nm
-    , sisetu_cd
-    , sisetu_nm
+    a.nendo
+    , a.gyomu_cd
+    , a.gyoshu_cd
+    , a.jigyo_cd
+    , a.dantai_cd
+    , a.dantai_nm
+    , a.sisetu_cd
+    , case when a.sisetu_nm = 'NaN' then b.jigyo_nm else a.sisetu_nm end 
     , joken_1
     , joken_2
     , joken_3
@@ -72,5 +72,10 @@ from
             , joken_7
             , joken_8
             , joken_9
-    ) a;
-
+    ) a
+    join analy_jigyo b
+on
+    a.nendo = b.nendo and
+    a.gyoshu_cd = b.gyoshu_cd and
+    a.jigyo_cd = b.jigyo_cd
+;

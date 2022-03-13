@@ -176,10 +176,10 @@ function createElementSelectGyoshu(list){
     //lbl.innerText = list[i].jigyo_nm;
 
 
-    if("01" <= list[i].gyoshu_cd && list[i].gyoshu_cd <= "06"){
+    if(1 <= list[i].gyoshu_cd && list[i].gyoshu_cd <= 6){
       subDivA.appendChild(chk);
       subDivA.appendChild(lbl);
-    } else if("07" <= list[i].gyoshu_cd && list[i].gyoshu_cd <= "16"){
+    } else if(7 <= list[i].gyoshu_cd && list[i].gyoshu_cd <= 16){
       subDivB.appendChild(chk);
       subDivB.appendChild(lbl);
     } else{
@@ -274,7 +274,7 @@ function getAndCreateTable_ShuekiRankList(){
   .then(jsonData => {
     createTableDiv("divMainLeftTop", "tableDivShueki");
     var list = JSON.parse(jsonData.data);
-    var hdText = ["ランク", "団体名", "施設名",　"経常収支比率(%)"];
+    var hdText = ["ランク", "団体名", "事業名・施設名",　"経常収支比率(%)"];
     var propId = ["rank", "dantai_nm", "sisetu_nm",　"keijo_shusi_hiritu"];
     var align = ["center", "left", "left",　"right"];
     var width = ["10%", "35%", "40%", "25%"];
@@ -302,7 +302,7 @@ function getAndCreateTable_ReturnOnEquityRankList(){
   .then(jsonData => {
     createTableDiv("divMainCenterBottom", "tableDivRoe");
     var list = JSON.parse(jsonData.data);
-    var hdText = ["ランク", "団体名", "施設名",　"自己資本利益率(%)"];
+    var hdText = ["ランク", "団体名", "事業名・施設名",　"自己資本利益率(%)"];
     var propId = ["rank", "dantai_nm", "sisetu_nm",　"roe"];
     var align = ["center", "left", "left",　"right"];
     var width = ["10%", "35%", "40%", "25%"];
@@ -319,7 +319,7 @@ function getAndCreateTable_ReturnOnEquityRankList(){
 //ROAランキングテーブルを作成
 function getAndCreateTable_ReturnOnAssetRankList(){
   //枠内にローダーを表示
-  createTableLoading("divMainRightBottom", "tableDivLoading9", "自己資本利益率(ROA)による収益性ランクを作成中...");
+  createTableLoading("divMainRightBottom", "tableDivLoading9", "総資産利益率(ROA)による収益性ランクを作成中...");
   val = "2020"; // 会計年度、見直し必要。
   var joken = getGyoshuJoken();
   fetch('/getReturnOnAssetRankList/' + val + "/" + joken, {
@@ -330,11 +330,11 @@ function getAndCreateTable_ReturnOnAssetRankList(){
   .then(jsonData => {
     createTableDiv("divMainRightBottom", "tableDivRoa");
     var list = JSON.parse(jsonData.data);
-    var hdText = ["ランク", "団体名", "施設名",　"総資産利益率(%)"];
+    var hdText = ["ランク", "団体名", "事業名・施設名",　"総資産利益率(%)"];
     var propId = ["rank", "dantai_nm", "sisetu_nm",　"roa"];
     var align = ["center", "left", "left",　"right"];
     var width = ["10%", "35%", "40%", "25%"];
-    createTableByJsonList(list, "divMainRightBottom", "tableDivRoa", "自己資本利益率(ROA)による収益性ランキング", hdText, propId, align, width, 3);
+    createTableByJsonList(list, "divMainRightBottom", "tableDivRoa", "総資産利益率(ROA)による収益性ランキング", hdText, propId, align, width, 3);
     //ローダーを削除
     destroyTableLoading("divMainRightBottom", "tableDivLoading9");
     return;
@@ -357,7 +357,7 @@ function getAndCreateTable_SihonHirituRankList(){
   .then(jsonData => {
     createTableDiv("divMainLeftBottom2", "tableDivSihonHiritu");
     var list = JSON.parse(jsonData.data);
-    var hdText = ["ランク", "団体名", "施設名",　"資本比率(%)"];
+    var hdText = ["ランク", "団体名", "事業名・施設名",　"資本比率(%)"];
     var propId = ["rank", "dantai_nm", "sisetu_nm",　"sihon_hiritu"];
     var align = ["center", "left", "left",　"right"];
     var width = ["10%", "35%", "40%", "25%"];
@@ -383,7 +383,7 @@ function getAndCreateTable_KoteiHirituRankList(){
   .then(jsonData => {
     createTableDiv("divMainCenterBottom2", "tableDivKoteiHiritu");
     var list = JSON.parse(jsonData.data);
-    var hdText = ["ランク", "団体名", "施設名",　"固定比率(%)"];
+    var hdText = ["ランク", "団体名", "事業名・施設名",　"固定比率(%)"];
     var propId = ["rank", "dantai_nm", "sisetu_nm",　"kotei_hiritu"];
     var align = ["center", "left", "left",　"right"];
     var width = ["10%", "35%", "40%", "25%"];
@@ -410,7 +410,7 @@ function getAndCreateTable_JugyoinHitoriRiekiRankList(){
   .then(jsonData => {
     createTableDiv("divMainRightBottom2", "tableDivHitoriRieki");
     var list = JSON.parse(jsonData.data);
-    var hdText = ["ランク", "団体名", "施設名",　"職員1人あたり利益(千円)"];
+    var hdText = ["ランク", "団体名", "事業名・施設名",　"職員1人あたり利益(千円)"];
     var propId = ["rank", "dantai_nm", "sisetu_nm",　"hitori_rieki"];
     var align = ["center", "left", "left",　"right"];
     var width = ["10%", "35%", "40%", "25%"];
@@ -437,7 +437,7 @@ function getAndCreateTable_KeijoriekiSeichorituRankList(){
   .then(jsonData => {
     createTableDiv("divMainLeftBottom3", "tableDivKeijoSeicho");
     var list = JSON.parse(jsonData.data);
-    var hdText = ["ランク", "団体名", "施設名",　"成長率(%)"];
+    var hdText = ["ランク", "団体名", "事業名・施設名",　"成長率(%)"];
     var propId = ["rank", "dantai_nm", "sisetu_nm",　"seicho_ritu"];
     var align = ["center", "left", "left",　"right"];
     var width = ["10%", "35%", "40%", "25%"];
@@ -464,7 +464,7 @@ function getAndCreateTable_SihonSeichorituRankList(){
   .then(jsonData => {
     createTableDiv("divMainCenterBottom3", "tableDivSihonSeicho");
     var list = JSON.parse(jsonData.data);
-    var hdText = ["ランク", "団体名", "施設名",　"成長率(%)"];
+    var hdText = ["ランク", "団体名", "事業名・施設名",　"成長率(%)"];
     var propId = ["rank", "dantai_nm", "sisetu_nm",　"seicho_ritu"];
     var align = ["center", "left", "left",　"right"];
     var width = ["10%", "35%", "40%", "25%"];
@@ -818,7 +818,7 @@ function getAndCreateTable_AnzenRankList(){
   .then(jsonData => {
     createTableDiv("divMainCenterTop", "tableDivAnzen");
     var list = JSON.parse(jsonData.data);
-    var hdText = ["ランク", "団体名", "施設名",　"流動比率(%)"];
+    var hdText = ["ランク", "団体名", "事業名・施設名",　"流動比率(%)"];
     var propId = ["rank", "dantai_nm", "sisetu_nm",　"ryudo_hiritu"];
     var align = ["center", "left", "left",　"right"];
     var width = ["10%", "35%", "40%", "25%"];
@@ -850,7 +850,7 @@ function getAndCreateTable_RuisekiKessonRankList(){
   .then(jsonData => {
     createTableDiv("divMainRightTop", "tableDivRuisekiKesson");
     var list = JSON.parse(jsonData.data);
-    var hdText = ["ランク", "団体名", "施設名",　"累積欠損比率(%)"];
+    var hdText = ["ランク", "団体名", "事業名・施設名",　"累積欠損比率(%)"];
     var propId = ["rank", "dantai_nm", "sisetu_nm",　"ruiseki_kesson_hiritu"];
     var align = ["center", "left", "left",　"right"];
     var width = ["10%", "35%", "40%", "25%"];
@@ -878,7 +878,7 @@ function getAndCreateTable_KigyosaiKyusuiRankList(){
   .then(jsonData => {
     createTableDiv("divMainLeftMiddle", "tableDivKigyosaiKyusuiRankList");
     var list = JSON.parse(jsonData.data);
-    var hdText = ["ランク", "団体名", "施設名",　"企業債残高対給水収益比率(%)"];
+    var hdText = ["ランク", "団体名", "事業名・施設名",　"企業債残高対給水収益比率(%)"];
     var propId = ["rank", "dantai_nm", "sisetu_nm",　"kigyosai_shueki_hiritu"];
     var align = ["center", "left", "left",　"right"];
     var width = ["10%", "35%", "40%", "25%"];
@@ -906,7 +906,7 @@ function getAndCreateTable_KoteiShokyakurituRankList(){
   .then(jsonData => {
     createTableDiv("divMainCenterMiddle", "tableDivKoteiShokyakurituRankList");
     var list = JSON.parse(jsonData.data);
-    var hdText = ["ランク", "団体名", "施設名",　"有形固定資産償却率(%)"];
+    var hdText = ["ランク", "団体名", "事業名・施設名",　"有形固定資産償却率(%)"];
     var propId = ["rank", "dantai_nm", "sisetu_nm",　"shokyaku_hiritu"];
     var align = ["center", "left", "left",　"right"];
     var width = ["10%", "35%", "40%", "25%"];
@@ -933,7 +933,7 @@ function getAndCreateTable_ByoshoRiyorituRankList(){
   .then(jsonData => {
     createTableDiv("divMainRightMiddle", "tableDivByoshoRiyorituRankList");
     var list = JSON.parse(jsonData.data);
-    var hdText = ["ランク", "団体名", "施設名",　"病床利用率(%)"];
+    var hdText = ["ランク", "団体名", "事業名・施設名",　"病床利用率(%)"];
     var propId = ["rank", "dantai_nm", "sisetu_nm",　"riyoritu"];
     var align = ["center", "left", "left",　"right"];
     var width = ["10%", "35%", "40%", "25%"];
@@ -960,7 +960,7 @@ function getAndCreateTable_NyuinHitoriShuekiRankList(){
   .then(jsonData => {
     createTableDiv("divMainLeftBottom", "tableDivNyuinHitoriShuekiRankList");
     var list = JSON.parse(jsonData.data);
-    var hdText = ["ランク", "団体名", "施設名",　"入院患者1人1日あたり収益(%)"];
+    var hdText = ["ランク", "団体名", "事業名・施設名",　"入院患者1人1日あたり収益(%)"];
     var propId = ["rank", "dantai_nm", "sisetu_nm",　"hitori_ichinichi_shueki"];
     var align = ["center", "left", "left",　"right"];
     var width = ["10%", "35%", "40%", "25%"];
