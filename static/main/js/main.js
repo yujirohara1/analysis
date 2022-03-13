@@ -221,7 +221,7 @@ function getAndCreateTable_DantaiListOfRadarChart(datalist){
     var hdText = ["団体名", "施設・事業名"];
     var propId = ["dantai_nm", "sisetu_nm"];
     var align = ["left", "left"];
-    var width = ["70%", "70%"];
+    var width = ["50%", "80%"];
     createTableByJsonList(list, "divCompareRight", "tableDivDantaiListOfRadarChart", "同規模団体と比べてみよう", hdText, propId, align, width, 1.5);
     //ローダーを削除
     destroyTableLoading("divCompareRight", "tableDivLoadingCompareRight");
@@ -261,6 +261,12 @@ function createTableLoading(locationId, tableDivId, messageLabel){
 
 //業種条件を作る
 function getGyoshuJoken(){
+  // 暫定対応として、初期状態は上水道のみとする条件を入れる。
+  // 全業種を入れたらダイジェストを作るのに相当な時間がかかるようになってしまったため。
+  if(gyoshuSelectStauts==null){
+    return "dummy,1-0";
+  }
+  
   var joken = "dummy";
   for (let i in gyoshuSelectStauts){
     if(gyoshuSelectStauts[i].checked){
