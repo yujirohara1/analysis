@@ -48,7 +48,7 @@ window.onload = function(){
     //getAndCreateTable_KeijoriekiSeichorituRankList();// # 経常利益成長率
     //getAndCreateTable_SihonSeichorituRankList();// # 資本成長率
 
-    getAndCreateTable_DantaiListOfRadarChart(); //レーダーチャート右の団体リスト
+    //getAndCreateTable_DantaiListOfRadarChart(); //レーダーチャート右の団体リスト
 
     CreateRadarChart("");
     
@@ -196,11 +196,21 @@ function createElementSelectGyoshu(list){
 
 
 //レーダーチャート右の団体リスト
-function getAndCreateTable_DantaiListOfRadarChart(){
+function getAndCreateTable_DantaiListOfRadarChart(datalist){
   //枠内にローダーを表示
   createTableLoading("divCompareRight", "tableDivLoadingCompareRight", "団体リストを作成中...");
-  val = "2020"; // 会計年度、見直し必要。
-  fetch('/getDantaiListOfRadarChart/' + val, {
+  var val = "2020"; // 会計年度、見直し必要。
+  var jokenAll = "";
+  jokenAll = jokenAll + datalist.joken_1 + ",";
+  jokenAll = jokenAll + datalist.joken_2 + ",";
+  jokenAll = jokenAll + datalist.joken_3 + ",";
+  jokenAll = jokenAll + datalist.joken_4 + ",";
+  jokenAll = jokenAll + datalist.joken_5 + ",";
+  jokenAll = jokenAll + datalist.joken_6 + ",";
+  jokenAll = jokenAll + datalist.joken_7 + ",";
+  jokenAll = jokenAll + datalist.joken_8;
+
+  fetch('/getDantaiListOfRadarChart/' + val + "/" + datalist.gyomu_cd + "/" + datalist.gyoshu_cd + "/" + datalist.jigyo_cd + "/" + jokenAll, {
     method: 'GET',
     'Content-Type': 'application/json'
   })
@@ -208,10 +218,11 @@ function getAndCreateTable_DantaiListOfRadarChart(){
   .then(jsonData => {
     createTableDiv("divCompareRight", "tableDivDantaiListOfRadarChart");
     var list = JSON.parse(jsonData.data);
-    var hdText = ["団体名", "施設名"];
+    var hdText = ["団体名", "施設・事業名"];
     var propId = ["dantai_nm", "sisetu_nm"];
     var align = ["left", "left"];
-    createTableByJsonList(list, "divCompareRight", "tableDivDantaiListOfRadarChart", "登録団体リスト", hdText, propId, align, null, 1.5);
+    var width = ["70%", "70%"];
+    createTableByJsonList(list, "divCompareRight", "tableDivDantaiListOfRadarChart", "登録団体リスト", hdText, propId, align, width, 1.5);
     //ローダーを削除
     destroyTableLoading("divCompareRight", "tableDivLoadingCompareRight");
     return;
@@ -594,7 +605,8 @@ function createTableByJsonList(datalist, locationId, tableDivId, caption, hdText
           tdataA.title = datalist[i].gyomu_cd + "-" + datalist[i].gyoshu_cd + "-" + datalist[i].jigyo_cd + "-" +  datalist[i].dantai_cd + "-" +  datalist[i].sisetu_cd;
             tdataA.addEventListener('click', (event) => {
               var key = event.target.title;
-              moveProfileTab(key);
+              //moveProfileTab(key);
+              moveCompareTab(datalist[i]);
               createToasts(datalist[i]);
             });
         } 
@@ -682,6 +694,7 @@ function setAttributes(dom, str){
   }
 }
 
+// 基本情報タブへ移動
 function moveProfileTab(key){
   try{
     document.getElementById('dataTab').querySelector("a.nav-link").classList.remove("active");
@@ -697,6 +710,25 @@ function moveProfileTab(key){
   }
 }
 
+// レーダーチャートタブへ移動
+function moveCompareTab(datalist){
+  try{
+    document.getElementById('dataTab').querySelector("a.nav-link").classList.remove("active");
+    document.getElementById('compare-tab').classList.add("active");
+    document.getElementById('dataTabContent').querySelector("div.tab-pane").classList.remove("active");
+    document.getElementById('dataTabContent').querySelector("div.tab-pane").classList.remove("show");
+    document.getElementById('compare-panel').classList.add("active");
+    document.getElementById('compare-panel').classList.add("show");
+
+    //createHyoVerticalNavbar(key);
+    getRadarChartData(nanajikuRadarChart, datalist);
+    getAndCreateTable_DantaiListOfRadarChart(datalist);
+  }catch(e){
+
+  }
+}
+
+// 基本情報タブの左の表リストを作成
 function createHyoVerticalNavbar(key){
     val = "2020"; // 会計年度、見直し必要。
     fetch('/getHyoListForProfile/' + val + '/20/30/40/50/60', {
@@ -763,7 +795,7 @@ function createHyoVerticalNavbar(key){
     .catch(error => { console.log(error); });
 }
 
-
+//基本情報タブの左の表リストをクリックして、テーブルを作成
 function createHyoTableByHyoNumber(key, hyo_num){
   if(document.getElementById("tableDivHyo")!=null){
     document.getElementById("tableDivHyo").remove();
@@ -799,7 +831,6 @@ function createHyoTableByHyoNumber(key, hyo_num){
   .catch(error => { console.log(error); });
 
 }
-
 
 
 //安全性ランキングテーブルを作成

@@ -11,6 +11,14 @@ class VAnalySisetu(db.Model):
     dantai_nm = db.Column(db.String(), primary_key=True) 
     sisetu_cd = db.Column(db.String(), primary_key=True) 
     sisetu_nm = db.Column(db.String(), primary_key=True) 
+    joken_1      = db.Column(db.Integer, primary_key=False)
+    joken_2      = db.Column(db.Integer, primary_key=False)
+    joken_3      = db.Column(db.Integer, primary_key=False)
+    joken_4      = db.Column(db.Integer, primary_key=False)
+    joken_5      = db.Column(db.Integer, primary_key=False)
+    joken_6      = db.Column(db.Integer, primary_key=False)
+    joken_7      = db.Column(db.Integer, primary_key=False)
+    joken_8      = db.Column(db.Integer, primary_key=False)
 
 class VAnalySisetuSchema(ma.SQLAlchemyAutoSchema):
       class Meta:

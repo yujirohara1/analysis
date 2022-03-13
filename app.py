@@ -570,10 +570,18 @@ def createSisetuMainFromTo(csv, indexFrom, indexTo):
 
 # 
 # 団体リスト
-@app.route('/getDantaiListOfRadarChart/<nendo>')
-def getDantaiListOfRadarChart(nendo):
+@app.route('/getDantaiListOfRadarChart/<nendo>/<gyomu_cd>/<gyoshu_cd>/<jigyo_cd>/<jokenAll>')
+def getDantaiListOfRadarChart(nendo, gyomu_cd, gyoshu_cd, jigyo_cd, jokenAll):
+    jokenArray = jokenAll.split(",")
     datalist = VAnalySisetu.query.filter(
-        VAnalySisetu.nendo == nendo
+        VAnalySisetu.nendo == nendo,
+        VAnalySisetu.gyomu_cd == gyomu_cd,
+        VAnalySisetu.gyoshu_cd == gyoshu_cd,
+        VAnalySisetu.jigyo_cd == jigyo_cd,
+        VAnalySisetu.joken_1 == jokenArray[0],
+        VAnalySisetu.joken_2 == jokenArray[1],
+        VAnalySisetu.joken_4 == jokenArray[3],
+        VAnalySisetu.joken_5 == jokenArray[4]
       ).order_by(
           asc(VAnalySisetu.dantai_cd), 
           asc(VAnalySisetu.sisetu_cd)
