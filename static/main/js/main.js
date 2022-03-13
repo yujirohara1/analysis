@@ -50,7 +50,7 @@ window.onload = function(){
 
     //getAndCreateTable_DantaiListOfRadarChart(); //レーダーチャート右の団体リスト
 
-    CreateRadarChart("");
+    //CreateRadarChart("");
     
   }catch(e){
     console.log(e.message);
@@ -222,7 +222,7 @@ function getAndCreateTable_DantaiListOfRadarChart(datalist){
     var propId = ["dantai_nm", "sisetu_nm"];
     var align = ["left", "left"];
     var width = ["70%", "70%"];
-    createTableByJsonList(list, "divCompareRight", "tableDivDantaiListOfRadarChart", "登録団体リスト", hdText, propId, align, width, 1.5);
+    createTableByJsonList(list, "divCompareRight", "tableDivDantaiListOfRadarChart", "同規模団体と比べてみよう", hdText, propId, align, width, 1.5);
     //ローダーを削除
     destroyTableLoading("divCompareRight", "tableDivLoadingCompareRight");
     return;
@@ -606,6 +606,7 @@ function createTableByJsonList(datalist, locationId, tableDivId, caption, hdText
             tdataA.addEventListener('click', (event) => {
               var key = event.target.title;
               //moveProfileTab(key);
+              createHyoVerticalNavbar(key); //基本情報タブの左の表バー
               moveCompareTab(datalist[i]);
               createToasts(datalist[i]);
             });
@@ -721,7 +722,8 @@ function moveCompareTab(datalist){
     document.getElementById('compare-panel').classList.add("show");
 
     //createHyoVerticalNavbar(key);
-    getRadarChartData(nanajikuRadarChart, datalist);
+    //getRadarChartData(nanajikuRadarChart, datalist);
+    CreateRadarChart(datalist);
     getAndCreateTable_DantaiListOfRadarChart(datalist);
   }catch(e){
 
@@ -1096,18 +1098,55 @@ function CreateRadarChart(selectRow){
     };
     //const ctx = document.getElementById("myChart").getContext('2d');
     //nanajikuRadarChart = new Chart(ctx, chartData);
-    var datalist = { dantai_cd:"dummy", sisetu_cd:"dummy", val:0, dantai_nm:"", sisetu_nm:"" };
-    getRadarChartData(chartData, datalist);
+    //var datalist = { dantai_cd:"dummy", sisetu_cd:"dummy", val:0, dantai_nm:"", sisetu_nm:"" };
+    getRadarChartData(chartData, selectRow);
 }
 
 
+// レーダーチャートに含まれるかどうかを検査
+function isContainsRadarChart(chartData, datalist){
+  var tuikazumi = chartData.data.datasets;
+  var konkai = (datalist.dantai_nm + " " + datalist.sisetu_nm).substring(0,16);
+
+  for(let i in tuikazumi){
+    if (tuikazumi[i].label == konkai){
+      return true;
+    }
+  }
+
+  return false;
+}
+
 function getRadarChartData(chartData, datalist){
+
     var idx = chartData.data.datasets.length;
     if(idx==0){
         //var ctx = $("#myChart").get(0).getContext("2d");
         if(nanajikuRadarChart!=null){
             nanajikuRadarChart.destroy();// = new Chart(ctx, null);
         }
+    } else {
+      if(isContainsRadarChart(chartData, datalist)){
+        return false;
+      }
+    }
+
+    if(idx>=5){
+      // var selectTdText = event.target.innerText;
+      // var eventId = event.target.id;
+      // event.target.style.backgroundColor = "red";
+      // event.target.innerText = "これ以上追加できません。";
+      // //setTimeout("$('#progressPrintSeikyuPercent').hide(); $('#progressPrintSeikyuPercent').html('')", 3000);
+      // setTimeout('document.getElementById(' + eventId + ').innerText = ' + selectTdText + ";", 3000);
+      //divCompareRadar か //myChart で間にメッセージ
+      let divMessage = document.createElement("div");
+      divMessage.innerText = "レーダーチャートの比較機能は、最大５件までです。";
+      divMessage.style.color = "red";
+      divMessage.style.textAlign = "center";
+      divMessage.id = "divRadarchartMessage";
+      document.getElementById("divCompareRadar").insertBefore(divMessage, document.getElementById("myChart"));
+      setTimeout('document.getElementById("divRadarchartMessage").remove();', 3000);
+      return false;
     }
 
     val = "2020"; // 会計年度、見直し必要。

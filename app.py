@@ -58,18 +58,18 @@ import math
 from decimal import Decimal
 import openpyxl
 
-DELIMIT = "@|@|@"
+# DELIMIT = "@|@|@"
 
 
 
-tdfk = {
-  "01" : "北海道"   ,"02" : "青森県"   ,"03" : "岩手県"   ,"04" : "宮城県"   ,"05" : "秋田県"   ,"06" : "山形県"   ,"07" : "福島県"   ,"08" : "茨城県"   ,
-  "09" : "栃木県"   ,"10" : "群馬県"   ,"11" : "埼玉県"   ,"12" : "千葉県"   ,"13" : "東京都"   ,"14" : "神奈川県" ,"15" : "新潟県"   ,"16" : "富山県"   ,
-  "17" : "石川県"   ,"18" : "福井県"   ,"19" : "山梨県"   ,"20" : "長野県"   ,"21" : "岐阜県"   ,"22" : "静岡県"   ,"23" : "愛知県"   ,"24" : "三重県"   ,
-  "25" : "滋賀県"   ,"26" : "京都府"   ,"27" : "大阪府"   ,"28" : "兵庫県"   ,"29" : "奈良県"   ,"30" : "和歌山県" ,"31" : "鳥取県"   ,"32" : "島根県"   ,
-  "33" : "岡山県"   ,"34" : "広島県"   ,"35" : "山口県"   ,"36" : "徳島県"   ,"37" : "香川県"   ,"38" : "愛媛県"   ,"39" : "高知県"   ,"40" : "福岡県"   ,
-  "41" : "佐賀県"   ,"42" : "長崎県"   ,"43" : "熊本県"   ,"44" : "大分県"   ,"45" : "宮崎県"   ,"46" : "鹿児島県" ,"47" : "沖縄県"
-}
+# tdfk = {
+#   "01" : "北海道"   ,"02" : "青森県"   ,"03" : "岩手県"   ,"04" : "宮城県"   ,"05" : "秋田県"   ,"06" : "山形県"   ,"07" : "福島県"   ,"08" : "茨城県"   ,
+#   "09" : "栃木県"   ,"10" : "群馬県"   ,"11" : "埼玉県"   ,"12" : "千葉県"   ,"13" : "東京都"   ,"14" : "神奈川県" ,"15" : "新潟県"   ,"16" : "富山県"   ,
+#   "17" : "石川県"   ,"18" : "福井県"   ,"19" : "山梨県"   ,"20" : "長野県"   ,"21" : "岐阜県"   ,"22" : "静岡県"   ,"23" : "愛知県"   ,"24" : "三重県"   ,
+#   "25" : "滋賀県"   ,"26" : "京都府"   ,"27" : "大阪府"   ,"28" : "兵庫県"   ,"29" : "奈良県"   ,"30" : "和歌山県" ,"31" : "鳥取県"   ,"32" : "島根県"   ,
+#   "33" : "岡山県"   ,"34" : "広島県"   ,"35" : "山口県"   ,"36" : "徳島県"   ,"37" : "香川県"   ,"38" : "愛媛県"   ,"39" : "高知県"   ,"40" : "福岡県"   ,
+#   "41" : "佐賀県"   ,"42" : "長崎県"   ,"43" : "熊本県"   ,"44" : "大分県"   ,"45" : "宮崎県"   ,"46" : "鹿児島県" ,"47" : "沖縄県"
+# }
 
 
 class FlaskWithHamlish(Flask):
@@ -196,7 +196,7 @@ def insertJotai(document_name, chosa_jiten, dantai_cd, dantai_nm, file_url, jota
 def executeFileCollect(filePattern):
   link_list =[]
   hou = ""
-  for nen in range(2014, 2022):
+  for nen in range(2016, 2022):
     res = requests.get("https://www.e-stat.go.jp/stat-search/files?page=1&layout=datalist&toukei=00200251&kikan=00200&tstat=000001125335&cycle=7&year=" + str(nen) +  "0&month=0&tclass1=000001125336&tclass2=000001125337&result_back=1&result_page=1&tclass3val=0")
     soup = BeautifulSoup(res.content, 'html.parser')
     articles = soup.select("article")
@@ -281,25 +281,25 @@ def csvUpload():
     })
 
 
-@app.route('/binaryTest',methods=["PUT"])
-def binaryTest():
-  fi = request.files['excelFile']
-  # res = requests.get("https://www.soumu.go.jp" + xlfile)
-  xl = pd.read_excel(fi, sheet_name=None)
-  # xl = pd.read_excel(res.content, sheet_name=None)
-  # fileshubetu = fileShubetu(xl)
+# @app.route('/binaryTest',methods=["PUT"])
+# def binaryTest():
+#   fi = request.files['excelFile']
+#   # res = requests.get("https://www.soumu.go.jp" + xlfile)
+#   xl = pd.read_excel(fi, sheet_name=None)
+#   # xl = pd.read_excel(res.content, sheet_name=None)
+#   # fileshubetu = fileShubetu(xl)
 
-  createSisetuMain(xl)
-  # if fileshubetu=="sisetu":
-  #   createSisetuMain(xl)
-  # elif fileshubetu=="sokatu":
-  #   createSokatuMain(xl)
-  #   pass
-  # else:
-  #   pass
+#   createSisetuMain(xl)
+#   # if fileshubetu=="sisetu":
+#   #   createSisetuMain(xl)
+#   # elif fileshubetu=="sokatu":
+#   #   createSokatuMain(xl)
+#   #   pass
+#   # else:
+#   #   pass
 
-  return "1"
-  # return send_file("tmp/" + timestampStr + ".pdf", as_attachment=True)
+#   return "1"
+#   # return send_file("tmp/" + timestampStr + ".pdf", as_attachment=True)
 
 def fileShubetu(xlfile):
   for sh in xlfile:
@@ -314,194 +314,194 @@ def fileShubetu(xlfile):
             b = a
   return "1"
 
-def createSokatuMain(xl):
-  tokubetuShoku = ["知事","副知事","教育長","議会議長","議会副議長","議会議員"]
-  ippanShoku = ["一般職員","うち消防職員","うち技能労務職員","警察官","教育公務員","臨時職員","合計"]
+# def createSokatuMain(xl):
+#   tokubetuShoku = ["知事","副知事","教育長","議会議長","議会副議長","議会議員"]
+#   ippanShoku = ["一般職員","うち消防職員","うち技能労務職員","警察官","教育公務員","臨時職員","合計"]
 
-  timestamp = datetime.datetime.now()
-  timestampStr = timestamp.strftime('%Y%m%d%H%M%S%f')
-  dictData = {}
-  for sh in xl:
-    if sh == "総括表":
-      for row in xl[sh].itertuples():
-        dictData[(sh + str(row.Index+2))]=[]
-        for cell in row:
-          if str(cell) != "nan":
-            dictData[(sh + str(row.Index+2))].append(str(cell).replace( '\n' , '' ).replace(" ",""))
+#   timestamp = datetime.datetime.now()
+#   timestampStr = timestamp.strftime('%Y%m%d%H%M%S%f')
+#   dictData = {}
+#   for sh in xl:
+#     if sh == "総括表":
+#       for row in xl[sh].itertuples():
+#         dictData[(sh + str(row.Index+2))]=[]
+#         for cell in row:
+#           if str(cell) != "nan":
+#             dictData[(sh + str(row.Index+2))].append(str(cell).replace( '\n' , '' ).replace(" ",""))
 
-  kokuChoCount = 0
-  jukiJinkoCount = 0
-  for rowid in dictData:
-    for val in dictData[rowid]:
-      if val in tokubetuShoku:
-        dictData[rowid].insert(dictData[rowid].index(val)+2,val + "_給料額")
-        tokubetuShoku.remove(val)
-      elif "年国調" in val:
-        if kokuChoCount==0:
-          dictData[rowid][dictData[rowid].index(val)] = "人口_国勢調査_前回"
-          kokuChoCount = 1
-        else:
-          dictData[rowid][dictData[rowid].index(val)] = "人口_国勢調査_前々回"
-      elif isJukiJinko(val):
-        if jukiJinkoCount == 0:
-          dictData[rowid][dictData[rowid].index(val)] = "人口_住基台帳_当年度"
-          jukiJinkoCount = 1
-        else:
-          dictData[rowid][dictData[rowid].index(val)] = "人口_住基台帳_前年度"
-        # try:
-        #   sisetuMain = SisetuMain()
-        #   if isfloat(str(cell)):
-        #     sisetuMain.val_num = float(cell)
-        #   else:
-        #     sisetuMain.val_char = str(cell)
-        #   # db.session.add(sisetuMain)
-        #   # db.session.commit()
+#   kokuChoCount = 0
+#   jukiJinkoCount = 0
+#   for rowid in dictData:
+#     for val in dictData[rowid]:
+#       if val in tokubetuShoku:
+#         dictData[rowid].insert(dictData[rowid].index(val)+2,val + "_給料額")
+#         tokubetuShoku.remove(val)
+#       elif "年国調" in val:
+#         if kokuChoCount==0:
+#           dictData[rowid][dictData[rowid].index(val)] = "人口_国勢調査_前回"
+#           kokuChoCount = 1
+#         else:
+#           dictData[rowid][dictData[rowid].index(val)] = "人口_国勢調査_前々回"
+#       elif isJukiJinko(val):
+#         if jukiJinkoCount == 0:
+#           dictData[rowid][dictData[rowid].index(val)] = "人口_住基台帳_当年度"
+#           jukiJinkoCount = 1
+#         else:
+#           dictData[rowid][dictData[rowid].index(val)] = "人口_住基台帳_前年度"
+#         # try:
+#         #   sisetuMain = SisetuMain()
+#         #   if isfloat(str(cell)):
+#         #     sisetuMain.val_num = float(cell)
+#         #   else:
+#         #     sisetuMain.val_char = str(cell)
+#         #   # db.session.add(sisetuMain)
+#         #   # db.session.commit()
 
-        # except:
-        #   # 何もしない
-        #   import traceback
-        #   traceback.print_exc()
-  # tdfkCd = tdfkCodeByName(tdfkNm)
-  try:
-    nendo = seireki(dictData["総括表3"][5])
-  except:
-    import traceback
-    traceback.print_exc()
+#         # except:
+#         #   # 何もしない
+#         #   import traceback
+#         #   traceback.print_exc()
+#   # tdfkCd = tdfkCodeByName(tdfkNm)
+#   try:
+#     nendo = seireki(dictData["総括表3"][5])
+#   except:
+#     import traceback
+#     traceback.print_exc()
 
-  dictInsData = {}
-  try:
-    for rowid in dictData:
-      for val in dictData[rowid]:
-        if isfloat(str(val)):
-          pass
-        else:
-          tmp = findPair(dictData, val)
-          if tmp[1] != "" and tmp[0] != "-" and tmp[0] != "うち日本人(人)" and tmp[0] != "うち日本人(％)" :
-            dictInsData[tmp[0]] = tmp[1]
-  except:
-    # 何もしない
-    import traceback
-    traceback.print_exc()
+#   dictInsData = {}
+#   try:
+#     for rowid in dictData:
+#       for val in dictData[rowid]:
+#         if isfloat(str(val)):
+#           pass
+#         else:
+#           tmp = findPair(dictData, val)
+#           if tmp[1] != "" and tmp[0] != "-" and tmp[0] != "うち日本人(人)" and tmp[0] != "うち日本人(％)" :
+#             dictInsData[tmp[0]] = tmp[1]
+#   except:
+#     # 何もしない
+#     import traceback
+#     traceback.print_exc()
   
 
-  colIndex = 1
-  for rowid in dictInsData:
-    try:
-      # if colIndex <= 63:
-      sisetuMain = SisetuMain()
-      sisetuMain.nendo = nendo
-      sisetuMain.bunrui = ""
-      sisetuMain.dantai_cd =tdfkCodeByName(dictInsData["都道府県名"])
-      sisetuMain.tdfk_nm = dictInsData["都道府県名"]
-      sisetuMain.city_nm = dictInsData["都道府県名"]
-      sisetuMain.sheet_nm = "test"
-      sisetuMain.col_key1 = rowid
-      sisetuMain.col_key2 = rowid
-      colIndex = getColIndex(sisetuMain, colIndex)
-      if colIndex <= 63:
-        sisetuMain.col_index = colIndex
-        cell = str(dictInsData[rowid])
-        if isfloat(cell):
-          sisetuMain.val_num = float(cell)
-        else:
-          sisetuMain.val_char = str(cell)
-        db.session.add(sisetuMain)
-        db.session.commit()
+#   colIndex = 1
+#   for rowid in dictInsData:
+#     try:
+#       # if colIndex <= 63:
+#       sisetuMain = SisetuMain()
+#       sisetuMain.nendo = nendo
+#       sisetuMain.bunrui = ""
+#       sisetuMain.dantai_cd =tdfkCodeByName(dictInsData["都道府県名"])
+#       sisetuMain.tdfk_nm = dictInsData["都道府県名"]
+#       sisetuMain.city_nm = dictInsData["都道府県名"]
+#       sisetuMain.sheet_nm = "test"
+#       sisetuMain.col_key1 = rowid
+#       sisetuMain.col_key2 = rowid
+#       colIndex = getColIndex(sisetuMain, colIndex)
+#       if colIndex <= 63:
+#         sisetuMain.col_index = colIndex
+#         cell = str(dictInsData[rowid])
+#         if isfloat(cell):
+#           sisetuMain.val_num = float(cell)
+#         else:
+#           sisetuMain.val_char = str(cell)
+#         db.session.add(sisetuMain)
+#         db.session.commit()
 
-    except:
-      # 何もしない
-      import traceback
-      traceback.print_exc()
+#     except:
+#       # 何もしない
+#       import traceback
+#       traceback.print_exc()
           
-    # colIndex += 1
+#     # colIndex += 1
 
-  a = "1"
-  b = a
-  pass
-  # for key in dictData:
-  #     for row in dictData[key]:
-  #       a = row
-  #       b = a
-  #       # columnId += 1
+#   a = "1"
+#   b = a
+#   pass
+#   # for key in dictData:
+#   #     for row in dictData[key]:
+#   #       a = row
+#   #       b = a
+#   #       # columnId += 1
 
 
-def isJukiJinko(key):
-  tmp = key.split(".")
-  if len(tmp)==3:
-    tmp0 = tmp[0].replace("平","").replace("令","").replace("(人)","")
-    tmp1 = tmp[1].replace("平","").replace("令","").replace("(人)","")
-    tmp2 = tmp[1].replace("平","").replace("令","").replace("(人)","")
-    if isfloat(tmp0) and isfloat(tmp1) and isfloat(tmp2) :
-      return True
-    # if isfloat(tmp[0]) and isfloat(tmp[1]) and isfloat(tmp[2]):
-    #   if "(人)" in tmp[3]:
-    #     return True
+# def isJukiJinko(key):
+#   tmp = key.split(".")
+#   if len(tmp)==3:
+#     tmp0 = tmp[0].replace("平","").replace("令","").replace("(人)","")
+#     tmp1 = tmp[1].replace("平","").replace("令","").replace("(人)","")
+#     tmp2 = tmp[1].replace("平","").replace("令","").replace("(人)","")
+#     if isfloat(tmp0) and isfloat(tmp1) and isfloat(tmp2) :
+#       return True
+#     # if isfloat(tmp[0]) and isfloat(tmp[1]) and isfloat(tmp[2]):
+#     #   if "(人)" in tmp[3]:
+#     #     return True
 
-def getColIndex(sisetuMain, colIndex):
+# def getColIndex(sisetuMain, colIndex):
   
-    datalist = db.session.query(db.func.max(SisetuMain.col_index).label("col_index")).filter( 
-      SisetuMain.sheet_nm==sisetuMain.sheet_nm,
-      SisetuMain.col_key1==sisetuMain.col_key1,
-      SisetuMain.col_key2==sisetuMain.col_key2,
-      SisetuMain.col_key3==sisetuMain.col_key3,
-      SisetuMain.col_key4==sisetuMain.col_key4,
-      SisetuMain.col_key5==sisetuMain.col_key5,
-      SisetuMain.col_key6==sisetuMain.col_key6,
-      SisetuMain.col_key7==sisetuMain.col_key7).all()
-    if datalist[0].col_index == None:
-      # 当該番号がすでに使われているかどうかを見る
-      datalist = db.session.query(db.func.max(SisetuMain.col_index).label("col_index")).filter( 
-        SisetuMain.sheet_nm==sisetuMain.sheet_nm).all()
-      if datalist[0].col_index == None:
-        return 1
-      else:
-        return datalist[0].col_index + 1
-    else:
-      return datalist[0].col_index
+#     datalist = db.session.query(db.func.max(SisetuMain.col_index).label("col_index")).filter( 
+#       SisetuMain.sheet_nm==sisetuMain.sheet_nm,
+#       SisetuMain.col_key1==sisetuMain.col_key1,
+#       SisetuMain.col_key2==sisetuMain.col_key2,
+#       SisetuMain.col_key3==sisetuMain.col_key3,
+#       SisetuMain.col_key4==sisetuMain.col_key4,
+#       SisetuMain.col_key5==sisetuMain.col_key5,
+#       SisetuMain.col_key6==sisetuMain.col_key6,
+#       SisetuMain.col_key7==sisetuMain.col_key7).all()
+#     if datalist[0].col_index == None:
+#       # 当該番号がすでに使われているかどうかを見る
+#       datalist = db.session.query(db.func.max(SisetuMain.col_index).label("col_index")).filter( 
+#         SisetuMain.sheet_nm==sisetuMain.sheet_nm).all()
+#       if datalist[0].col_index == None:
+#         return 1
+#       else:
+#         return datalist[0].col_index + 1
+#     else:
+#       return datalist[0].col_index
 
 
-def tdfkCodeByName(tdfkName):
-  try:
-    cd = [k for k, v in tdfk.items() if v == tdfkName]
-    return cd[0] + "0000"
-  except:
-    # 何もしない
-    import traceback
-    traceback.print_exc()
-  return ""
+# def tdfkCodeByName(tdfkName):
+#   try:
+#     cd = [k for k, v in tdfk.items() if v == tdfkName]
+#     return cd[0] + "0000"
+#   except:
+#     # 何もしない
+#     import traceback
+#     traceback.print_exc()
+#   return ""
 
-def findPair(dictData, targetKey):
-  find = False #発見フラグ
-  for rowid in dictData:
-    if find:
-      return ["",""] #発見済みなのに次の行を見に行くのは最後列ということなので抜ける（キー：バリューの最後のバリュー）
+# def findPair(dictData, targetKey):
+#   find = False #発見フラグ
+#   for rowid in dictData:
+#     if find:
+#       return ["",""] #発見済みなのに次の行を見に行くのは最後列ということなので抜ける（キー：バリューの最後のバリュー）
 
-    for val in dictData[rowid]:
-      if val==targetKey:
-        find=True
-      else:
-        if find:
-          if isfloat(val) or val=="-" or (val in str(tdfk.values())) or isLeftNumeric(val):
-            return [targetKey, val]
-          else:
-            return ["", ""]
-        else:
-          continue
-            # if targetKey in tokubetuShoku :
-            #   return [targetKey + "_定数", val]
-            # elif targetKey in ippanShoku :
-            #   return [targetKey + "_職員数", val]
-            # else:
-            #   return [targetKey, val]
-  return ["", ""]
+#     for val in dictData[rowid]:
+#       if val==targetKey:
+#         find=True
+#       else:
+#         if find:
+#           if isfloat(val) or val=="-" or (val in str(tdfk.values())) or isLeftNumeric(val):
+#             return [targetKey, val]
+#           else:
+#             return ["", ""]
+#         else:
+#           continue
+#             # if targetKey in tokubetuShoku :
+#             #   return [targetKey + "_定数", val]
+#             # elif targetKey in ippanShoku :
+#             #   return [targetKey + "_職員数", val]
+#             # else:
+#             #   return [targetKey, val]
+#   return ["", ""]
 
-def isLeftNumeric(val):
-  tmp = str(val).split("(")
-  if len(tmp) == 2:
-    if isfloat(tmp[0]):
-      return True
+# def isLeftNumeric(val):
+#   tmp = str(val).split("(")
+#   if len(tmp) == 2:
+#     if isfloat(tmp[0]):
+#       return True
 
-  return False
+#   return False
 
 def createSisetuMainFromTo(csv, indexFrom, indexTo):
   timestamp = datetime.datetime.now()
