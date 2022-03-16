@@ -187,11 +187,34 @@ function createElementSelectGyoshu(list){
       subDivC.appendChild(lbl);
     }
   }
+  //<a class="btn btn-sm btn-primary sihyoPopOver" data-bs-toggle="popover" roll="button" data-bs-trigger="focus" tabindex="0" title="" data-bs-original-title="経常収支比率ってなに？">経常収支比率</a>
+  var btn = document.createElement('button');
+  btn.classList.add("btn","btn-sm","btn-primary");
+  //setAttributes(btn,"roll,button")
+  setAttributes(btn, "onclick,hideGyoshuPopOver();")
+  btn.innerText = "決定";
+  btn.id = "btnGyoshuSelect";
+  
+  // btn.addEventListener('click', (event) => {
+  //   confirm(123);
+  // });
 
-  mainDiv.appendChild(subDivA);
-  mainDiv.appendChild(subDivB);
-  mainDiv.appendChild(subDivC);
+  var bodyDiv = document.createElement('div');
+  var footDiv = document.createElement('div');
+  footDiv.style.textAlign="right";
+
+  bodyDiv.appendChild(subDivA);
+  bodyDiv.appendChild(subDivB);
+  bodyDiv.appendChild(subDivC);
+  footDiv.appendChild(btn);
+
+  mainDiv.appendChild(bodyDiv);
+  mainDiv.appendChild(footDiv);
   return mainDiv.outerHTML;
+}
+
+function hideGyoshuPopOver(){
+  document.getElementById("selectGyoshuDigestTab").click();
 }
 
 
@@ -579,6 +602,8 @@ function createTableByJsonList(datalist, locationId, tableDivId, caption, hdText
   thead.appendChild(createTableHeader(hdText, width));
   
   for(let i in datalist){
+    if(i>=200){break;}
+
     trow = document.createElement('tr');
     
     for (let id in propId){
