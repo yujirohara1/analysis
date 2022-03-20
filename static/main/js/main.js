@@ -1890,7 +1890,7 @@ function createGraphArea(valueArray, areaId, title){
   var sep = document.createElement("span");
   sep.innerText = " ";
   var tmpDivArea = document.createElement("div");
-  tmpDivArea.classList.add("col-4");
+  tmpDivArea.classList.add("col-6");
   
   tmpDivArea.id = "divGraphArea" + (max+1);
   document.getElementById(areaId).appendChild(tmpDivArea);

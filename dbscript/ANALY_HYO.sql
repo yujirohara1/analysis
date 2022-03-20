@@ -40,10 +40,25 @@ insert into analy_hyo values(2020, 33, 0, trim('Œo‰c•ªÍ‚ÉŠÖ‚·‚é’²i“ñj        
 insert into analy_hyo values(2020, 34, 0, trim('{İ‹y‚Ñ‹Æ–±ŠT‹µ‚ÉŠÖ‚·‚é’²i•t•\j     '),null,null,null);
 insert into analy_hyo values(2020, 40, 0, trim('ŒJ“ü‹à‚ÉŠÖ‚·‚é’²                       '),null,null,null);
 insert into analy_hyo values(2020, 45, 0, trim('Šé‹ÆÂ”N“x•ÊŠÒó‹µ’²                 '),null,null,null);
--- insert into analy_hyo values(2020, 45, 0, trim('Šé‹ÆÂ”N“x•ÊŠÒó‹µ’²                 '),null,null,null);
 insert into analy_hyo values(2020, 50, 0, trim('{İ‹y‚Ñ‹Æ–±ŠT‹µ‚ÉŠÖ‚·‚é’²             '),null,null,null);
 insert into analy_hyo values(2020, 51, 0, trim('{İ‹y‚Ñ‹Æ–±ŠT‹µ‚ÉŠÖ‚·‚é’²             '),null,null,null);
 insert into analy_hyo values(2020, 52, 0, trim('‚»‚Ì‘¼                                 '),null,null,null);
 insert into analy_hyo values(2020, 60, 0, trim('{İ‹y‚Ñ‹Æ–±ŠT‹µ‚ÉŠÖ‚·‚é’²             '),null,null,null);
 
 commit;
+
+insert into analy_hyo
+select
+    b.nendo,
+    a.hyo_num,
+    a.hyo_num_sub,
+    a.hyo_nm,
+    a.memo1,
+    a.memo2,
+    a.memo3
+from
+    analy_hyo a,
+    (select 2019 nendo union
+     select 2018 nendo union
+     select 2017 nendo ) b
+;

@@ -1,32 +1,34 @@
-CREATE TABLE analy_gyoretu (
-    nendo        integer not null,
-    hyo_num      integer not null,
-    hyo_num_sub  integer ,
-    gyo_num      integer not null,
-    gyo_num_sub  integer ,
-    retu_num     integer not null,
-    retu_num_sub integer ,
-    indent       integer ,
-    name1         character varying(100),
-    name2         character varying(100),
-    name3         character varying(100),
-    name4         character varying(100),
-    name5         character varying(100)
-);
-
-
-ALTER TABLE ONLY analy_gyoretu
-    ADD CONSTRAINT analy_gyoretu_prkey PRIMARY KEY (
-       nendo        ,
-       hyo_num      ,
-       gyo_num      ,
-       retu_num     ,
-       retu_num_sub 
-    );
-
-
-
-
+-- drop table analy_gyoretu;
+-- 
+-- CREATE TABLE analy_gyoretu (
+--     nendo        integer not null,
+--     hyo_num      integer not null,
+--     hyo_num_sub  integer ,
+--     gyo_num      integer not null,
+--     gyo_num_sub  integer ,
+--     retu_num     integer not null,
+--     retu_num_sub integer ,
+--     indent       integer ,
+--     name1         character varying(100),
+--     name2         character varying(100),
+--     name3         character varying(100),
+--     name4         character varying(100),
+--     name5         character varying(100)
+-- );
+-- 
+-- 
+-- ALTER TABLE ONLY analy_gyoretu
+--     ADD CONSTRAINT analy_gyoretu_prkey PRIMARY KEY (
+--        nendo        ,
+--        hyo_num      ,
+--        gyo_num      ,
+--        retu_num     ,
+--        retu_num_sub 
+--     );
+-- 
+-- 
+-- 
+-- 
 
 
 delete from analy_gyoretu;
@@ -190,7 +192,7 @@ insert into analy_gyoretu values(2020,22,null,01,null,5,0,0,'‚¤‚¿ƒŠ[ƒX‘Y',nul
 insert into analy_gyoretu values(2020,22,null,01,null,6,0,0,'ƒEŒ¸‰¿‹p—İŒvŠz(¢)',null,null,null,null);
 insert into analy_gyoretu values(2020,22,null,01,null,7,0,0,'‚¤‚¿ƒŠ[ƒX‘YŒ¸‰¿‹p—İŒvŠz(¢)',null,null,null,null);
 insert into analy_gyoretu values(2020,22,null,01,null,8,0,0,'ƒGŒšİ‰¼Š¨’è',null,null,null,null);
-insert into analy_gyoretu values(2020,22,null,01,null,,null,0,'ƒI‚»‚Ì‘¼',null,null,null,null);
+--insert into analy_gyoretu values(2020,22,null,01,null,,null,0,'ƒI‚»‚Ì‘¼',null,null,null,null);
 insert into analy_gyoretu values(2020,22,null,01,null,9,0,0,'(2)–³Œ`ŒÅ’è‘Y',null,null,null,null);
 insert into analy_gyoretu values(2020,22,null,01,null,10,0,0,'(3)“Š‘‚»‚Ì‘¼‚Ì‘Y',null,null,null,null);
 insert into analy_gyoretu values(2020,22,null,01,null,14,0,0,'2.—¬“®‘Y',null,null,null,null);
@@ -1414,3 +1416,30 @@ insert into analy_gyoretu values(2020,40,null,2,null,65,0,0,'8.01s27—ñ‚Ì‚¤‚¿•â
 insert into analy_gyoretu values(2020,40,null,2,null,66,0,0,'8.01s28—ñ‚Ì‚¤‚¿•â³—\ZÂ•ª',null,null,null,null);
 insert into analy_gyoretu values(2020,40,null,2,null,67,0,0,'8.02s23—ñ‚Ì‚¤‚¿•â³—\ZÂ•ª',null,null,null,null);
 insert into analy_gyoretu values(2020,40,null,2,null,68,0,0,'8.02s24—ñ‚Ì‚¤‚¿•â³—\ZÂ•ª',null,null,null,null);
+
+
+
+
+delete from analy_gyoretu where nendo <> 2020;
+
+insert into analy_gyoretu
+select
+    b.nendo        ,
+    a.hyo_num      ,
+    a.hyo_num_sub  ,
+    a.gyo_num      ,
+    a.gyo_num_sub  ,
+    a.retu_num     ,
+    a.retu_num_sub ,
+    a.indent       ,
+    a.name1        ,
+    a.name2        ,
+    a.name3        ,
+    a.name4        ,
+    a.name5        
+from
+    analy_gyoretu a,
+    (select 2019 nendo union
+     select 2018 nendo union
+     select 2017 nendo ) b
+;

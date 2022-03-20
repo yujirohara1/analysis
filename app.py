@@ -145,8 +145,8 @@ def SendMail_AccountToroku():
 def load_user(user_id):
   return users.get(int(user_id))
 
-# db_uri = "postgresql://postgres:yjrhr1102@localhost:5432/newdb3" #開発用
-db_uri = os.environ.get('HEROKU_POSTGRESQL_COBALT_URL') #本番用HEROKU_POSTGRESQL_COBALTHEROKU_POSTGRESQL_DIANA_URL
+db_uri = "postgresql://postgres:yjrhr1102@localhost:5432/newdb3" #開発用
+# db_uri = os.environ.get('HEROKU_POSTGRESQL_COBALT_URL') #本番用HEROKU_POSTGRESQL_COBALTHEROKU_POSTGRESQL_DIANA_URL
 app.config['SQLALCHEMY_DATABASE_URI'] = db_uri 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -196,32 +196,40 @@ def insertJotai(document_name, chosa_jiten, dantai_cd, dantai_nm, file_url, jota
 def executeFileCollect(filePattern):
   link_list =[]
   hou = ""
-  for nen in range(2016, 2022):
-    res = requests.get("https://www.e-stat.go.jp/stat-search/files?page=1&layout=datalist&toukei=00200251&kikan=00200&tstat=000001125335&cycle=7&year=" + str(nen) +  "0&month=0&tclass1=000001125336&tclass2=000001125337&result_back=1&result_page=1&tclass3val=0")
-    soup = BeautifulSoup(res.content, 'html.parser')
-    articles = soup.select("article")
-    for article in articles:
-      for ul in article.select("ul"):
-        if len(ul.select('span:contains("表番号")')) != 0 :
-          hyoBango = ul.select('span:contains("表番号") ~ span')[0].text
-          if len(ul.select('a:contains("法適用")')) == 1:
-            hou = "法適用"
-          if len(ul.select('a:contains("法非適用")')) == 1:
-            hou = "法非適用"
+  for nen in range(2016, 2021):
+    try:
+      res = requests.get("https://www.e-stat.go.jp/stat-search/files?page=1&layout=datalist&toukei=00200251&kikan=00200&tstat=000001125335&cycle=7&year=" + str(nen) + "0&month=0&tclass1=000001125336&tclass2=000001125337&result_back=1&result_page=1&tclass3val=0")
+    except:
+      import traceback
+      traceback.print_exc()
+      ret = None
 
-          if len(ul.select("a[data-file_type=EXCEL]")) == 1:
-            link = ul.select("a[data-file_type=EXCEL]")[0]
-            href = link.get("href")
-            text = link.text[1:]
-            # if href.endswith('xlsx') or href.endswith('xls'):
-            #   tdfk = tdfkCodeByName(text)
-            #   if tdfk != "":
-            link_list.append({"document":"filePattern", 
-                              "year":(nen-1), 
-                              "dantai":hou, 
-                              "text":hyoBango, 
-                              "url" :"https://www.e-stat.go.jp" + href.replace("https://www.e-stat.go.jp",""),
-                              "jotai" : getJotai((nen-1), hou, hyoBango)})
+    if res != None:
+      # "https://www.e-stat.go.jp/stat-search/files?page=1&layout=datalist&toukei=00200251&kikan=00200&tstat=000001125335&cycle=7&year=" + str(nen) + "0&month=0&tclass1=000001125336&tclass2=000001125337&result_back=1&result_page=1&tclass3val=0"
+      soup = BeautifulSoup(res.content, 'html.parser')
+      articles = soup.select("article")
+      for article in articles:
+        for ul in article.select("ul"):
+          if len(ul.select('span:contains("表番号")')) != 0 :
+            hyoBango = ul.select('span:contains("表番号") ~ span')[0].text
+            if len(ul.select('a:contains("法適用")')) == 1:
+              hou = "法適用"
+            if len(ul.select('a:contains("法非適用")')) == 1:
+              hou = "法非適用"
+
+            if len(ul.select("a[data-file_type=EXCEL]")) == 1:
+              link = ul.select("a[data-file_type=EXCEL]")[0]
+              href = link.get("href")
+              text = link.text[1:]
+              # if href.endswith('xlsx') or href.endswith('xls'):
+              #   tdfk = tdfkCodeByName(text)
+              #   if tdfk != "":
+              link_list.append({"document":"filePattern", 
+                                "year":(nen-1), 
+                                "dantai":hou, 
+                                "text":hyoBango, 
+                                "url" :"https://www.e-stat.go.jp" + href.replace("https://www.e-stat.go.jp",""),
+                                "jotai" : getJotai((nen-1), hou, hyoBango)})
 
   return jsonify({'data': link_list})
   # return send_file("tmp/" + timestampStr + ".pdf", as_attachment=True)
