@@ -291,6 +291,9 @@ function getGyoshuJoken(){
       joken = joken + "," + gyoshuSelectStauts[i].title;
     }
   }
+  if(joken == "dummy"){
+    joken = "dummy,1-0"
+  }
   return joken;
 }
 
