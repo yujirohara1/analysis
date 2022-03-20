@@ -602,7 +602,7 @@ function createTableByJsonList(datalist, locationId, tableDivId, caption, hdText
   thead.appendChild(createTableHeader(hdText, width));
   
   for(let i in datalist){
-    if(i>=200){break;}
+    // if(i>=200){break;}
 
     trow = document.createElement('tr');
     

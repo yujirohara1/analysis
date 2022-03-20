@@ -620,10 +620,12 @@ def getRankList(nendo, joken, table_nm, rank_col):
     sql = sql + " order by " + rank_col + " desc "
 
   datalist = []
-  if db.session.execute(text(sql)).fetchone() is not None:
-    datalist = db.session.execute(text(sql))
+  # if db.session.execute(text(sql)).fetchone() is not None:
+  datalist = db.session.execute(text(sql))
+  # for y in datalist:
+  #   datalist[y] = datalist[y]
 
-  return datalist
+  return datalist.fetchmany(200)
 
 
 
