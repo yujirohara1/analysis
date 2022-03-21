@@ -636,7 +636,10 @@ function createTableByJsonList(datalist, locationId, tableDivId, caption, hdText
               //moveProfileTab(key);
               createHyoVerticalNavbar(key); //基本情報タブの左の表バー
               moveCompareTab(datalist[i]);
+              CreateRadarChart(datalist[i]);
+              getAndCreateTable_DantaiListOfRadarChart(datalist[i]);
               createToasts(datalist[i]);
+              createScatterChart(datalist[i]);
             });
         } 
       }
@@ -751,8 +754,6 @@ function moveCompareTab(datalist){
 
     //createHyoVerticalNavbar(key);
     //getRadarChartData(nanajikuRadarChart, datalist);
-    CreateRadarChart(datalist);
-    getAndCreateTable_DantaiListOfRadarChart(datalist);
   }catch(e){
 
   }
@@ -1131,6 +1132,7 @@ function CreateRadarChart(selectRow){
 }
 
 
+
 // レーダーチャートに含まれるかどうかを検査
 function isContainsRadarChart(chartData, datalist){
   var tuikazumi = chartData.data.datasets;
@@ -1221,6 +1223,115 @@ function getRadarChartData(chartData, datalist){
     })
     .catch(error => { console.log(error); });
 }
+
+
+
+
+function createScatterChart(selectRow){
+  //枠内にローダーを表示
+  var val = "2020"; // 会計年度、見直し必要。
+  var dantaicd = selectRow.dantai_cd;
+  fetch('/getReturnOnEquityRankList/' + val + "/" + "dummy,1-0", {
+    method: 'GET',
+    'Content-Type': 'application/json'
+  })
+  .then(res => res.json())
+  .then(jsonData => {
+
+    var list = JSON.parse(jsonData.data);
+
+    var plotData = {};
+    var dataA = [];
+    for(let i in list){
+      if(dantaicd == list[i].dantai_cd){
+        dataA.push({label:list[i].dantai_nm.substring(0,4), pointRadius: 8, backgroundColor:'rgba(0, 159, 255, 0.45)',borderColor:'rgba(0, 159, 255, 0.5)' ,data:[{ x: list[i].sihon_kei,  y:  list[i].sisan_kei}]});
+      }else{
+        dataA.push({label:list[i].dantai_nm.substring(0,4), pointRadius: 8, backgroundColor:'rgba(255, 48, 32, 0.45)',borderColor:'rgba(255, 48, 32, 0.5)' ,data:[{ x: list[i].sihon_kei,  y:  list[i].sisan_kei}]});
+      }
+    }
+    var dataG = {datasets:dataA};
+
+    var ctx = document.getElementById('scatterChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'scatter',
+      data: dataG,
+      options:  {
+        plugins: {
+          legend: {
+            // 右上に配置
+            display:true,
+            align: 'start',
+            position: 'right',
+            // 余白
+            labels: {
+              padding: 5
+            }
+          },
+          tooltip:{
+            callbacks: {
+              // ツールチップの表示内容
+              label: function(tooltipItem, data) {
+                var groupName = tooltipItem.dataset.label; //data.datasets[tooltipItem.datasetIndex].label;
+                var xAxesLabel = tooltipItem.chart.options.scales.x.title.text;
+                var xValue = tooltipItem.dataset.data[0].x;
+                var yAxesLabel = tooltipItem.chart.options.scales.y.title.text;
+                var yValue = tooltipItem.dataset.data[0].y;
+                return groupName + " | " + xAxesLabel + ":" + xValue + " | " + yAxesLabel + ":" + yValue;
+              }}
+          },
+        },
+        scales: {                          //軸設定
+            y: {                      //y軸設定
+                display: true,             //表示設定
+                title: {              //軸ラベル設定
+                   display: true,          //表示設定
+                   text: '縦軸ラベル',  //ラベル
+                   fontSize: 18               //フォントサイズ
+                },
+                ticks: {                      //最大値最小値設定
+                    min: 0,                   //最小値
+                    max: 30,                  //最大値
+                    fontSize: 18,             //フォントサイズ
+                    stepSize: 5               //軸間隔
+                },
+            },
+            x: {                         //x軸設定
+                display: true,                //表示設定
+                title: {                 //軸ラベル設定
+                   display: true,             //表示設定
+                   text: '横軸ラベル',  //ラベル
+                   fontSize: 18               //フォントサイズ
+                },
+                ticks: {
+                    fontSize: 18             //フォントサイズ
+                },
+            },
+        },
+        responsive: true,
+      },
+    });
+
+
+    return;
+  })
+  .catch(error => { console.log(error); });
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

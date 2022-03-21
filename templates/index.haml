@@ -36,6 +36,10 @@
       %li.nav-item(role="presentation")
         %a.nav-link#compare-tab(data-bs-toggle="tab" data-bs-target="#compare-panel" type="button" role="tab" aria-controls="compare" aria-selected="true")
           <i class="bi bi-images" style="margin-right:5px"></i>類似団体比較
+      %li.nav-item(role="presentation")
+        %a.nav-link#sokan-tab(data-bs-toggle="tab" data-bs-target="#sokan-panel" type="button" role="tab" aria-controls="sokan" aria-selected="true")
+          <i class="bi bi-layers-fill" style="margin-right:5px"></i>相関分析
+          
 
     %div.tab-content#dataTabContent
       %div.tab-pane.active.show#home-panel(role="tabpanel" aria-labelledby="home-tab")
@@ -86,7 +90,6 @@
       %div.tab-pane#profile-panel(role="tabpanel" aria-labelledby="profile-tab")
 
 
-      %div.tab-pane#transition-panel(role="tabpanel" aria-labelledby="transition-tab")
       %div.tab-pane#compare-panel(role="tabpanel" aria-labelledby="compare-tab")
         %div.row
           %div.col-md-1#divCompareCenter
@@ -96,6 +99,10 @@
           %div.col-md-3#divCompareRight
 
 
+      %div.tab-pane#sokan-panel(role="tabpanel" aria-labelledby="sokan-tab")
+        %div.row
+          %div.col-md-12
+            <canvas id="scatterChart"></canvas>
 
 
 
