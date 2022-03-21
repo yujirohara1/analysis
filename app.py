@@ -17,7 +17,7 @@ from marshmallow_sqlalchemy import ModelSchema
 # from reportlab.lib.units import mm
 # from reportlab.lib import colors
 from api.database import db, ma
-from models.analymain import AnalyMain, AnalyMainSchema
+from models.analymain import AnalyMain, AnalyMainSchema, AnalyScatter, AnalyScatterSchema
 from models.analyhyo import AnalyHyo, AnalyHyoSchema
 from models.vanalyhyo import VAnalyHyo, VAnalyHyoSchema
 from models.vanalyshuekiseia import VAnalyShuekiseiA, VAnalyShuekiseiASchema #収益性ランクA・・・経常収支比率
@@ -770,6 +770,61 @@ def getAnalyJigyo(nendo):
     datalist = AnalyJigyo.query.filter(AnalyJigyo.nendo == nendo).order_by(asc(AnalyJigyo.gyoshu_cd),asc(AnalyJigyo.jigyo_cd)).all()
     datalist_schema = AnalyJigyoSchema(many=True)
     return jsonify({'data': datalist_schema.dumps(datalist, ensure_ascii=False, default=decimal_default_proc)})
+
+
+# 散布図用のデータ取得
+@app.route('/getDataSourceScatterXY/<nendo>/<gyomu_gyoshu_jigyo>/<joken_1245>/<xJoken>/<yJoken>')
+def getDataSourceScatterXY(nendo, gyomu_gyoshu_jigyo, joken_1245, xJoken, yJoken):
+  datalist = getScatterXyData(nendo, gyomu_gyoshu_jigyo, joken_1245, xJoken, yJoken)
+  datalist_schema = AnalyScatterSchema(many=True)
+  return jsonify({'data': datalist_schema.dumps(datalist, ensure_ascii=False, default=decimal_default_proc)})
+
+
+# レーダーチャートのデータを取得
+def getScatterXyData(nendo, gyomu_gyoshu_jigyo, joken_1245, xJoken, yJoken):
+  ret = 0
+  resultset=[]
+
+  gyo = gyomu_gyoshu_jigyo.split("-")
+  dantaiJoken = joken_1245.split("-")
+  
+  
+
+  xfilters = xJoken.split("-")
+  xWhere = "nendo = " + nendo + " and gyomu_cd = '" + gyo[0] + "' and gyoshu_cd = '" + gyo[1] + "' and jigyo_cd = '" + gyo[2] + "' and joken_1 = " + dantaiJoken[0] + " and joken_2 = " + dantaiJoken[1] + " and joken_4 = " + dantaiJoken[2] + " and joken_5 = " + dantaiJoken[3] + " and hyo_num = " + xfilters[0] + " and gyo_num = " + xfilters[1] + " and retu_num = " + xfilters[2] + " and val_num <> 0 " 
+  yfilters = yJoken.split("-")
+  yWhere = "nendo = " + nendo + " and gyomu_cd = '" + gyo[0] + "' and gyoshu_cd = '" + gyo[1] + "' and jigyo_cd = '" + gyo[2] + "' and joken_1 = " + dantaiJoken[0] + " and joken_2 = " + dantaiJoken[1] + " and joken_4 = " + dantaiJoken[2] + " and joken_5 = " + dantaiJoken[3] + " and hyo_num = " + yfilters[0] + " and gyo_num = " + yfilters[1] + " and retu_num = " + yfilters[2] + " and val_num <> 0 " 
+
+  keyColumns = " nendo,gyomu_cd,gyoshu_cd,jigyo_cd,dantai_cd,dantai_nm,sisetu_cd,sisetu_nm,hyo_num,hyo_num_sub,gyo_num,gyo_num_sub,retu_num,retu_num_sub,joken_1, joken_2 "
+  xSql = " (select " + keyColumns + ", sum(val_num) val_x from analy_main where " + xWhere + " group by " + keyColumns + ") xd " 
+  ySql = " (select " + keyColumns + ", sum(val_num) val_y from analy_main where " + yWhere + " group by " + keyColumns + ") yd " 
+
+  sql = ""
+  sql = sql + " select "
+  sql = sql + "     xd.*, "
+  sql = sql + "     yd.val_y "
+  sql = sql + " from "
+  sql = sql + "    " + xSql + ", "
+  sql = sql + "    " + ySql + " "
+  sql = sql + " where "
+  sql = sql + "     xd.nendo     = yd.nendo      and "
+  sql = sql + "     xd.gyomu_cd  = yd.gyomu_cd   and "
+  sql = sql + "     xd.gyoshu_cd = yd.gyoshu_cd  and "
+  sql = sql + "     xd.jigyo_cd  = yd.jigyo_cd   and "
+  sql = sql + "     xd.dantai_cd = yd.dantai_cd  and "
+  sql = sql + "     xd.sisetu_cd = yd.sisetu_cd  "
+
+  datalist = []
+  # if db.session.execute(text(sql)).fetchone() is not None:
+  datalist = db.session.execute(text(sql))
+  # for y in datalist:
+  #   datalist[y] = datalist[y]
+
+  return datalist.fetchmany(200)
+  # return jsonify({'data': datalist.fetchmany(200)})
+  # datalist_schema = AnalyScatterSchema(many=True)
+  # return jsonify({'data': datalist_schema.dumps(datalist.fetchmany(200), ensure_ascii=False, default=decimal_default_proc)})
+
 
 
 # ファイル取り込み状況テーブルの更新

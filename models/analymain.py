@@ -105,3 +105,29 @@ class AnalyMainSchema(ma.SQLAlchemyAutoSchema):
 #       class Meta:
 #             model = VTodohukenGroupbyVendor
 #             load_instance = True
+
+class AnalyScatter(db.Model): 
+    __tablename__ = "dummy"
+    
+    nendo        = db.Column(db.Integer, primary_key=True) 
+    gyomu_cd     = db.Column(db.String(), primary_key=True) 
+    gyoshu_cd    = db.Column(db.String(), primary_key=True) 
+    jigyo_cd     = db.Column(db.String(), primary_key=True) 
+    dantai_cd    = db.Column(db.String(), primary_key=True) 
+    dantai_nm    = db.Column(db.String(), primary_key=False) 
+    sisetu_cd    = db.Column(db.String(), primary_key=True) 
+    sisetu_nm    = db.Column(db.String(), primary_key=False) 
+    hyo_num      = db.Column(db.Integer, primary_key=True) 
+    hyo_num_sub  = db.Column(db.Integer, primary_key=False) 
+    gyo_num      = db.Column(db.Integer, primary_key=True) 
+    gyo_num_sub  = db.Column(db.Integer, primary_key=False)
+    retu_num     = db.Column(db.Integer, primary_key=True) 
+    retu_num_sub = db.Column(db.Integer, primary_key=False)
+    val_x        = db.Column(db.Numeric, primary_key=False) 
+    val_y        = db.Column(db.Numeric, primary_key=False) 
+
+
+class AnalyScatterSchema(ma.SQLAlchemyAutoSchema):
+      class Meta:
+            model = AnalyScatter
+            load_instance = True

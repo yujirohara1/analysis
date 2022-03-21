@@ -5,6 +5,7 @@
 const BgColor_RadarChart =  ["rgba(2,35,199,.2)", "rgba(199,2,2,.2)", "rgba(42,199,2,.2)", "rgba(153,2,199,.2)", "rgba(199,120,2,.2)"];
 const BdrColor_RadarChart = ["rgba(2,35,199,1)",  "rgba(199,2,2,1)",  "rgba(42,199,2,1)",  "rgba(153,2,199,1)",  "rgba(199,120,2,1)"];
 var nanajikuRadarChart=null;
+var scatterChart = null;
 var gyoshuSelectStauts = null;
 
 Chart.defaults.color = '#666666';
@@ -51,6 +52,7 @@ window.onload = function(){
     //getAndCreateTable_DantaiListOfRadarChart(); //レーダーチャート右の団体リスト
 
     //CreateRadarChart("");
+    createScatterSelectXY();
     
   }catch(e){
     console.log(e.message);
@@ -1230,8 +1232,14 @@ function getRadarChartData(chartData, datalist){
 function createScatterChart(selectRow){
   //枠内にローダーを表示
   var val = "2020"; // 会計年度、見直し必要。
-  var dantaicd = selectRow.dantai_cd;
-  fetch('/getReturnOnEquityRankList/' + val + "/" + "dummy,1-0", {
+  var dantai_sisetu = selectRow.dantai_cd + "-" + selectRow.sisetu_cd;
+  var joken_1245 = selectRow.joken_1 + "-" + selectRow.joken_2 + "-" + selectRow.joken_4 + "-" + selectRow.joken_5;
+  fetch('/getDataSourceScatterXY/' + 
+    val + "/" +
+    selectRow.gyomu_cd + "-" + selectRow.gyoshu_cd + "-" + selectRow.jigyo_cd + "/" +
+    joken_1245 + "/" +
+    document.getElementById("selScatterX").value + "/" + 
+    document.getElementById("selScatterY").value, {
     method: 'GET',
     'Content-Type': 'application/json'
   })
@@ -1243,16 +1251,21 @@ function createScatterChart(selectRow){
     var plotData = {};
     var dataA = [];
     for(let i in list){
-      if(dantaicd == list[i].dantai_cd){
-        dataA.push({label:list[i].dantai_nm.substring(0,4), pointRadius: 8, backgroundColor:'rgba(0, 159, 255, 0.45)',borderColor:'rgba(0, 159, 255, 0.5)' ,data:[{ x: list[i].sihon_kei,  y:  list[i].sisan_kei}]});
+      if(dantai_sisetu == (list[i].dantai_cd + "-" + list[i].sisetu_cd)){
+        dataA.push({label:list[i].dantai_nm.substring(0,4), pointRadius: 8, backgroundColor:'rgba(255, 48, 32, 0.45)',borderColor:'rgba(255, 48, 32, 0.5)' ,data:[{ x: list[i].val_x,  y:  list[i].val_y}]});
       }else{
-        dataA.push({label:list[i].dantai_nm.substring(0,4), pointRadius: 8, backgroundColor:'rgba(255, 48, 32, 0.45)',borderColor:'rgba(255, 48, 32, 0.5)' ,data:[{ x: list[i].sihon_kei,  y:  list[i].sisan_kei}]});
+        dataA.push({label:list[i].dantai_nm.substring(0,4), pointRadius: 8, backgroundColor:'rgba(192, 192, 192, 0.45)',borderColor:'rgba(192, 192, 192, 0.5)' ,data:[{ x: list[i].val_x,  y:  list[i].val_y}]});
       }
     }
     var dataG = {datasets:dataA};
 
     var ctx = document.getElementById('scatterChart').getContext('2d');
-    new Chart(ctx, {
+    //var ctx = $("#myChart").get(0).getContext("2d");
+    if(scatterChart!=null){
+      scatterChart.destroy();// = new Chart(ctx, null);
+    }
+
+    scatterChart = new Chart(ctx, {
       type: 'scatter',
       data: dataG,
       options:  {
@@ -1285,7 +1298,7 @@ function createScatterChart(selectRow){
                 display: true,             //表示設定
                 title: {              //軸ラベル設定
                    display: true,          //表示設定
-                   text: '縦軸ラベル',  //ラベル
+                   text: document.getElementById("selScatterY").innerText,  //ラベル
                    fontSize: 18               //フォントサイズ
                 },
                 ticks: {                      //最大値最小値設定
@@ -1299,7 +1312,7 @@ function createScatterChart(selectRow){
                 display: true,                //表示設定
                 title: {                 //軸ラベル設定
                    display: true,             //表示設定
-                   text: '横軸ラベル',  //ラベル
+                   text: document.getElementById("selScatterX").innerText,  //ラベル
                    fontSize: 18               //フォントサイズ
                 },
                 ticks: {
@@ -1321,6 +1334,33 @@ function createScatterChart(selectRow){
 
 
 
+
+function createScatterSelectXY(){
+  var selX = document.getElementById("selScatterX"); //selTdfkSub
+  for(let i in SCATTER_X){
+    var option = document.createElement("option");
+    option.value = SCATTER_X[i].split(",")[0];
+    option.text = SCATTER_X[i].split(",")[1];
+    selX.appendChild(option);
+  }
+
+  var selY = document.getElementById("selScatterY"); //selTdfkSub
+  for(let i in SCATTER_Y){
+    var option = document.createElement("option");
+    option.value = SCATTER_Y[i].split(",")[0];
+    option.text = SCATTER_Y[i].split(",")[1];
+    selY.appendChild(option);
+  }
+
+}
+
+const SCATTER_X = {
+  1:"20-1-55,純利益" 
+};
+
+const SCATTER_Y = {
+  1:"21-1-53,職員一人当たり平均給与" 
+};
 
 
 
@@ -2082,60 +2122,60 @@ function createCitySelectOption(datalist){
 }
 
 
-// 都道府県プルダウンの作成
-// べた書きでいくよ
-// selTdfk
-function createTdfkSelectOption(){
-  var vSelTdfk = document.getElementById("selTdfk"); //selTdfkSub
-  for(let i=1; i<=47; i++){
+// // 都道府県プルダウンの作成
+// // べた書きでいくよ
+// // selTdfk
+// function createTdfkSelectOption(){
+//   var vSelTdfk = document.getElementById("selTdfk"); //selTdfkSub
+//   for(let i=1; i<=47; i++){
     
-    if(i==2 || i==8 || i==16 || i==19 || i==25 || i==31 || i==36 || i==40){ //東北
-      var separator = document.createElement("option");
-      separator.value =  (i==2 ? '91' : (i==8 ? '92' : (i==16 ? '93' : (i==19 ? '94' : (i==25 ? '95' : (i==31 ? '96' : (i==36 ? '97' : (i==40 ? '97' : '')))))))); //"91";
-      separator.text = (i==2 ? '─── 東北地方 ───' : (i==8 ? '─── 関東地方 ───' : (i==16 ? '─── 北陸地方 ───' : (i==19 ? '─── 中部地方 ───' : (i==25 ? '─── 関西地方 ───' : (i==31 ? '─── 中国地方 ───' : (i==36 ? '─── 四国地方 ───' : (i==40 ? '─── 九州地方 ───' : '')))))))); //"91";
-      separator.setAttribute("disabled","disabled");
-      vSelTdfk.appendChild(separator);
-    }
+//     if(i==2 || i==8 || i==16 || i==19 || i==25 || i==31 || i==36 || i==40){ //東北
+//       var separator = document.createElement("option");
+//       separator.value =  (i==2 ? '91' : (i==8 ? '92' : (i==16 ? '93' : (i==19 ? '94' : (i==25 ? '95' : (i==31 ? '96' : (i==36 ? '97' : (i==40 ? '97' : '')))))))); //"91";
+//       separator.text = (i==2 ? '─── 東北地方 ───' : (i==8 ? '─── 関東地方 ───' : (i==16 ? '─── 北陸地方 ───' : (i==19 ? '─── 中部地方 ───' : (i==25 ? '─── 関西地方 ───' : (i==31 ? '─── 中国地方 ───' : (i==36 ? '─── 四国地方 ───' : (i==40 ? '─── 九州地方 ───' : '')))))))); //"91";
+//       separator.setAttribute("disabled","disabled");
+//       vSelTdfk.appendChild(separator);
+//     }
 
-    var option = document.createElement("option");
-    var val = ( '0' + i).slice(-2);
-    option.value = val;
-    option.text = c_tdfk[val];
-    vSelTdfk.appendChild(option);
-  }
-  var vSelTdfkSub = document.getElementById("selTdfkSub"); //
-  const options = document.getElementById('selTdfk').options
-  Array.from(options).forEach(function(option) {
-    var opt = document.createElement("option");
-    opt.value = option.value;
-    opt.text = option.text
-    vSelTdfkSub.appendChild(opt);
-  });
+//     var option = document.createElement("option");
+//     var val = ( '0' + i).slice(-2);
+//     option.value = val;
+//     option.text = c_tdfk[val];
+//     vSelTdfk.appendChild(option);
+//   }
+//   var vSelTdfkSub = document.getElementById("selTdfkSub"); //
+//   const options = document.getElementById('selTdfk').options
+//   Array.from(options).forEach(function(option) {
+//     var opt = document.createElement("option");
+//     opt.value = option.value;
+//     opt.text = option.text
+//     vSelTdfkSub.appendChild(opt);
+//   });
 
-}
+// }
 
-const c_tdfk = {
-  "01" : "北海道"   ,"02" : "青森県"   ,"03" : "岩手県"   ,"04" : "宮城県"   ,"05" : "秋田県"   ,"06" : "山形県"   ,"07" : "福島県"   ,"08" : "茨城県"   ,
-  "09" : "栃木県"   ,"10" : "群馬県"   ,"11" : "埼玉県"   ,"12" : "千葉県"   ,"13" : "東京都"   ,"14" : "神奈川県" ,"15" : "新潟県"   ,"16" : "富山県"   ,
-  "17" : "石川県"   ,"18" : "福井県"   ,"19" : "山梨県"   ,"20" : "長野県"   ,"21" : "岐阜県"   ,"22" : "静岡県"   ,"23" : "愛知県"   ,"24" : "三重県"   ,
-  "25" : "滋賀県"   ,"26" : "京都府"   ,"27" : "大阪府"   ,"28" : "兵庫県"   ,"29" : "奈良県"   ,"30" : "和歌山県" ,"31" : "鳥取県"   ,"32" : "島根県"   ,
-  "33" : "岡山県"   ,"34" : "広島県"   ,"35" : "山口県"   ,"36" : "徳島県"   ,"37" : "香川県"   ,"38" : "愛媛県"   ,"39" : "高知県"   ,"40" : "福岡県"   ,
-  "41" : "佐賀県"   ,"42" : "長崎県"   ,"43" : "熊本県"   ,"44" : "大分県"   ,"45" : "宮崎県"   ,"46" : "鹿児島県" ,"47" : "沖縄県"
-};
+// const c_tdfk = {
+//   "01" : "北海道"   ,"02" : "青森県"   ,"03" : "岩手県"   ,"04" : "宮城県"   ,"05" : "秋田県"   ,"06" : "山形県"   ,"07" : "福島県"   ,"08" : "茨城県"   ,
+//   "09" : "栃木県"   ,"10" : "群馬県"   ,"11" : "埼玉県"   ,"12" : "千葉県"   ,"13" : "東京都"   ,"14" : "神奈川県" ,"15" : "新潟県"   ,"16" : "富山県"   ,
+//   "17" : "石川県"   ,"18" : "福井県"   ,"19" : "山梨県"   ,"20" : "長野県"   ,"21" : "岐阜県"   ,"22" : "静岡県"   ,"23" : "愛知県"   ,"24" : "三重県"   ,
+//   "25" : "滋賀県"   ,"26" : "京都府"   ,"27" : "大阪府"   ,"28" : "兵庫県"   ,"29" : "奈良県"   ,"30" : "和歌山県" ,"31" : "鳥取県"   ,"32" : "島根県"   ,
+//   "33" : "岡山県"   ,"34" : "広島県"   ,"35" : "山口県"   ,"36" : "徳島県"   ,"37" : "香川県"   ,"38" : "愛媛県"   ,"39" : "高知県"   ,"40" : "福岡県"   ,
+//   "41" : "佐賀県"   ,"42" : "長崎県"   ,"43" : "熊本県"   ,"44" : "大分県"   ,"45" : "宮崎県"   ,"46" : "鹿児島県" ,"47" : "沖縄県"
+// };
 
 
-function createFilePatternSelectOption(){
-  var select = document.getElementById("selFilePattern");
-  for(let i=1; i<=Object.keys(c_filePattern).length; i++){
-    var option = document.createElement("option");
-    option.value = i;
-    option.text = c_filePattern[i];
-    select.appendChild(option);
-  }
-}
-const c_filePattern = {
-  1:"財政状況資料_都道府県", 2:"ファイル２"
-}
+// function createFilePatternSelectOption(){
+//   var select = document.getElementById("selFilePattern");
+//   for(let i=1; i<=Object.keys(c_filePattern).length; i++){
+//     var option = document.createElement("option");
+//     option.value = i;
+//     option.text = c_filePattern[i];
+//     select.appendChild(option);
+//   }
+// }
+// const c_filePattern = {
+//   1:"財政状況資料_都道府県", 2:"ファイル２"
+// }
 
 
 

@@ -101,8 +101,24 @@
 
       %div.tab-pane#sokan-panel(role="tabpanel" aria-labelledby="sokan-tab")
         %div.row
-          %div.col-md-12
+          %div.col-md-1
+          %div.col-md-3(style="display:flex")
+            %span(style="width:50px; position:relative; top:3px")
+              Ｘ軸
+            %select#selScatterX.form-select.form-select-sm(aria-label=".form-select-sm example" style="height:30px")
+            %h3(style="position:relative; top:-5px; width:60px; text-align:right")
+              ×
+          %div.col-md-3(style="display:flex")
+            %span(style="width:50px; position:relative; top:3px")
+              Ｙ軸
+            %select#selScatterY.form-select.form-select-sm(aria-label=".form-select-sm example" style="height:30px")
+          %div.col-md-5
+
+        %div.row
+          %div.col-md-1
+          %div.col-md-10
             <canvas id="scatterChart"></canvas>
+          %div.col-md-1
 
 
 
