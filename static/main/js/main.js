@@ -1254,7 +1254,7 @@ function createScatterChart(selectRow){
       }
       dataA.push({
         label:list[i].dantai_nm.substring(0,4), 
-        pointRadius: 10, 
+        pointRadius: (isSelected ? 12:8), 
         backgroundColor: getScatterColor(list[i].dantai_cd,0,isSelected), //'rgba(255, 48, 32, 0.45)',
         borderColor: getScatterColor(list[i].dantai_cd,1,isSelected),
         data:[{ x: list[i].val_x,  y:  list[i].val_y}]
@@ -1277,10 +1277,10 @@ function createScatterChart(selectRow){
             // 右上に配置
             display:true,
             align: 'start',
-            position: 'right',
+            position: 'left',
             // 余白
             labels: {
-              padding: 5
+              padding: 8,
             }
           },
           tooltip:{
@@ -1302,13 +1302,10 @@ function createScatterChart(selectRow){
                 title: {              //軸ラベル設定
                    display: true,          //表示設定
                    text: document.getElementById("selScatterY").innerText,  //ラベル
-                   fontSize: 18               //フォントサイズ
+                    font: {size: 18},
                 },
                 ticks: {                      //最大値最小値設定
-                    min: 0,                   //最小値
-                    max: 30,                  //最大値
-                    fontSize: 18,             //フォントサイズ
-                    stepSize: 5               //軸間隔
+                    font: {size: 18},
                 },
             },
             x: {                         //x軸設定
@@ -1316,10 +1313,10 @@ function createScatterChart(selectRow){
                 title: {                 //軸ラベル設定
                    display: true,             //表示設定
                    text: document.getElementById("selScatterX").innerText,  //ラベル
-                   fontSize: 18               //フォントサイズ
+                    font: {size: 18},
                 },
                 ticks: {
-                    fontSize: 18             //フォントサイズ
+                    font: {size: 18},
                 },
             },
         },
@@ -1339,7 +1336,7 @@ function createScatterChart(selectRow){
 function getScatterColor(dantai_cd, backOrLine, isSelected){
   locationCd = getLocationCdByDantaiCd(dantai_cd);
   if(0 <= locationCd && locationCd <= 7){
-    if(backOrLine==0){
+    if(backOrLine==0 && !isSelected){
       return BgColor_ScatterChart[locationCd];
     } else{
       return BdrColor_ScatterChart[locationCd];
