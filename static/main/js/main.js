@@ -1,10 +1,7 @@
 /*
 || バニラで書いていく。
 */
-//graphHikakuChart = null;
-const BgColor_RadarChart =  ["rgba(2,35,199,.2)", "rgba(199,2,2,.2)", "rgba(42,199,2,.2)", "rgba(153,2,199,.2)", "rgba(199,120,2,.2)"];
-const BdrColor_RadarChart = ["rgba(2,35,199,1)",  "rgba(199,2,2,1)",  "rgba(42,199,2,1)",  "rgba(153,2,199,1)",  "rgba(199,120,2,1)"];
-var nanajikuRadarChart=null;
+var radarChart=null;
 var scatterChart = null;
 var gyoshuSelectStauts = null;
 
@@ -46,8 +43,8 @@ window.onload = function(){
     getAndCreateTable_SihonHirituRankList();// # 資本比率
     getAndCreateTable_KoteiHirituRankList();// # 固定比率
     getAndCreateTable_JugyoinHitoriRiekiRankList();// # 労働生産性
-    //getAndCreateTable_KeijoriekiSeichorituRankList();// # 経常利益成長率
-    //getAndCreateTable_SihonSeichorituRankList();// # 資本成長率
+    getAndCreateTable_KeijoriekiSeichorituRankList();// # 経常利益成長率
+    getAndCreateTable_SihonSeichorituRankList();// # 資本成長率
 
     //getAndCreateTable_DantaiListOfRadarChart(); //レーダーチャート右の団体リスト
 
@@ -673,7 +670,7 @@ function createTableByJsonList(datalist, locationId, tableDivId, caption, hdText
     } else if(locationId == "divCompareRight"){
       trow.addEventListener('click', (event) => {
         //clickCompareRight(datalist[i]);
-        getRadarChartData(nanajikuRadarChart, datalist[i]);
+        getRadarChartData(radarChart, datalist[i]);
       });
     }
     
@@ -755,7 +752,7 @@ function moveCompareTab(datalist){
     document.getElementById('compare-panel').classList.add("show");
 
     //createHyoVerticalNavbar(key);
-    //getRadarChartData(nanajikuRadarChart, datalist);
+    //getRadarChartData(radarChart, datalist);
   }catch(e){
 
   }
@@ -1095,7 +1092,7 @@ function CreateRadarChart(selectRow){
               '資本成長率'
             ],
             datasets: []
-        }, //nanajikuRadarChart.config.options.scales.r.pointLabels.font.size = 20;
+        }, //radarChart.config.options.scales.r.pointLabels.font.size = 20;
         options: {
           animation:{
             duration:200,
@@ -1128,7 +1125,7 @@ function CreateRadarChart(selectRow){
         }
     };
     //const ctx = document.getElementById("myChart").getContext('2d');
-    //nanajikuRadarChart = new Chart(ctx, chartData);
+    //radarChart = new Chart(ctx, chartData);
     //var datalist = { dantai_cd:"dummy", sisetu_cd:"dummy", val:0, dantai_nm:"", sisetu_nm:"" };
     getRadarChartData(chartData, selectRow);
 }
@@ -1154,8 +1151,8 @@ function getRadarChartData(chartData, datalist){
     var idx = chartData.data.datasets.length;
     if(idx==0){
         //var ctx = $("#myChart").get(0).getContext("2d");
-        if(nanajikuRadarChart!=null){
-            nanajikuRadarChart.destroy();// = new Chart(ctx, null);
+        if(radarChart!=null){
+            radarChart.destroy();// = new Chart(ctx, null);
         }
     } else {
       if(isContainsRadarChart(chartData, datalist)){
@@ -1218,9 +1215,9 @@ function getRadarChartData(chartData, datalist){
 
       const ctx = document.getElementById("myChart").getContext('2d');
       if(idx==0){
-        nanajikuRadarChart = new Chart(ctx, chartData);
+        radarChart = new Chart(ctx, chartData);
       }else{
-        nanajikuRadarChart.update();
+        radarChart.update();
       }
     })
     .catch(error => { console.log(error); });
@@ -1251,11 +1248,17 @@ function createScatterChart(selectRow){
     var plotData = {};
     var dataA = [];
     for(let i in list){
+      var isSelected = false;
       if(dantai_sisetu == (list[i].dantai_cd + "-" + list[i].sisetu_cd)){
-        dataA.push({label:list[i].dantai_nm.substring(0,4), pointRadius: 8, backgroundColor:'rgba(255, 48, 32, 0.45)',borderColor:'rgba(255, 48, 32, 0.5)' ,data:[{ x: list[i].val_x,  y:  list[i].val_y}]});
-      }else{
-        dataA.push({label:list[i].dantai_nm.substring(0,4), pointRadius: 8, backgroundColor:'rgba(192, 192, 192, 0.45)',borderColor:'rgba(192, 192, 192, 0.5)' ,data:[{ x: list[i].val_x,  y:  list[i].val_y}]});
+        isSelected = true;
       }
+      dataA.push({
+        label:list[i].dantai_nm.substring(0,4), 
+        pointRadius: 10, 
+        backgroundColor: getScatterColor(list[i].dantai_cd,0,isSelected), //'rgba(255, 48, 32, 0.45)',
+        borderColor: getScatterColor(list[i].dantai_cd,1,isSelected),
+        data:[{ x: list[i].val_x,  y:  list[i].val_y}]
+      });
     }
     var dataG = {datasets:dataA};
 
@@ -1333,7 +1336,16 @@ function createScatterChart(selectRow){
 
 
 
-
+function getScatterColor(dantai_cd, backOrLine, isSelected){
+  locationCd = getLocationCdByDantaiCd(dantai_cd);
+  if(0 <= locationCd && locationCd <= 7){
+    if(backOrLine==0){
+      return BgColor_ScatterChart[locationCd];
+    } else{
+      return BdrColor_ScatterChart[locationCd];
+    }
+  }
+}
 
 function createScatterSelectXY(){
   var selX = document.getElementById("selScatterX"); //selTdfkSub

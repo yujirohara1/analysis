@@ -45,4 +45,9 @@ ALTER TABLE ONLY analy_main
     );
 
     
-    
+
+create index on analy_main (nendo, hyo_num, gyo_num, retu_num);
+vacuum;
+analyze;
+vacuum;
+analyze;
