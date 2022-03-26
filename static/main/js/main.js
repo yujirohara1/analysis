@@ -1444,6 +1444,41 @@ function createVersionNote(){
   }
 }
 
+
+//公営企業とは（サマリーモーダル）
+document.getElementById('modalSummary').addEventListener('shown.bs.modal', function () {
+  var body = document.getElementById("modalBodySummary");
+
+  var speed = 2;
+  var numA = [0, 0, 0, 0];
+  var tgtA = [35, 20000000,123,90382748291235];
+  var divArray = []
+
+  for(let i=0; i<4; i++){
+    var tmpDiv = document.createElement("div");
+    tmpDiv.id = "divSummaryCount" + i + "";
+    divArray[i] = tmpDiv;
+  }
+
+  setInterval(function(){
+    for(let i=0; i<4; i++){
+      var stepA = tgtA[i] / 200;
+
+      if(numA[i] <= tgtA[i]){
+        divArray[i].innerText = (numA[i] + "").split(".")[0]; //(num <= tgt ? num:tgt);
+        numA[i] = numA[i] + stepA;
+      } else {
+        divArray[i].innerText = tgtA[i]; //(num <= tgt ? num:tgt);
+      }
+    }
+  },speed);
+
+  for(let i in divArray){
+    body.appendChild(divArray[i]);
+  }
+  
+});
+
 // ここからは過去資料
 
 
