@@ -17,17 +17,17 @@
     %div.col-4(style="display:flex; position:relative; top:5px")
       %h6
         %a.headerLink
-          ダイアナの理念
-      %span(style="padding-left:12px;padding-right:12px;")
-        ｜
-      %h6
-        %a.headerLink
           公営企業とは
       %span(style="padding-left:12px;padding-right:12px;")
         ｜
       %h6
         %a.headerLink
           ご利用方法
+      %span(style="padding-left:12px;padding-right:12px;")
+        ｜
+      %h6
+        %a.headerLink(data-bs-toggle="modal" data-bs-target="#modalVersion")
+          更新履歴
 
     %div.col-1
       %button.btn.btn-primary.btn-sm.float-end(type="button" data-bs-toggle="modal" data-bs-target="#modalExcelUpload" style="margin-top:10px")
@@ -140,7 +140,7 @@
             %select#selScatterZ.form-select.form-select-sm(aria-label=".form-select-sm example" style="height:30px; width:16%")
         %div.row
           %div.col-md-10
-            <canvas id="scatterChart" style="position: relative; height:70vh; width:80vw"></canvas>
+            <canvas id="scatterChart" style="position: relative"></canvas>
           %div.col-md-2
 
       %div.tab-pane#mix-panel(role="tabpanel" aria-labelledby="mix-tab")
@@ -240,6 +240,22 @@
           閉じる
 
 
+<!-- Modal -->
+%div.modal.fade#modalVersion(data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modalVersionLabel" aria-hidden="true")
+  %div.modal-dialog.modal-dialog-centered.modal-dialog-scrollable.modal-xl
+    %div.modal-content
+      %div.modal-header
+        %div.display-6.modal-title#modalVersionLabel(style="font-size:18px; font-weight:bold;")
+          更新履歴
+      %div.modal-body
+        %div.panel-body(style="overflow-y: scroll;height:400px;")
+          %dl#versionNote
+
+      %div.modal-footer
+        %button.btn.btn-secondary(type="button" data-bs-dismiss="modal")
+          閉じる
+
+
 %div#loading
   %div.spinner-border(role="status" style="position:relative; left:50%; top:50%; width: 6rem; height: 6rem;")
 
@@ -257,6 +273,7 @@
 
 {% block scripts %}
   <script src="../static/main/js/constants.js"></script>
+  <script src="../static/main/js/versionHistory.js"></script>
   <script src="../static/main/js/indexes.js"></script>
   <script src="../static/main/js/main.js"></script>
 {% endblock  %}

@@ -50,7 +50,8 @@ window.onload = function(){
 
     //CreateRadarChart("");
     createScatterSelectXY();
-    
+    createVersionNote();
+
   }catch(e){
     console.log(e.message);
   }
@@ -1262,7 +1263,11 @@ function createScatterChart(selectRow){
     }
     var dataG = {datasets:dataA};
 
-    var ctx = document.getElementById('scatterChart').getContext('2d');
+    var chart = document.getElementById('scatterChart');
+    var ctx = chart.getContext('2d');
+    chart.style.height = "30vh";
+    chart.style.width = "70vw";
+    setAttributes(chart, "height,30vh/width,70vw");
     //var ctx = $("#myChart").get(0).getContext("2d");
     if(scatterChart!=null){
       scatterChart.destroy();// = new Chart(ctx, null);
@@ -1375,18 +1380,22 @@ const SCATTER_Y = {
 
 
 
+function createVersionNote(){
+  var noteArea = document.getElementById("versionNote");
+  while(noteArea.lastChild){
+    noteArea.removeChild(noteArea.lastChild);
+  }
 
-
-
-
-
-
-
-
-
-
-
-
+  for(let i=0; i<C_VERSION_NOTE.length; i++){
+    if(getVersionHistoryDate(i) != null){
+      var dt = getVersionHistoryDate(i);
+      var dd = getVersionHistoryNote(i);
+      if(dt == null) break;
+      noteArea.appendChild(dt);
+      noteArea.appendChild(dd);
+    }
+  }
+}
 
 // ここからは過去資料
 
