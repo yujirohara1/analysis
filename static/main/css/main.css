@@ -25,6 +25,16 @@ table.dataTable thead tr {
     vertical-align: top;
 }
 
+.headerLink{
+    text-decoration: none;
+    color:#454545;
+    cursor: pointer;
+}
+
+.headerLink:hover{
+    color:#a9a9a9;
+}
+
 .sihyoPopOver{
     float: left;
     padding: 0px 10px 0px 10px;

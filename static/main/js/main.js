@@ -1253,7 +1253,7 @@ function createScatterChart(selectRow){
         isSelected = true;
       }
       dataA.push({
-        label:list[i].dantai_nm.substring(0,4), 
+        label:list[i].dantai_nm.substring(0,5), 
         pointRadius: (isSelected ? 12:8), 
         backgroundColor: getScatterColor(list[i].dantai_cd,0,isSelected), //'rgba(255, 48, 32, 0.45)',
         borderColor: getScatterColor(list[i].dantai_cd,1,isSelected),
@@ -1277,7 +1277,9 @@ function createScatterChart(selectRow){
             // 右上に配置
             display:true,
             align: 'start',
-            position: 'left',
+            position: 'right',
+            left:100,
+            top:100,
             // 余白
             labels: {
               padding: 8,

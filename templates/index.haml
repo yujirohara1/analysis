@@ -14,14 +14,29 @@
         Diagnosis（診断） と Analysis（分析）のダイアナ。<br>
         公営企業を、<font>もっとおもしろく。</font>
         
-    %div.col-4#areaSelectTarget(style="display:flex; align-items:center")
+    %div.col-4(style="display:flex; position:relative; top:5px")
+      %h6
+        %a.headerLink
+          Dianaの理念
+      %span(style="padding-left:12px;padding-right:12px;")
+        ｜
+      %h6
+        %a.headerLink
+          公営企業とは
+      %span(style="padding-left:12px;padding-right:12px;")
+        ｜
+      %h6
+        %a.headerLink
+          ご利用希望の方
 
     %div.col-1
       %button.btn.btn-primary.btn-sm.float-end(type="button" data-bs-toggle="modal" data-bs-target="#modalExcelUpload" style="margin-top:10px")
         データ取込
 
   %div.row
-    &nbsp;
+    %div.col-8
+      &nbsp;
+    %div.col-4#areaSelectTarget(style="display:flex; align-items:center")
     
 
 
@@ -115,9 +130,9 @@
           %div.col-md-1
 
         %div.row
-          %div.col-md-9
+          %div.col-md-10
             <canvas id="scatterChart"></canvas>
-          %div.col-md-3
+          %div.col-md-2
 
 
 
