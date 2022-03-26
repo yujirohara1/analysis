@@ -16,13 +16,13 @@
         
     %div.col-4(style="display:flex; position:relative; top:5px")
       %h6
-        %a.headerLink
+        %a.headerLink(data-bs-toggle="modal" data-bs-target="#modalSummary")
           公営企業とは
       %span(style="padding-left:12px;padding-right:12px;")
         ｜
       %h6
-        %a.headerLink
-          ご利用方法
+        %a.headerLink(data-bs-toggle="modal" data-bs-target="#modalUse")
+          利用方法
       %span(style="padding-left:12px;padding-right:12px;")
         ｜
       %h6
@@ -250,6 +250,36 @@
       %div.modal-body
         %div.panel-body(style="overflow-y: scroll;height:400px;")
           %dl#versionNote
+
+      %div.modal-footer
+        %button.btn.btn-secondary(type="button" data-bs-dismiss="modal")
+          閉じる
+
+<!-- Modal -->
+%div.modal.fade#modalSummary(data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modalSummaryLabel" aria-hidden="true")
+  %div.modal-dialog.modal-dialog-centered.modal-dialog-scrollable.modal-xl
+    %div.modal-content
+      %div.modal-header
+        %div.display-6.modal-title#modalSummaryLabel(style="font-size:18px; font-weight:bold;")
+          公営企業とは
+      %div.modal-body
+        %div.panel-body
+          準備中
+
+      %div.modal-footer
+        %button.btn.btn-secondary(type="button" data-bs-dismiss="modal")
+          閉じる
+
+<!-- Modal -->
+%div.modal.fade#modalUse(data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modalUseLabel" aria-hidden="true")
+  %div.modal-dialog.modal-dialog-centered.modal-dialog-scrollable.modal-xl
+    %div.modal-content
+      %div.modal-header
+        %div.display-6.modal-title#modalUseLabel(style="font-size:18px; font-weight:bold;")
+          利用方法
+      %div.modal-body
+        %div.panel-body
+          準備中
 
       %div.modal-footer
         %button.btn.btn-secondary(type="button" data-bs-dismiss="modal")

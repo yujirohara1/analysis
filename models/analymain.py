@@ -40,71 +40,6 @@ class AnalyMainSchema(ma.SQLAlchemyAutoSchema):
             model = AnalyMain
             load_instance = True
 
-# class VCity(db.Model): 
-#     __tablename__ = "v_city"
-#     tdfk_cd = db.Column(db.String(), primary_key=True) 
-#     dantai_cd = db.Column(db.String(), primary_key=True) 
-#     city_nm = db.Column(db.String(), primary_key=False) 
-
-# class VCitySchema(ma.SQLAlchemyAutoSchema):
-#       class Meta:
-#             model = VCity
-#             load_instance = True
-
-# class VTokoGroupbySystem(db.Model): 
-#     __tablename__ = "v_toko_groupby_system"
-#     system_nm = db.Column(db.String(), primary_key=True) 
-#     kensu = db.Column(db.Integer, primary_key=True) 
-#     rank1_avg = db.Column(db.Float , primary_key=True) 
-
-# class VTokoGroupbySystemSchema(ma.SQLAlchemyAutoSchema):
-#       class Meta:
-#             model = VTokoGroupbySystem
-#             load_instance = True
-
-
-# #v_tokoradar_groupby_vendor
-# class VTokoRadarGroupByVendor(db.Model): 
-#     __tablename__ = "v_tokoradar_groupby_vendor"
-#     vendor_nm = db.Column(db.String(), primary_key=True) 
-#     shubetu1_avg = db.Column(db.Float , primary_key=True) 
-#     shubetu2_avg = db.Column(db.Float , primary_key=True) 
-#     shubetu3_avg = db.Column(db.Float , primary_key=True) 
-#     shubetu4_avg = db.Column(db.Float , primary_key=True) 
-#     shubetu5_avg = db.Column(db.Float , primary_key=True) 
-#     shubetu6_avg = db.Column(db.Float , primary_key=True) 
-#     shubetu7_avg = db.Column(db.Float , primary_key=True) 
-
-# class VTokoRadarGroupByVendorSchema(ma.SQLAlchemyAutoSchema):
-#       class Meta:
-#             model = VTokoRadarGroupByVendor
-#             load_instance = True
-
-
-# class VBunyaMapGroupbyVendor(db.Model): 
-#     __tablename__ = "v_bunyamap_groupby_vendor"
-#     vendor_nm = db.Column(db.String(), primary_key=True) 
-#     bunya_cd = db.Column(db.Integer, primary_key=True) 
-#     bunya_nm = db.Column(db.String(), primary_key=True) 
-#     ryaku_nm = db.Column(db.String(), primary_key=True) 
-#     kensu = db.Column(db.Integer, primary_key=True) 
-
-# class VBunyaMapGroupbyVendorSchema(ma.SQLAlchemyAutoSchema):
-#       class Meta:
-#             model = VBunyaMapGroupbyVendor
-#             load_instance = True
-
-
-# class VTodohukenGroupbyVendor(db.Model): 
-#     __tablename__ = "v_todohuken_groupby_vendor"
-#     vendor_nm = db.Column(db.String(), primary_key=True) 
-#     hyoka_value = db.Column(db.String(), primary_key=True) 
-#     kensu = db.Column(db.Integer, primary_key=True) 
-
-# class VTodohukenGroupbyVendorSchema(ma.SQLAlchemyAutoSchema):
-#       class Meta:
-#             model = VTodohukenGroupbyVendor
-#             load_instance = True
 
 class AnalyScatter(db.Model): 
     __tablename__ = "dummy"
@@ -125,6 +60,7 @@ class AnalyScatter(db.Model):
     retu_num_sub = db.Column(db.Integer, primary_key=False)
     val_x        = db.Column(db.Numeric, primary_key=False) 
     val_y        = db.Column(db.Numeric, primary_key=False) 
+    val_z        = db.Column(db.Numeric, primary_key=False) 
 
 
 class AnalyScatterSchema(ma.SQLAlchemyAutoSchema):

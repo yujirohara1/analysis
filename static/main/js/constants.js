@@ -77,3 +77,16 @@ function getLocationCdByDantaiCd(dantai_cd){
 }
 
 
+
+const SCATTER_X = {
+  1:"20-1-55,純利益" 
+};
+
+const SCATTER_Y = {
+  1:"21-1-53,職員一人当たり平均給与" 
+};
+
+const SCATTER_Z = {
+  1:"24-1-12,企業債現在高" 
+};
+

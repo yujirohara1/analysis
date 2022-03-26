@@ -773,46 +773,56 @@ def getAnalyJigyo(nendo):
 
 
 # 散布図用のデータ取得
-@app.route('/getDataSourceScatterXY/<nendo>/<gyomu_gyoshu_jigyo>/<joken_1245>/<xJoken>/<yJoken>')
-def getDataSourceScatterXY(nendo, gyomu_gyoshu_jigyo, joken_1245, xJoken, yJoken):
-  datalist = getScatterXyData(nendo, gyomu_gyoshu_jigyo, joken_1245, xJoken, yJoken)
+@app.route('/getDataSourceScatterXY/<nendo>/<gyomu_gyoshu_jigyo>/<joken_1245>/<xJoken>/<yJoken>/<zJoken>')
+def getDataSourceScatterXY(nendo, gyomu_gyoshu_jigyo, joken_1245, xJoken, yJoken, zJoken):
+  datalist = getScatterXyData(nendo, gyomu_gyoshu_jigyo, joken_1245, xJoken, yJoken, zJoken)
   datalist_schema = AnalyScatterSchema(many=True)
   return jsonify({'data': datalist_schema.dumps(datalist, ensure_ascii=False, default=decimal_default_proc)})
 
 
 # レーダーチャートのデータを取得
-def getScatterXyData(nendo, gyomu_gyoshu_jigyo, joken_1245, xJoken, yJoken):
+def getScatterXyData(nendo, gyomu_gyoshu_jigyo, joken_1245, xJoken, yJoken, zJoken):
   ret = 0
   resultset=[]
 
   gyo = gyomu_gyoshu_jigyo.split("-")
   dantaiJoken = joken_1245.split("-")
   
-  
 
   xfilters = xJoken.split("-")
   xWhere = "nendo = " + nendo + " and gyomu_cd = '" + gyo[0] + "' and gyoshu_cd = '" + gyo[1] + "' and jigyo_cd = '" + gyo[2] + "' and joken_1 = " + dantaiJoken[0] + " and joken_2 = " + dantaiJoken[1] + " and joken_4 = " + dantaiJoken[2] + " and joken_5 = " + dantaiJoken[3] + " and hyo_num = " + xfilters[0] + " and gyo_num = " + xfilters[1] + " and retu_num = " + xfilters[2] + " and val_num <> 0 " 
   yfilters = yJoken.split("-")
   yWhere = "nendo = " + nendo + " and gyomu_cd = '" + gyo[0] + "' and gyoshu_cd = '" + gyo[1] + "' and jigyo_cd = '" + gyo[2] + "' and joken_1 = " + dantaiJoken[0] + " and joken_2 = " + dantaiJoken[1] + " and joken_4 = " + dantaiJoken[2] + " and joken_5 = " + dantaiJoken[3] + " and hyo_num = " + yfilters[0] + " and gyo_num = " + yfilters[1] + " and retu_num = " + yfilters[2] + " and val_num <> 0 " 
+  zfilters = zJoken.split("-")
+  zWhere = "nendo = " + nendo + " and gyomu_cd = '" + gyo[0] + "' and gyoshu_cd = '" + gyo[1] + "' and jigyo_cd = '" + gyo[2] + "' and joken_1 = " + dantaiJoken[0] + " and joken_2 = " + dantaiJoken[1] + " and joken_4 = " + dantaiJoken[2] + " and joken_5 = " + dantaiJoken[3] + " and hyo_num = " + zfilters[0] + " and gyo_num = " + zfilters[1] + " and retu_num = " + zfilters[2] + " " 
 
   keyColumns = " nendo,gyomu_cd,gyoshu_cd,jigyo_cd,dantai_cd,dantai_nm,sisetu_cd,sisetu_nm,hyo_num,hyo_num_sub,gyo_num,gyo_num_sub,retu_num,retu_num_sub,joken_1, joken_2 "
   xSql = " (select " + keyColumns + ", sum(val_num) val_x from analy_main where " + xWhere + " group by " + keyColumns + ") xd " 
   ySql = " (select " + keyColumns + ", sum(val_num) val_y from analy_main where " + yWhere + " group by " + keyColumns + ") yd " 
+  zSql = " (select " + keyColumns + ", sum(val_num) val_z from analy_main where " + zWhere + " group by " + keyColumns + ") zd " 
 
   sql = ""
   sql = sql + " select "
   sql = sql + "     xd.*, "
-  sql = sql + "     yd.val_y "
+  sql = sql + "     yd.val_y, "
+  sql = sql + "     zd.val_z "
   sql = sql + " from "
   sql = sql + "    " + xSql + ", "
-  sql = sql + "    " + ySql + " "
+  sql = sql + "    " + ySql + ", "
+  sql = sql + "    " + zSql + " "
   sql = sql + " where "
   sql = sql + "     xd.nendo     = yd.nendo      and "
   sql = sql + "     xd.gyomu_cd  = yd.gyomu_cd   and "
   sql = sql + "     xd.gyoshu_cd = yd.gyoshu_cd  and "
   sql = sql + "     xd.jigyo_cd  = yd.jigyo_cd   and "
   sql = sql + "     xd.dantai_cd = yd.dantai_cd  and "
-  sql = sql + "     xd.sisetu_cd = yd.sisetu_cd  "
+  sql = sql + "     xd.sisetu_cd = yd.sisetu_cd  and "
+  sql = sql + "     xd.nendo     = zd.nendo      and "
+  sql = sql + "     xd.gyomu_cd  = zd.gyomu_cd   and "
+  sql = sql + "     xd.gyoshu_cd = zd.gyoshu_cd  and "
+  sql = sql + "     xd.jigyo_cd  = zd.jigyo_cd   and "
+  sql = sql + "     xd.dantai_cd = zd.dantai_cd  and "
+  sql = sql + "     xd.sisetu_cd = zd.sisetu_cd  "
 
   datalist = []
   # if db.session.execute(text(sql)).fetchone() is not None:
@@ -918,25 +928,25 @@ def getHensaKouryoValue(resultSet, hensaSet):
           hensaRec.hensa_val = 0
           
         if netRec["source"] == hensaRec.kijun_cd:
-          if hensaRec.average_val <= netRec["val"] <= (hensaRec.average_val + hensaRec.hensa_val):
+          if hensaRec.average_val <= netRec["val"] and netRec["val"] <= (hensaRec.average_val + hensaRec.hensa_val):
             hyotei = 5 # 平均プラス方向に１範囲
-          elif hensaRec.average_val <= netRec["val"] <= (hensaRec.average_val + (hensaRec.hensa_val*2)):
+          elif (hensaRec.average_val + hensaRec.hensa_val) < netRec["val"] and netRec["val"] <= (hensaRec.average_val + hensaRec.hensa_val*2):
             hyotei = 6 # 平均プラス方向に２範囲
-          elif hensaRec.average_val <= netRec["val"] <= (hensaRec.average_val + (hensaRec.hensa_val*3)):
+          elif (hensaRec.average_val + hensaRec.hensa_val*2) < netRec["val"] and netRec["val"] <= (hensaRec.average_val + hensaRec.hensa_val*3):
             hyotei = 7 # 平均プラス方向に３範囲
-          elif hensaRec.average_val <= netRec["val"] <= (hensaRec.average_val + (hensaRec.hensa_val*4)):
+          elif (hensaRec.average_val + hensaRec.hensa_val*3) < netRec["val"] and netRec["val"] <= (hensaRec.average_val + hensaRec.hensa_val*4):
             hyotei = 8 # 平均プラス方向に４範囲
-          elif hensaRec.average_val <= netRec["val"] <= (hensaRec.average_val + (hensaRec.hensa_val*5)):
+          elif (hensaRec.average_val + hensaRec.hensa_val*4) < netRec["val"] and netRec["val"] <= (hensaRec.average_val + hensaRec.hensa_val*5):
             hyotei = 9 # 平均プラス方向に５範囲
-          elif hensaRec.average_val <= netRec["val"]:
-            hyotei = 10 # 平均プラス方向に６範囲
-          elif hensaRec.average_val > netRec["val"] >= (hensaRec.average_val - (hensaRec.hensa_val)):
+          elif (hensaRec.average_val + hensaRec.hensa_val*5) < netRec["val"] :
+            hyotei = 10 # 平均プラス方向に５を超える
+          elif hensaRec.average_val > netRec["val"] and netRec["val"] >= (hensaRec.average_val - (hensaRec.hensa_val)):
             hyotei = 4 # 平均マイナス方向に１範囲
-          elif hensaRec.average_val > netRec["val"] >= (hensaRec.average_val - (hensaRec.hensa_val*2)):
+          elif (hensaRec.average_val - (hensaRec.hensa_val*1)) > netRec["val"] and netRec["val"] >= (hensaRec.average_val - (hensaRec.hensa_val*2)):
             hyotei = 3 # 平均マイナス方向に２範囲
-          elif hensaRec.average_val > netRec["val"] >= (hensaRec.average_val - (hensaRec.hensa_val*3)):
+          elif (hensaRec.average_val - (hensaRec.hensa_val*2)) > netRec["val"] and netRec["val"] >= (hensaRec.average_val - (hensaRec.hensa_val*3)):
             hyotei = 2 # 平均マイナス方向に３範囲
-          elif hensaRec.average_val > netRec["val"] >= (hensaRec.average_val - (hensaRec.hensa_val*4)):
+          elif (hensaRec.average_val - (hensaRec.hensa_val*3)) > netRec["val"] and netRec["val"] >= (hensaRec.average_val - (hensaRec.hensa_val*4)):
             hyotei = 1 # 平均マイナス方向に４範囲
           else:
             hyotei = 0

@@ -54,7 +54,7 @@ group by
     a.gyo_num,
     a.retu_num,
     b.indent,
-    b.name1
+    coalesce(c.name1,b.name1)
 order by
     a.gyo_num
     , a.retu_num;

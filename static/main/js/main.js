@@ -1237,7 +1237,8 @@ function createScatterChart(selectRow){
     selectRow.gyomu_cd + "-" + selectRow.gyoshu_cd + "-" + selectRow.jigyo_cd + "/" +
     joken_1245 + "/" +
     document.getElementById("selScatterX").value + "/" + 
-    document.getElementById("selScatterY").value, {
+    document.getElementById("selScatterY").value + "/" + 
+    document.getElementById("selScatterZ").value, {
     method: 'GET',
     'Content-Type': 'application/json'
   })
@@ -1245,17 +1246,19 @@ function createScatterChart(selectRow){
   .then(jsonData => {
 
     var list = JSON.parse(jsonData.data);
+    //var bubbleRank = createBubbleRank(list.map(item => item["val_z"]));
 
     var plotData = {};
     var dataA = [];
     for(let i in list){
+      bubbleSize = getBubbleSize(list, list[i].val_z);
       var isSelected = false;
       if(dantai_sisetu == (list[i].dantai_cd + "-" + list[i].sisetu_cd)){
         isSelected = true;
       }
       dataA.push({
         label:list[i].dantai_nm.substring(0,5), 
-        pointRadius: (isSelected ? 12:8), 
+        pointRadius: bubbleSize, //(isSelected ? 12:8), 
         backgroundColor: getScatterColor(list[i].dantai_cd,0,isSelected), //'rgba(255, 48, 32, 0.45)',
         borderColor: getScatterColor(list[i].dantai_cd,1,isSelected),
         data:[{ x: list[i].val_x,  y:  list[i].val_y}]
@@ -1338,7 +1341,52 @@ function createScatterChart(selectRow){
 
 }
 
+function getBubbleSize(list, zVal){
+  var zlist = list.map(item => item["val_z"]);
+  var sum = zlist.reduce((previous, current) =>
+    previous + current  // 前の要素につぎの要素を足す
+  );
+  var ave = sum / zlist.length;
 
+  var stddev = Math.sqrt(  // 分散の平方根を求める
+    zlist.map((current) => {  // 各要素について
+        let difference = current - ave;  // 平均値との差を求める
+        return difference ** 2;  // 差を2乘する
+    })
+    .reduce((previous, current) =>
+        previous + current  // 差の2乗をすべて足す
+    ) / zlist.length  // 差の2乗の平均が分散
+  );
+
+  var minSize = 5;
+  var step = 5;
+  var ret = 0;
+  if(stddev <= zVal && zVal <= (ave + stddev*1)){
+    ret = minSize+(step*5);
+  } else if((ave + stddev*1) < zVal && zVal <= (ave + stddev*2)){
+    ret = minSize+(step*6);
+  } else if((ave + stddev*2) < zVal && zVal <= (ave + stddev*3)){
+    ret = minSize+(step*7);
+  } else if((ave + stddev*3) < zVal && zVal <= (ave + stddev*4)){
+    ret = minSize+(step*7);
+  } else if((ave + stddev*4) < zVal && zVal <= (ave + stddev*5)){
+    ret = minSize+(step*9);
+  } else if((ave + stddev*5) < zVal){
+    ret = minSize+(step*10);
+  } else if(ave > zVal && zVal >= (ave - stddev*1)){
+    ret = minSize+(step*4);
+  } else if((ave - stddev*1) > zVal && zVal >= (ave - stddev*2)){
+    ret = minSize+(step*3);
+  } else if((ave - stddev*2) > zVal && zVal >= (ave - stddev*3)){
+    ret = minSize+(step*2);
+  } else if((ave - stddev*3) > zVal && zVal >= (ave - stddev*4)){
+    ret = minSize+(step*1);
+  } else {
+    ret = minSize;
+  } 
+
+  return ret;
+}
 
 function getScatterColor(dantai_cd, backOrLine, isSelected){
   locationCd = getLocationCdByDantaiCd(dantai_cd);
@@ -1368,16 +1416,15 @@ function createScatterSelectXY(){
     selY.appendChild(option);
   }
 
+  var selZ = document.getElementById("selScatterZ"); //selTdfkSub
+  for(let i in SCATTER_Z){
+    var option = document.createElement("option");
+    option.value = SCATTER_Z[i].split(",")[0];
+    option.text = SCATTER_Z[i].split(",")[1];
+    selZ.appendChild(option);
+  }
+
 }
-
-const SCATTER_X = {
-  1:"20-1-55,純利益" 
-};
-
-const SCATTER_Y = {
-  1:"21-1-53,職員一人当たり平均給与" 
-};
-
 
 
 function createVersionNote(){
