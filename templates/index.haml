@@ -17,7 +17,7 @@
     %div.col-4(style="display:flex; position:relative; top:5px")
       %h6
         %a.headerLink
-          Dianaの理念
+          ダイアナの理念
       %span(style="padding-left:12px;padding-right:12px;")
         ｜
       %h6
@@ -27,7 +27,7 @@
         ｜
       %h6
         %a.headerLink
-          ご利用希望の方
+          ご利用方法
 
     %div.col-1
       %button.btn.btn-primary.btn-sm.float-end(type="button" data-bs-toggle="modal" data-bs-target="#modalExcelUpload" style="margin-top:10px")
@@ -47,14 +47,19 @@
           <i class="bi bi-clouds-fill" style="margin-right:5px"></i>ダイジェスト
       %li.nav-item(role="presentation")
         %a.nav-link#profile-tab(data-bs-toggle="tab" data-bs-target="#profile-panel" type="button" role="tab" aria-controls="profile" aria-selected="true")
-          <i class="bi bi-grid-fill" style="margin-right:5px"></i>統計データ推移
+          <i class="bi bi-grid-fill" style="margin-right:5px"></i>統計ヒストリー
       %li.nav-item(role="presentation")
         %a.nav-link#compare-tab(data-bs-toggle="tab" data-bs-target="#compare-panel" type="button" role="tab" aria-controls="compare" aria-selected="true")
-          <i class="bi bi-images" style="margin-right:5px"></i>類似団体比較
+          <i class="bi bi-images" style="margin-right:5px"></i>指標比較レーダー
       %li.nav-item(role="presentation")
         %a.nav-link#sokan-tab(data-bs-toggle="tab" data-bs-target="#sokan-panel" type="button" role="tab" aria-controls="sokan" aria-selected="true")
-          <i class="bi bi-layers-fill" style="margin-right:5px"></i>相関分析
-          
+          <i class="bi bi-circle-square" style="margin-right:5px"></i>相関バブルチャート
+      %li.nav-item(role="presentation")
+        %a.nav-link#mix-tab(data-bs-toggle="tab" data-bs-target="#mix-panel" type="button" role="tab" aria-controls="mix" aria-selected="true")
+          <i class="bi bi-people-fill" style="margin-right:5px"></i>人口動態ミックス
+      %li.nav-item(role="presentation")
+        %a.nav-link#report-tab(data-bs-toggle="tab" data-bs-target="#report-panel" type="button" role="tab" aria-controls="report" aria-selected="true")
+          <i class="bi bi-layers-fill" style="margin-right:5px"></i>診断レポート
 
     %div.tab-content#dataTabContent
       %div.tab-pane.active.show#home-panel(role="tabpanel" aria-labelledby="home-tab")
@@ -116,24 +121,34 @@
 
       %div.tab-pane#sokan-panel(role="tabpanel" aria-labelledby="sokan-tab")
         %div.row
-          %div.col-md-3(style="display:flex")
-            %span(style="width:50px; position:relative; top:3px")
-              Ｘ軸
-            %select#selScatterX.form-select.form-select-sm(aria-label=".form-select-sm example" style="height:30px")
-            %h3(style="position:relative; top:-5px; width:60px; text-align:right")
+          %div.col-md-12(style="display:flex")
+            %div(style="width:4%; position:relative; top:3px; padding-left:20px")
+              %span.badge.bg-primary(style="font-size:0.89rem")
+                Ｘ軸
+            %select#selScatterX.form-select.form-select-sm(aria-label=".form-select-sm example" style="height:30px; width:16%")
+            %h3(style="position:relative; top:-5px; width:3%; text-align:center; color:#f36d84")
               ×
-          %div.col-md-3(style="display:flex")
-            %span(style="width:50px; position:relative; top:3px")
-              Ｙ軸
-            %select#selScatterY.form-select.form-select-sm(aria-label=".form-select-sm example" style="height:30px")
-          %div.col-md-5
-          %div.col-md-1
-
+            %div(style="width:4%; position:relative; top:3px")
+              %span.badge.bg-primary(style="font-size:0.89rem")
+                Ｙ軸
+            %select#selScatterY.form-select.form-select-sm(aria-label=".form-select-sm example" style="height:30px; width:16%")
+            %h3(style="position:relative; top:-5px; width:3%; text-align:center; color:#f36d84")
+              ×
+            %div(style="width:4%; position:relative; top:3px")
+              %span.badge.bg-primary(style="font-size:0.89rem")
+                バブル
+            %select#selScatterZ.form-select.form-select-sm(aria-label=".form-select-sm example" style="height:30px; width:16%")
         %div.row
           %div.col-md-10
-            <canvas id="scatterChart"></canvas>
+            <canvas id="scatterChart" style="position: relative; height:70vh; width:80vw"></canvas>
           %div.col-md-2
 
+      %div.tab-pane#mix-panel(role="tabpanel" aria-labelledby="mix-tab")
+        %div.row
+
+
+      %div.tab-pane#report-panel(role="tabpanel" aria-labelledby="report-tab")
+        %div.row
 
 
         

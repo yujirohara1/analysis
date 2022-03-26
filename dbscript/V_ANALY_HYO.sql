@@ -12,7 +12,7 @@ select
     a.gyo_num,
     a.retu_num,
     b.indent,
-    b.name1,
+    coalesce(c.name1,b.name1) name1,
     sum(case when a.nendo = 2015 then val_num else 0 end) val_a,
     sum(case when a.nendo = 2016 then val_num else 0 end) val_b,
     sum(case when a.nendo = 2017 then val_num else 0 end) val_c,
@@ -26,14 +26,24 @@ select
 from
     analy_main a
 join
-    analy_gyoretu b
+    (select * from analy_gyoretu where gyomu_cd = '0') b
 on
     a.nendo = b.nendo and
     a.hyo_num = b.hyo_num and
     a.gyo_num = b.gyo_num and
     a.retu_num = b.retu_num 
+left join
+    (select * from analy_gyoretu where gyomu_cd <> '0') c
+on
+    a.nendo = c.nendo and
+    a.gyomu_cd = c.gyomu_cd and
+    a.gyoshu_cd = c.gyoshu_cd and
+    a.jigyo_cd = c.jigyo_cd and
+    a.hyo_num = c.hyo_num and
+    a.gyo_num = c.gyo_num and
+    a.retu_num = c.retu_num 
 where
-    coalesce(b.name1,'') <> ''
+    coalesce(coalesce(c.name1,b.name1),'') <> ''
 group by
     a.gyomu_cd,
     a.gyoshu_cd,

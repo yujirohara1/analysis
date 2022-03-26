@@ -145,8 +145,8 @@ def SendMail_AccountToroku():
 def load_user(user_id):
   return users.get(int(user_id))
 
-# db_uri = "postgresql://postgres:yjrhr1102@localhost:5432/newdb3" #開発用
-db_uri = os.environ.get('HEROKU_POSTGRESQL_COBALT_URL') #本番用HEROKU_POSTGRESQL_COBALTHEROKU_POSTGRESQL_DIANA_URL
+db_uri = "postgresql://postgres:yjrhr1102@localhost:5432/newdb3" #開発用
+# db_uri = os.environ.get('HEROKU_POSTGRESQL_COBALT_URL') #本番用HEROKU_POSTGRESQL_COBALTHEROKU_POSTGRESQL_DIANA_URL
 app.config['SQLALCHEMY_DATABASE_URI'] = db_uri 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -820,7 +820,7 @@ def getScatterXyData(nendo, gyomu_gyoshu_jigyo, joken_1245, xJoken, yJoken):
   # for y in datalist:
   #   datalist[y] = datalist[y]
 
-  return datalist.fetchmany(200)
+  return datalist
   # return jsonify({'data': datalist.fetchmany(200)})
   # datalist_schema = AnalyScatterSchema(many=True)
   # return jsonify({'data': datalist_schema.dumps(datalist.fetchmany(200), ensure_ascii=False, default=decimal_default_proc)})
