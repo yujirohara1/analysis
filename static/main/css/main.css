@@ -43,6 +43,15 @@ table.dataTable thead tr {
     font-size:16px;
 }
 
+.dropcap:first-letter {
+    font-size: 32px;/*文字の大きさ*/
+    margin-right: 6px;
+    margin-top: 6px;
+    float: left;
+    line-height: 1;/*必要*/
+    font-weight: 400;
+}
+
 .summaryHead{
     color:#212529;
     font-family: var(--bs-font-sans-serif);

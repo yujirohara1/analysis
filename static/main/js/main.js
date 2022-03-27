@@ -1489,23 +1489,48 @@ document.getElementById('modalSummary').addEventListener('hidden.bs.modal', func
     body.removeChild(body.lastChild);
   }
   
+  var body = document.getElementById("modalBodySummaryDescription");
+  while(body.lastChild){
+    body.removeChild(body.lastChild);
+  }
+  
+  
 });
 
 
 function createSummaryDescription(){
-  var div = document.createElement("div");
+  var divA = document.createElement("div");
+  var divB = document.createElement("div");
+  var divC = document.createElement("div");
+  var divD = document.createElement("div");
+  
   var txt = "";
   txt = txt + "公営企業とは、地方公共団体が住民の福祉の増進を目的として設置し、経営する企業です。\r\n";
   txt = txt + "\r\n";
+  divA.innerText = txt;
+  divA.classList.add("dropcap");
+
+  txt = "";
   txt = txt + "水道、病院、交通、ガス、電気 といった、地域における社会資本の整備、生活サービスの供給、産業の振興など地域住民の生活や地域の発展に不可欠なサービスを提供し、重要な役割を果たしています。\r\n";
   txt = txt + "\r\n";
+  divB.innerText = txt;
+  divB.classList.add("dropcap");
+
+  txt = "";
   txt = txt + "これらのうち、地方公営企業法が適用される事業は、民間企業と同じように発生主義会計・複式簿記を採用し、損益計算書・貸借対照表等の作成が義務付けられています。\r\n";
   txt = txt + "\r\n";
+  divC.innerText = txt;
+  divC.classList.add("dropcap");
+  
+  txt = "";
   txt = txt + "私たちは、それらの経営状況をわかりやすく可視化し、経営改善につなげるための分析と診断サービスを運営しております。\r\n";
-  //地方公営企業法
-
-  div.innerText = txt;
-  document.getElementById("modalBodySummaryDescription").appendChild(div);
+  divD.innerText = txt;
+  divD.classList.add("dropcap");
+  
+  document.getElementById("modalBodySummaryDescription").appendChild(divA);
+  document.getElementById("modalBodySummaryDescription").appendChild(divB);
+  document.getElementById("modalBodySummaryDescription").appendChild(divC);
+  document.getElementById("modalBodySummaryDescription").appendChild(divD);
 }
 //
 //公営企業とは（サマリーモーダル）
