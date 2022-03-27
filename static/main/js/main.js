@@ -567,6 +567,8 @@ function createToasts(selectData){
   divToast.classList.add("toast", "align-items-center", "face", "show");
   setAttributes(divToast,"role,alert/roaria-livele,assertive/aria-atomic,true");
   divToast.id = "divToast";
+  //divToast.style.position = "relative";
+  //divToast.style.top = "-30px";
 
   
   let divToastBody = document.createElement('div');
@@ -1797,7 +1799,35 @@ function donutsAmountFormat(dataString){
 
 
 
+document.getElementById('modalUse').addEventListener('show.bs.modal', function () {
+  var tmpDiv = document.getElementById("mapAreaDiv");
+  while(tmpDiv.lastChild){
+    tmpDiv.removeChild(tmpDiv.lastChild);
+  }
+  
+  
+  var nendo = 2020;
+  fetch('/getAnalyPrefecture/' + nendo , {
+    method: 'GET',
+    'Content-Type': 'application/json'
+  })
+  .then(res => res.json())
+  .then(jsonData => {
+    document.getElementById("mapAreaDiv").appendChild(getMapHtml());
+    var list = JSON.parse(jsonData.data);
+    var areas = document.getElementById("japan-map").querySelectorAll(".area");
+    for(let i=0; i<areas.length; i++){//for(let i in areas){
+      var prefs = areas[i].querySelectorAll("div");
+      for(let j=0; j<prefs.length; j++){
+        var kensu = list.filter(value => value["pref_nm"].substring(0,2) == prefs[j].innerText.substring(0,2)).map(item => item["kensu"]);
+        prefs[j].innerText = prefs[j].innerText + "\r\n" + kensu;
+      }
+    }
+    console.log(123);
+  })
+  .catch(error => { console.log(error); });
 
+});
 
 
 

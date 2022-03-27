@@ -43,6 +43,9 @@ table.dataTable thead tr {
     font-size:16px;
 }
 
+.dropcap{
+    font-size: 15px;
+}
 .dropcap:first-letter {
     font-size: 32px;/*文字の大きさ*/
     margin-right: 6px;
@@ -103,6 +106,8 @@ table.dataTable thead tr {
     padding: 2px 12px 2px 12px;
     font-weight: bold;
 }
+
+
 
 .spinner-lg {
     background-image:url(../../../static/image/load_anime.gif); 

@@ -30,6 +30,7 @@ from models.analykijun import AnalyKijun, AnalyKijunSchema
 from models.analyjigyo import AnalyJigyo, AnalyJigyoSchema
 from models.analyimport import AnalyImport, AnalyImportSchema
 from models.vanalysummary import VAnalySummary, VAnalySummarySchema
+from models.vanalyprefecture import VAnalyPrefecture, VAnalyPrefectureSchema
 
 from sqlalchemy.sql import text
 from sqlalchemy import distinct
@@ -770,6 +771,14 @@ def getAnalyJigyo(nendo):
 def getAnalySummary(nendo):
     datalist = VAnalySummary.query.filter(VAnalySummary.nendo == nendo).order_by(desc(VAnalySummary.kessan_g)).all()
     datalist_schema = VAnalySummarySchema(many=True)
+    return jsonify({'data': datalist_schema.dumps(datalist, ensure_ascii=False, default=decimal_default_proc)})
+
+
+# 都道府県サマリー
+@app.route('/getAnalyPrefecture/<nendo>')
+def getAnalyPrefecture(nendo):
+    datalist = VAnalyPrefecture.query.filter(VAnalyPrefecture.nendo == nendo).order_by(desc(VAnalyPrefecture.pref_cd)).all()
+    datalist_schema = VAnalyPrefectureSchema(many=True)
     return jsonify({'data': datalist_schema.dumps(datalist, ensure_ascii=False, default=decimal_default_proc)})
 
 
