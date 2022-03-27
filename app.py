@@ -768,7 +768,7 @@ def getAnalyJigyo(nendo):
 # 登録データ数サマリー
 @app.route('/getAnalySummary/<nendo>')
 def getAnalySummary(nendo):
-    datalist = VAnalySummary.query.filter(VAnalySummary.nendo == nendo).order_by(asc(VAnalySummary.gyoshu_cd)).all()
+    datalist = VAnalySummary.query.filter(VAnalySummary.nendo == nendo).order_by(desc(VAnalySummary.kessan_g)).all()
     datalist_schema = VAnalySummarySchema(many=True)
     return jsonify({'data': datalist_schema.dumps(datalist, ensure_ascii=False, default=decimal_default_proc)})
 

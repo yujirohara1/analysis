@@ -20,6 +20,40 @@ Chart.defaults.elements.point.radius = 2;
 
 window.onload = function(){
 
+  
+// Chart.register({
+//   afterDatasetsDraw: function (chart, easing) {
+//       // To only draw at the end of animation, check for easing === 1
+//       var ctx = chart.ctx;
+
+//       chart.data.datasets.forEach(function (dataset, i) {
+//           var meta = chart.getDatasetMeta(i);
+//           if (!meta.hidden) {
+//               meta.data.forEach(function (element, index) {
+//                   // Draw the text in black, with the specified font
+//                   ctx.fillStyle = 'rgb(0, 0, 0)';
+
+//                   var fontSize = 16;
+//                   var fontStyle = 'normal';
+//                   var fontFamily = 'Helvetica Neue';
+//                   ctx.font = Chart.helpers.fontString(fontSize, fontStyle, fontFamily);
+
+//                   // Just naively convert to string for now
+//                   var dataString = dataset.data[index].toString();
+
+//                   // Make sure alignment settings are correct
+//                   ctx.textAlign = 'center';
+//                   ctx.textBaseline = 'middle';
+
+//                   var padding = 5;
+//                   var position = element.tooltipPosition();
+//                   ctx.fillText(dataString, position.x, position.y - (fontSize / 2) - padding);
+//               });
+//           }
+//       });
+//   }
+// });
+
   /* スーパーリロードを実装。最終的にソースが固まったら外す。*/
   if(document.URL.indexOf("#")==-1){
     url = document.URL+"#";
@@ -1449,6 +1483,12 @@ document.getElementById('modalSummary').addEventListener('hidden.bs.modal', func
   while(body.lastChild){
     body.removeChild(body.lastChild);
   }
+
+  var body = document.getElementById("modalBodySummaryDonuts");
+  while(body.lastChild){
+    body.removeChild(body.lastChild);
+  }
+  
 });
 
 //
@@ -1462,9 +1502,7 @@ document.getElementById('modalSummary').addEventListener('shown.bs.modal', funct
   .then(res => res.json())
   .then(jsonData => {
     var list = JSON.parse(jsonData.data);
-    
     var body = document.getElementById("modalBodySummary");
-
     var speed = 4;
     var numA = [];
     var numB = [];
@@ -1483,12 +1521,8 @@ document.getElementById('modalSummary').addEventListener('shown.bs.modal', funct
     setInterval(function(){
       for(let i=0; i<list.length; i++){
 
-        if(numA[i] == undefined) {
-          numA[i] = 0;
-        }
-        if(numB[i] == undefined) {
-          numB[i] = 0;
-        }
+        if(numA[i] == undefined) numA[i] = 0;
+        if(numB[i] == undefined) numB[i] = 0;
 
         var stepA = list[i].kessan_g / 200;
         var stepB = list[i].kensu / 200;
@@ -1508,13 +1542,24 @@ document.getElementById('modalSummary').addEventListener('shown.bs.modal', funct
       }
     },speed);
 
+    createTableLoading("modalBodySummaryDonuts", "SummaryDonutsDivLoading", "読み込み中...");
+    setTimeout(() => {
+      destroyTableLoading("modalBodySummaryDonuts", "SummaryDonutsDivLoading");
+      
+      var tmpCanvas = document.createElement("canvas");
+      tmpCanvas.id = "donutsChart";
+      document.getElementById("modalBodySummaryDonuts").appendChild(tmpCanvas);
+      document.getElementById("modalBodySummaryDonutsCaption").innerText = "業種別構成比グラフ";
+      createSummaryDonuts("donutsChart", list);
+    }, 400);
+
     var table = document.createElement("table");
     var tr = document.createElement("tr");
     var thA = document.createElement("th");
     thA.innerText = "業種";
     thA.classList.add("summaryHead");
     var thB = document.createElement("th");
-    thB.innerText = "事業体数";
+    thB.innerText = "事業数";
     thB.classList.add("summaryHead");
     var thC = document.createElement("th");
     thC.innerText = "経済規模";
@@ -1529,8 +1574,6 @@ document.getElementById('modalSummary').addEventListener('shown.bs.modal', funct
       var tdA = document.createElement("td");
       tdA.innerText = list[i].gyoshu_nm;
       tdA.classList.add("summaryCell");
-//      tdA.style.color = "#ffffff";
-//      tdA.style.backgroundColor = "#42496e";
 
       var tdB = document.createElement("td");
       tdB.appendChild(divKensuArray[i]);
@@ -1541,8 +1584,7 @@ document.getElementById('modalSummary').addEventListener('shown.bs.modal', funct
       tdC.appendChild(divKessangArray[i]);
       tdC.style.textAlign = "right";
       tdC.classList.add("summaryCell");
-      //body.appendChild(divKessangArray[i]);
-      //body.appendChild();
+
       tr.appendChild(tdA);
       tr.appendChild(tdB);
       tr.appendChild(tdC);
@@ -1555,7 +1597,6 @@ document.getElementById('modalSummary').addEventListener('shown.bs.modal', funct
   
 });
 
-// ここからは過去資料
 
 function fullFormat(number) {
   const formatter = new Intl.NumberFormat("ja-JP",{ 
@@ -1585,6 +1626,119 @@ function fullFormat(number) {
 
 
 
+function createSummaryDonuts(id, list){
+  //document.getElementById(id).title="";
+  const ctx = document.getElementById(id).getContext('2d');
+  var kessanGArray = list.map(item => item["kessan_g"]);
+  var gyoshuNmArray = list.map(item => item["gyoshu_nm"]);
+  //var data = kessanGArray;
+
+  var sonota = 0;
+  var newIndex = 0;
+  var dataVal = [];
+  var dataLabel = [];
+  for (let i in kessanGArray){
+    if(kessanGArray[i] >= 100000000000){
+      dataVal[newIndex] = kessanGArray[i];
+      dataLabel[newIndex] = gyoshuNmArray[i];
+      newIndex = newIndex + 1;
+    } else {
+      sonota = sonota + kessanGArray[i];
+    }
+  }
+  dataVal[newIndex] = sonota;
+  dataLabel[newIndex] = "その他";
+
+  var objChart1 = new Chart(ctx, {
+      plugins: [{
+        afterDatasetsDraw: function (chart, easing) {
+          // To only draw at the end of animation, check for easing === 1
+          var ctx = chart.ctx;
+          
+          chart.data.datasets.forEach(function (dataset, i) {
+              var meta = chart.getDatasetMeta(i);
+              if (!meta.hidden) {
+                  meta.data.forEach(function (element, index) {
+                      // Draw the text in black, with the specified font
+                      ctx.fillStyle = 'rgb(0, 0, 0)';
+    
+                      var fontSize = 16;
+                      var fontStyle = 'normal';
+                      var fontFamily = 'Helvetica Neue';
+                      ctx.font = Chart.helpers.fontString(fontSize, fontStyle, fontFamily);
+    
+                      // Just naively convert to string for now
+                      var dataString = dataset.data[index].toString();
+    
+                      // Make sure alignment settings are correct
+                      ctx.textAlign = 'center';
+                      ctx.textBaseline = 'middle';
+    
+                      var padding = 5;
+                      var position = element.tooltipPosition();
+
+                      var sum = chart.data.datasets[0].data.reduce((previous, current) => previous + current);
+                      if((dataString/sum) > 0.25){
+                        ctx.fillText( donutsAmountFormat(dataString), position.x, position.y - (fontSize / 2) - padding);
+
+                      }
+                  });
+              }
+          });
+          
+          if (chart.data.datasets[0].data.length > 0) {
+            const current = chart.ctx;
+            const width = chart.width;
+            const height = chart.height
+            var fontSize = 30;
+            var fontStyle = 'bold';
+            var fontFamily = 'Helvetica Neue';
+            current.font = Chart.helpers.fontString(fontSize, fontStyle, fontFamily);
+            var sum = chart.data.datasets[0].data.reduce((previous, current) => previous + current);
+            current.fillStyle = "#4d4cc1";
+            if(donutsAmountFormat(sum).split("兆").length==2){
+              var arr = donutsAmountFormat(sum).split("兆");
+              current.fillText(arr[0] + "兆", width / 2, height / 2 +5);
+              current.fillText(arr[1], width / 2, height / 2 +45);
+            } else {
+              current.fillText(donutsAmountFormat(sum), width / 2, height / 2 +25);
+            }
+          }
+        }
+      }],
+      type: 'doughnut',
+      data: {
+          labels: dataLabel, //見直し必要
+          datasets: [{
+              data: dataVal, //datalist.filter(value => value["col_index"] ==rowindex).map(item => item["val_num"]), //[12, 19, 3, 5, 2, 3],tableから取得する 
+              backgroundColor: BgColor_DoghnutsChart,
+              borderColor: BdrColor_DoghnutsChart,
+              borderWidth: 1
+          }]
+      },
+      options: {
+          plugins: {
+              title: {
+                  display: false,
+                  align: "start",
+                  text: "dummy"
+              }
+          }
+          
+      }
+  });
+  return objChart1;
+  
+}
+
+
+function donutsAmountFormat(dataString){
+  var am = fullFormat(dataString);
+  if(am.split("億").length == 2){
+    return am.split("億")[0] + "億";
+  }
+  return "";
+}
 
 
 
@@ -1603,12 +1757,7 @@ function fullFormat(number) {
 
 
 
-
-
-
-
-
-
+// ここからは過去資料
 
 
 

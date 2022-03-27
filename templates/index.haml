@@ -248,8 +248,14 @@
       %div.modal-header
         %div.display-6.modal-title#modalSummaryLabel(style="font-size:18px; font-weight:bold;")
           公営企業とは
-      %div.modal-body
-        %div.panel-body#modalBodySummary(style="overflow-y: scroll;height:400px;")
+      %div.modal-body(style="overflow-y: scroll;height:400px;")
+        %div.row
+          %div.col-4
+            aaaa
+          %div.col-4#modalBodySummary
+
+          %div.col-4.loadableTable#modalBodySummaryDonuts
+            <canvas id="donutsChart"></canvas>
 
       %div.modal-footer
         %button.btn.btn-secondary(type="button" data-bs-dismiss="modal")
