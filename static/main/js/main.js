@@ -1534,7 +1534,7 @@ function createSummaryDescription(){
 }
 //
 //公営企業とは（サマリーモーダル）
-document.getElementById('modalSummary').addEventListener('shown.bs.modal', function () {
+document.getElementById('modalSummary').addEventListener('show.bs.modal', function () {
   var nendo = 2020;
   fetch('/getAnalySummary/' + nendo , {
     method: 'GET',
