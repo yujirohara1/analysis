@@ -9,13 +9,6 @@ import datetime
 from flask_bootstrap import Bootstrap
 from marshmallow_sqlalchemy import ModelSchema
 
-# from reportlab.pdfgen import canvas
-# from reportlab.pdfbase import pdfmetrics
-# from reportlab.pdfbase.cidfonts import UnicodeCIDFont
-# from reportlab.lib.pagesizes import A4, portrait
-# from reportlab.platypus import Table, TableStyle
-# from reportlab.lib.units import mm
-# from reportlab.lib import colors
 from api.database import db, ma
 from models.analymain import AnalyMain, AnalyMainSchema, AnalyScatter, AnalyScatterSchema
 from models.analyhyo import AnalyHyo, AnalyHyoSchema
@@ -36,6 +29,7 @@ from models.vanalysihonseichoritua import VAnalySihonSeichorituA, VAnalySihonSei
 from models.analykijun import AnalyKijun, AnalyKijunSchema
 from models.analyjigyo import AnalyJigyo, AnalyJigyoSchema
 from models.analyimport import AnalyImport, AnalyImportSchema
+from models.vanalysummary import VAnalySummary, VAnalySummarySchema
 
 from sqlalchemy.sql import text
 from sqlalchemy import distinct
@@ -769,6 +763,13 @@ def getHyoListForProfile(nendo, gyomu_cd, gyoshu_cd, jigyo_cd, dantai_cd, sisetu
 def getAnalyJigyo(nendo):
     datalist = AnalyJigyo.query.filter(AnalyJigyo.nendo == nendo).order_by(asc(AnalyJigyo.gyoshu_cd),asc(AnalyJigyo.jigyo_cd)).all()
     datalist_schema = AnalyJigyoSchema(many=True)
+    return jsonify({'data': datalist_schema.dumps(datalist, ensure_ascii=False, default=decimal_default_proc)})
+
+# 登録データ数サマリー
+@app.route('/getAnalySummary/<nendo>')
+def getAnalySummary(nendo):
+    datalist = VAnalySummary.query.filter(VAnalySummary.nendo == nendo).order_by(asc(VAnalySummary.gyoshu_cd)).all()
+    datalist_schema = VAnalySummarySchema(many=True)
     return jsonify({'data': datalist_schema.dumps(datalist, ensure_ascii=False, default=decimal_default_proc)})
 
 

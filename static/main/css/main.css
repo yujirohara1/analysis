@@ -35,6 +35,24 @@ table.dataTable thead tr {
     color:#a9a9a9;
 }
 
+.summaryCell{
+    color:#212529;
+    font-family: var(--bs-font-sans-serif);
+    padding-left: 25px;
+    padding-right: 25px;
+    font-size:16px;
+}
+
+.summaryHead{
+    color:#212529;
+    font-family: var(--bs-font-sans-serif);
+    padding-left: 25px;
+    padding-right: 25px;
+    font-size:18px;
+    text-align: center;
+    border-bottom: 1px solid #212529;
+}
+
 .sihyoPopOver{
     float: left;
     padding: 0px 10px 0px 10px;

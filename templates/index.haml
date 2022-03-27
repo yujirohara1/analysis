@@ -38,8 +38,6 @@
       &nbsp;
     %div.col-4#areaSelectTarget(style="display:flex; align-items:center")
     
-
-
   %div.row
     %ul.nav.nav-tabs.mb-3#dataTab(role="tablist")
       %li.nav-item(role="presentation")
@@ -106,9 +104,7 @@
             %div.col-4.loadableTable#divMainCenterBottom3
             %div.col-4.loadableTable#divMainRightBottom3
 
-
       %div.tab-pane#profile-panel(role="tabpanel" aria-labelledby="profile-tab")
-
 
       %div.tab-pane#compare-panel(role="tabpanel" aria-labelledby="compare-tab")
         %div.row
@@ -117,7 +113,6 @@
             <canvas id="myChart" ></canvas>
           %div.col-md-3#divCompareCenter
           %div.col-md-3#divCompareRight
-
 
       %div.tab-pane#sokan-panel(role="tabpanel" aria-labelledby="sokan-tab")
         %div.row
@@ -149,8 +144,6 @@
 
       %div.tab-pane#report-panel(role="tabpanel" aria-labelledby="report-tab")
         %div.row
-
-
         
   %div.container-fluid.table-responsive#mainTableDiv
 
@@ -181,8 +174,6 @@
         %button.btn.btn-secondary(type="button" data-bs-dismiss="modal")
           キャンセル
 
-
-
 <!-- 個別団体情報の表示モーダル -->
 %div.modal.fade#modalDantaiProfile(data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modalDantaiProfileLabel" aria-hidden="true")
   %div.modal-dialog.modal-dialog-centered.modal-dialog-scrollable.modal-xl
@@ -208,8 +199,6 @@
         %button.btn.btn-secondary(type="button" data-bs-dismiss="modal")
           閉じる
 
-
-
 <!-- Modal -->
 %div.modal.fade#modalGraphHikaku(data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modalGraphHikakuLabel" aria-hidden="true")
   %div.modal-dialog.modal-dialog-centered.modal-dialog-scrollable.modal-xl
@@ -233,12 +222,9 @@
               %div.col-12
                 %div.col-12.table-responsive#tableDivHikakuCityList
 
-            
-
       %div.modal-footer
         %button.btn.btn-secondary(type="button" data-bs-dismiss="modal")
           閉じる
-
 
 <!-- Modal -->
 %div.modal.fade#modalVersion(data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modalVersionLabel" aria-hidden="true")
@@ -255,7 +241,6 @@
         %button.btn.btn-secondary(type="button" data-bs-dismiss="modal")
           閉じる
 
-
 <!-- Modal -->
 %div.modal.fade#modalSummary(data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modalSummaryLabel" aria-hidden="true")
   %div.modal-dialog.modal-dialog-centered.modal-dialog-scrollable.modal-xl
@@ -263,13 +248,12 @@
       %div.modal-header
         %div.display-6.modal-title#modalSummaryLabel(style="font-size:18px; font-weight:bold;")
           公営企業とは
-      %div.modal-body#modalBodySummary
-        準備中
+      %div.modal-body
+        %div.panel-body#modalBodySummary(style="overflow-y: scroll;height:400px;")
 
       %div.modal-footer
         %button.btn.btn-secondary(type="button" data-bs-dismiss="modal")
           閉じる
-
 
 <!-- Modal -->
 %div.modal.fade#modalUse(data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modalUseLabel" aria-hidden="true")
@@ -285,7 +269,6 @@
       %div.modal-footer
         %button.btn.btn-secondary(type="button" data-bs-dismiss="modal")
           閉じる
-
 
 %div#loading
   %div.spinner-border(role="status" style="position:relative; left:50%; top:50%; width: 6rem; height: 6rem;")

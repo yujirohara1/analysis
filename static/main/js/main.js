@@ -1444,44 +1444,140 @@ function createVersionNote(){
   }
 }
 
+document.getElementById('modalSummary').addEventListener('hidden.bs.modal', function () {
+  var body = document.getElementById("modalBodySummary");
+  while(body.lastChild){
+    body.removeChild(body.lastChild);
+  }
+});
 
+//
 //公営企業とは（サマリーモーダル）
 document.getElementById('modalSummary').addEventListener('shown.bs.modal', function () {
-  var body = document.getElementById("modalBodySummary");
+  var nendo = 2020;
+  fetch('/getAnalySummary/' + nendo , {
+    method: 'GET',
+    'Content-Type': 'application/json'
+  })
+  .then(res => res.json())
+  .then(jsonData => {
+    var list = JSON.parse(jsonData.data);
+    
+    var body = document.getElementById("modalBodySummary");
 
-  var speed = 2;
-  var numA = [0, 0, 0, 0];
-  var tgtA = [35, 20000000,123,90382748291235];
-  var divArray = []
+    var speed = 4;
+    var numA = [];
+    var numB = [];
+    var divKessangArray = []
+    var divKensuArray = []
 
-  for(let i=0; i<4; i++){
-    var tmpDiv = document.createElement("div");
-    tmpDiv.id = "divSummaryCount" + i + "";
-    divArray[i] = tmpDiv;
-  }
-
-  setInterval(function(){
-    for(let i=0; i<4; i++){
-      var stepA = tgtA[i] / 200;
-
-      if(numA[i] <= tgtA[i]){
-        divArray[i].innerText = (numA[i] + "").split(".")[0]; //(num <= tgt ? num:tgt);
-        numA[i] = numA[i] + stepA;
-      } else {
-        divArray[i].innerText = tgtA[i]; //(num <= tgt ? num:tgt);
-      }
+    for(let i=0; i<list.length; i++){
+      var tmpDiv1 = document.createElement("div");
+      tmpDiv1.id = "divKessanG_" + list[i].gyoshu_cd + "";
+      divKessangArray[i] = tmpDiv1;
+      var tmpDiv2 = document.createElement("div");
+      tmpDiv2.id = "divKensu_" + list[i].gyoshu_cd + "";
+      divKensuArray[i] = tmpDiv2;
     }
-  },speed);
 
-  for(let i in divArray){
-    body.appendChild(divArray[i]);
-  }
+    setInterval(function(){
+      for(let i=0; i<list.length; i++){
+
+        if(numA[i] == undefined) {
+          numA[i] = 0;
+        }
+        if(numB[i] == undefined) {
+          numB[i] = 0;
+        }
+
+        var stepA = list[i].kessan_g / 200;
+        var stepB = list[i].kensu / 200;
+        if(numA[i] <= list[i].kessan_g){
+          divKessangArray[i].innerText = fullFormat( ((numA[i] + "").split(".")[0]) *1).split("万")[0] + "万円"; //(num <= tgt ? num:tgt);
+          numA[i] = numA[i] + stepA;
+        } else {
+          divKessangArray[i].innerText =  fullFormat(list[i].kessan_g+0).split("万")[0]+ "万円"; //(num <= tgt ? num:tgt);
+        }
+
+        if(numB[i] <= list[i].kensu){
+          divKensuArray[i].innerText =  ((numB[i] + "").split(".")[0]) + ""; //(num <= tgt ? num:tgt);
+          numB[i] = numB[i] + stepB;
+        } else {
+          divKensuArray[i].innerText = list[i].kensu + ""; //(num <= tgt ? num:tgt);
+        }
+      }
+    },speed);
+
+    var table = document.createElement("table");
+    var tr = document.createElement("tr");
+    var thA = document.createElement("th");
+    thA.innerText = "業種";
+    thA.classList.add("summaryHead");
+    var thB = document.createElement("th");
+    thB.innerText = "事業体数";
+    thB.classList.add("summaryHead");
+    var thC = document.createElement("th");
+    thC.innerText = "経済規模";
+    thC.classList.add("summaryHead");
+    tr.appendChild(thA);
+    tr.appendChild(thB);
+    tr.appendChild(thC);
+    table.appendChild(tr);
+
+    for(let i=0; i<list.length; i++){
+      var tr = document.createElement("tr");
+      var tdA = document.createElement("td");
+      tdA.innerText = list[i].gyoshu_nm;
+      tdA.classList.add("summaryCell");
+//      tdA.style.color = "#ffffff";
+//      tdA.style.backgroundColor = "#42496e";
+
+      var tdB = document.createElement("td");
+      tdB.appendChild(divKensuArray[i]);
+      tdB.style.textAlign = "right";
+      tdB.classList.add("summaryCell");
+
+      var tdC = document.createElement("td");
+      tdC.appendChild(divKessangArray[i]);
+      tdC.style.textAlign = "right";
+      tdC.classList.add("summaryCell");
+      //body.appendChild(divKessangArray[i]);
+      //body.appendChild();
+      tr.appendChild(tdA);
+      tr.appendChild(tdB);
+      tr.appendChild(tdC);
+      table.appendChild(tr);
+    }
+    body.appendChild(table);
+
+  })
+  .catch(error => { console.log(error); });
   
 });
 
 // ここからは過去資料
 
-
+function fullFormat(number) {
+  const formatter = new Intl.NumberFormat("ja-JP",{ 
+    notation: "compact",
+    useGrouping: false,
+    maximumFractionDigits: 0
+  })
+  const fmt = (number, result = []) => {
+    const bigIntNum = BigInt(number)
+    const [num,notation] = formatter.formatToParts(bigIntNum)
+    const numStr = bigIntNum.toString()
+    if(notation === undefined){
+      return [...result, numStr].join("")
+    }
+    const dig = num.value.length
+    const value = numStr.slice(0,dig)
+    const next = numStr.slice(dig)
+    
+    return fmt(next, [...result,`${value}${notation.value}`])
+  }
+  return fmt(number)
+}
 
 
 
