@@ -246,12 +246,13 @@
   %div.modal-dialog.modal-dialog-centered.modal-dialog-scrollable.modal-xl
     %div.modal-content
       %div.modal-header
-        %div.display-6.modal-title#modalSummaryLabel(style="font-size:18px; font-weight:bold;")
+        %div.col-4(style="font-size:18px; font-weight:bold;")
           公営企業とは
+        %div.col-8(style="font-size:18px; font-weight:bold;")
+          現在の登録データ数
       %div.modal-body(style="overflow-y: scroll;height:400px;")
         %div.row
-          %div.col-4
-            aaaa
+          %div.col-4#modalBodySummaryDescription
           %div.col-4#modalBodySummary
 
           %div.col-4.loadableTable#modalBodySummaryDonuts
