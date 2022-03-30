@@ -11,6 +11,7 @@ class VAnalySisetu(db.Model):
     dantai_nm = db.Column(db.String(), primary_key=True) 
     sisetu_cd = db.Column(db.String(), primary_key=True) 
     sisetu_nm = db.Column(db.String(), primary_key=True) 
+    pref_cd = db.Column(db.String(), primary_key=False) 
     joken_1      = db.Column(db.Integer, primary_key=False)
     joken_2      = db.Column(db.Integer, primary_key=False)
     joken_3      = db.Column(db.Integer, primary_key=False)

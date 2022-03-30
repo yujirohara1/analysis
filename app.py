@@ -781,6 +781,13 @@ def getAnalyPrefecture(nendo):
     datalist_schema = VAnalyPrefectureSchema(many=True)
     return jsonify({'data': datalist_schema.dumps(datalist, ensure_ascii=False, default=decimal_default_proc)})
 
+# 都道府県を指定して企業リストを返却
+@app.route('/getAnalySisetuByPrefCd/<nendo>/<prefCd>')
+def getAnalySisetuByPrefCd(nendo, prefCd):
+    datalist = VAnalySisetu.query.filter(VAnalySisetu.nendo == nendo, VAnalySisetu.pref_cd == prefCd).order_by(asc(VAnalySisetu.dantai_cd)).all()
+    datalist_schema = VAnalySisetuSchema(many=True)
+    return jsonify({'data': datalist_schema.dumps(datalist, ensure_ascii=False, default=decimal_default_proc)})
+
 
 # 散布図用のデータ取得
 @app.route('/getDataSourceScatterXY/<nendo>/<gyomu_gyoshu_jigyo>/<joken_1245>/<xJoken>/<yJoken>/<zJoken>')

@@ -22,7 +22,7 @@
         ｜
       %h6
         %a.headerLink(data-bs-toggle="modal" data-bs-target="#modalUse")
-          データを見る
+          企業を探す
       %span(style="padding-left:12px;padding-right:12px;")
         ｜
       %h6
@@ -267,9 +267,12 @@
   %div.modal-dialog.modal-dialog-centered.modal-dialog-scrollable.modal-xl
     %div.modal-content(style="width:80%")
       %div.modal-header
-        %div.display-6.modal-title#modalUseLabel(style="font-size:18px; font-weight:bold;")
-          データを見る
-      %div.modal-body.#mapAreaDiv
+        %div.col-6(style="font-size:18px; font-weight:bold;")
+          企業を探す
+        %div.col-6(style="font-size:18px; font-weight:bold; text-align:right")
+          %a.btn.btn-sm.btn-primary#btnMapOn(role="button")
+            地図から探す
+      %div.modal-body.#mapAreaDiv(style="height:515px")
           
 
       %div.modal-footer

@@ -1832,6 +1832,71 @@ document.getElementById('modalUse').addEventListener('show.bs.modal', function (
 
 
 
+document.getElementById("mapAreaDiv").addEventListener('click', function() {
+  var prefCd = event.target.title;
+  prefCd = prefCd.replace("pref","");
+  if("01" <= prefCd && prefCd <= 47){
+    document.getElementById("japan-map").style.display = "none";
+    //<div class="alert alert-primary" role="alert">
+    if(document.getElementById("divSelectedPrefecture")!=undefined){
+      document.getElementById("divSelectedPrefecture").remove();
+    }
+    var alert = document.createElement("div");
+    alert.classList.add("alert","alert-primary","col-2");
+    alert.id = "divSelectedPrefecture";
+    setAttributes(alert,"role,alert");
+    alert.style.textAlign = "center";
+    alert.style.fontSize = "22px";
+    alert.style.padding = "2px 0px 2px 0px";
+    alert.innerText = event.target.innerHTML.split("<br>")[0];
+    document.getElementById("mapAreaDiv").appendChild(alert);
+    
+    //%div.col-4.loadableTable#divMainLeftBottom
+    var loadbleTable = document.createElement("div");
+    loadbleTable.classList.add("loadableTable");
+    loadbleTable.id = "prefDantaiListTableDiv";
+    document.getElementById("mapAreaDiv").appendChild(loadbleTable);
+
+    createTableLoading("prefDantaiListTableDiv", "prefDantaiListTableDivLoading", "企業名リストを作成中...");
+
+    var nendo = 2020;
+    fetch('/getAnalySisetuByPrefCd/' + nendo + "/" + prefCd , {
+      method: 'GET',
+      'Content-Type': 'application/json'
+    })
+    .then(res => res.json())
+    .then(jsonData => {
+      var list = JSON.parse(jsonData.data);
+      createTableDiv("prefDantaiListTableDiv", "prefDantaiListTableDivMain");
+      var hdText = ["団体コード", "施設コード", "団体名", "施設名"];
+      var propId = ["dantai_cd", "sisetu_cd", "dantai_nm", "sisetu_nm"];
+      var align = ["left", "left", "left", "left"];
+      var width = ["10%", "10%", "45%", "45%"];
+      createTableByJsonList(list, "prefDantaiListTableDiv", "prefDantaiListTableDivMain", "企業名リスト", hdText, propId, align, width, 3);
+
+      destroyTableLoading("prefDantaiListTableDiv", "prefDantaiListTableDivLoading");
+
+      console.log(123);
+    })
+    .catch(error => { console.log(error); });
+
+  }
+});
+
+
+
+document.getElementById("btnMapOn").addEventListener('click', function() {
+  document.getElementById("japan-map").style.display = "";
+  if(document.getElementById("divSelectedPrefecture")!=undefined){
+    document.getElementById("divSelectedPrefecture").remove();
+  }
+  // if(document.getElementById("japan-map").style.display=="none"){
+
+  // }
+});
+
+
+//
 // ここからは過去資料
 
 

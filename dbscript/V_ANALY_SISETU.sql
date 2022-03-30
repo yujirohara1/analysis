@@ -8,6 +8,7 @@ select
     , a.gyoshu_cd
     , a.jigyo_cd
     , lpad(trim(a.dantai_cd), 6, '0') dantai_cd
+    , substr(lpad(trim(a.dantai_cd), 6, '0'),1,2) pref_cd
     , a.sisetu_cd
     , a.joken_1
     , a.joken_2
