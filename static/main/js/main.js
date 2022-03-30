@@ -1841,6 +1841,9 @@ document.getElementById("mapAreaDiv").addEventListener('click', function() {
     if(document.getElementById("divSelectedPrefecture")!=undefined){
       document.getElementById("divSelectedPrefecture").remove();
     }
+    if(document.getElementById("prefDantaiListTableDiv")!=undefined){
+      document.getElementById("prefDantaiListTableDiv").remove();
+    }
     var alert = document.createElement("div");
     alert.classList.add("alert","alert-primary","col-2");
     alert.id = "divSelectedPrefecture";
