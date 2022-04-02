@@ -1135,14 +1135,30 @@ function CreateRadarChart(selectRow){
             duration:200,
             easing:""
           },
+          scale: {
+            beforeFit: function (scale) {
+                //var pointLabelFontSize = 2; //Chart.helpers.getValueOrDefault(scale.options.pointLabels.fontSize, Chart.defaults.global.defaultFontSize);
+                // scale.height *= (2 / 1.7)
+                // scale.height -= pointLabelFontSize;
+                scale.height = scale.height * 0.85;
+            },
+            afterFit: function (scale) {
+                //var pointLabelFontSize = 2; //Chart.helpers.getValueOrDefault(scale.options.pointLabels.fontSize, Chart.defaults.global.defaultFontSize);
+                //scale.height += pointLabelFontSize;
+                //scale.height /= (2 / 1.7);
+                scale.height = scale.height * 0.85;
+            },
+          },
             plugins: {
                 legend: {
                     labels: {
                         // This more specific font property overrides the global property
                         font: {
                             size: 16
-                        }
-                    }
+                        },
+                        padding:30
+                    },
+                    position:"right"
                 }
             },
             scales: {
@@ -1234,7 +1250,7 @@ function getRadarChartData(chartData, datalist){
           data: [],
           borderWidth: 1
       });
-      chartData.data.datasets[idx].label = (datalist.dantai_nm + " " + datalist.sisetu_nm).substring(0,16); //datalist.sisetu_nm;//(idx == 0 ? selectVendor : selectVendor.substring(0,2));
+      chartData.data.datasets[idx].label = (datalist.dantai_nm + " " + datalist.sisetu_nm).substring(0,5); //datalist.sisetu_nm;//(idx == 0 ? selectVendor : selectVendor.substring(0,2));
       var list = JSON.parse(jsonData.data);
 
       if(datalist.dantai_nm != "dummy" && list.length > 0){
@@ -1831,39 +1847,67 @@ document.getElementById('modalUse').addEventListener('show.bs.modal', function (
 
 
 
+function remove(str){
+  var tmp = str.split(",");
+  for (let i in tmp){
+    if(document.getElementById(tmp[i]) != undefined){
+      document.getElementById(tmp[i]).remove();
+    }
+  }
+}
+
+
+function createElementCustom(tagName, classList, id, innerText, title){
+  var tmp = document.createElement(tagName);
+  var tmpClassListArray = classList.split(",");
+  for(let i in tmpClassListArray){
+    tmp.classList.add(tmpClassListArray[i]);
+  }
+  tmp.id = id;
+  tmp.innerText = innerText;
+  if(title!=undefined){
+    tmp.title = title;
+  }
+
+  return tmp;
+}
 
 document.getElementById("mapAreaDiv").addEventListener('click', function() {
   var prefCd = event.target.title;
+  var gyoshuCd = "0";
+  var jigyoCd = "0";
+  if( prefCd.indexOf("pref") == -1){
+    return;
+  }
+  if( prefCd.indexOf("-") > -1){
+    var tmp = prefCd.split("-");
+    prefCd = tmp[0];
+    gyoshuCd = tmp[1];
+    jigyoCd = tmp[2];
+  }
   prefCd = prefCd.replace("pref","");
-  if("01" <= prefCd && prefCd <= 47){
-    document.getElementById("japan-map").style.display = "none";
-    //<div class="alert alert-primary" role="alert">
-    if(document.getElementById("divSelectedPrefecture")!=undefined){
-      document.getElementById("divSelectedPrefecture").remove();
+  if(1 <= prefCd && prefCd <= 47){
+    remove("prefDantaiListTableDiv");
+    if(gyoshuCd == "0" && jigyoCd == "0"){
+      document.getElementById("japan-map").style.display = "none";
+      remove("divSelectedPrefecture,prefDantaiListTableDiv,mapHeadRowDiv");
+      var divRow = createElementCustom("div","row","mapHeadRowDiv","");
+      var divCol2 = createElementCustom("div","col-2","","");
+      divRow.appendChild(divCol2);
+      var alert = createElementCustom("div","alert,alert-secondary","divSelectedPrefecture",event.target.innerHTML.split("<br>")[0]);
+      setAttributes(alert,"role,alert");
+      alert.style.cssText = "text-align:center; font-size:22px; padding:2px 2px 2px 2px";
+      divCol2.appendChild(alert);
+      document.getElementById("mapAreaDiv").appendChild(divRow);
     }
-    if(document.getElementById("prefDantaiListTableDiv")!=undefined){
-      document.getElementById("prefDantaiListTableDiv").remove();
-    }
-    var alert = document.createElement("div");
-    alert.classList.add("alert","alert-primary","col-2");
-    alert.id = "divSelectedPrefecture";
-    setAttributes(alert,"role,alert");
-    alert.style.textAlign = "center";
-    alert.style.fontSize = "22px";
-    alert.style.padding = "2px 0px 2px 0px";
-    alert.innerText = event.target.innerHTML.split("<br>")[0];
-    document.getElementById("mapAreaDiv").appendChild(alert);
     
     //%div.col-4.loadableTable#divMainLeftBottom
-    var loadbleTable = document.createElement("div");
-    loadbleTable.classList.add("loadableTable");
-    loadbleTable.id = "prefDantaiListTableDiv";
+    var loadbleTable = createElementCustom("div", "loadableTable", "prefDantaiListTableDiv") //document.createElement("div");
     document.getElementById("mapAreaDiv").appendChild(loadbleTable);
-
     createTableLoading("prefDantaiListTableDiv", "prefDantaiListTableDivLoading", "企業名リストを作成中...");
 
     var nendo = 2020;
-    fetch('/getAnalySisetuByPrefCd/' + nendo + "/" + prefCd , {
+    fetch('/getAnalySisetuByPrefCd/' + nendo + "/" + prefCd + "/" + gyoshuCd + "/" + jigyoCd , {
       method: 'GET',
       'Content-Type': 'application/json'
     })
@@ -1871,28 +1915,68 @@ document.getElementById("mapAreaDiv").addEventListener('click', function() {
     .then(jsonData => {
       var list = JSON.parse(jsonData.data);
       createTableDiv("prefDantaiListTableDiv", "prefDantaiListTableDivMain");
-      var hdText = ["団体コード", "施設コード", "団体名", "施設名"];
-      var propId = ["dantai_cd", "sisetu_cd", "dantai_nm", "sisetu_nm"];
-      var align = ["left", "left", "left", "left"];
-      var width = ["10%", "10%", "45%", "45%"];
+      var hdText = ["団体コード", "施設コード", "団体名", "施設名", "業種名", "事業名"];
+      var propId = ["dantai_cd", "sisetu_cd", "dantai_nm", "sisetu_nm", "gyoshu_nm", "jigyo_nm"];
+      var align = ["left", "left", "left", "left", "left", "left"];
+      var width = ["10%", "10%", "25%", "25%", "15%", "15%"];
       createTableByJsonList(list, "prefDantaiListTableDiv", "prefDantaiListTableDivMain", "企業名リスト", hdText, propId, align, width, 3);
-
       destroyTableLoading("prefDantaiListTableDiv", "prefDantaiListTableDivLoading");
 
-      console.log(123);
+      if(document.getElementById("mapHeadRowDiv").querySelectorAll("span").length == 0){
+        var jigyoSummaryArray = getjigyoSummary( list ); //list.map(item => item["jigyo_nm"]) );
+        var divCol4 = document.createElement("div"); 
+        divCol4.classList.add("col-10");
+        document.getElementById("mapHeadRowDiv").appendChild(divCol4);
+  
+        var prefCd = list[0].dantai_cd.substring(0,2);
+        for(let i=0; i<jigyoSummaryArray.length; i++){
+          var span = createElementCustom("span", "badge,bg-primary,rounded-pill","gyoshuBadgeDiv_" + i,jigyoSummaryArray[i].jigyo_nm + " " + jigyoSummaryArray[i].kensu,"") //document.createElement("span");
+          span.title = "pref" + prefCd + "-" + jigyoSummaryArray[i].gyoshu_cd + "-" + jigyoSummaryArray[i].jigyo_cd
+          span.style.cssText = "cursor:pointer; margin-right:5px";
+          span.addEventListener('click', (event) => {
+            console.log(1);
+          });
+          divCol4.appendChild(span);
+        }
+      }
     })
     .catch(error => { console.log(error); });
-
   }
 });
 
-
+function getjigyoSummary(array) {
+  var uniquedArray = [];
+  var countArray = [];
+  var codeArray = [];
+  var returnArray = [];
+  for (const elem of array) {
+    if (!returnArray.map(item => item["jigyo_nm"]).includes(elem.jigyo_nm)){
+      returnArray.push( {
+        gyoshu_cd:elem.gyoshu_cd, 
+        jigyo_cd:elem.jigyo_cd, 
+        jigyo_nm:elem.jigyo_nm, 
+        kensu:1
+      } );
+      //countArray.push(1);
+    } else {
+      var a = returnArray.filter(value => value["jigyo_nm"] ==elem.jigyo_nm).map(item => item["kensu"]);
+      returnArray.filter(value => value["jigyo_nm"] ==elem.jigyo_nm)[0].kensu = a*1 + 1;
+      //countArray[uniquedArray.indexOf(elem)] = countArray[uniquedArray.indexOf(elem)] + 1;
+    }
+  }
+  // for(let a in uniquedArray){
+  //   returnArray.push([uniquedArray[a], countArray[a]]);
+  // }
+  return returnArray;
+}
 
 document.getElementById("btnMapOn").addEventListener('click', function() {
   document.getElementById("japan-map").style.display = "";
   if(document.getElementById("divSelectedPrefecture")!=undefined){
     document.getElementById("divSelectedPrefecture").remove();
   }
+  remove("divSelectedPrefecture,prefDantaiListTableDiv,mapHeadRowDiv");
+
   // if(document.getElementById("japan-map").style.display=="none"){
 
   // }

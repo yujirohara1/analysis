@@ -6,7 +6,9 @@ select
     max(a.nendo) nendo
     , a.gyomu_cd
     , a.gyoshu_cd
+    , b.gyoshu_nm
     , a.jigyo_cd
+    , b.jigyo_nm
     , lpad(trim(a.dantai_cd), 6, '0') dantai_cd
     , substr(lpad(trim(a.dantai_cd), 6, '0'),1,2) pref_cd
     , a.sisetu_cd
@@ -39,7 +41,9 @@ where
 group by
     a.gyomu_cd
     , a.gyoshu_cd
+    , b.gyoshu_nm
     , a.jigyo_cd
+    , b.jigyo_nm
     , a.dantai_cd
     , a.sisetu_cd
     , a.joken_1
