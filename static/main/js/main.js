@@ -1970,6 +1970,70 @@ function getjigyoSummary(array) {
   return returnArray;
 }
 
+document.getElementById("btnResasApiTest").addEventListener('click', function() {
+  
+  var nendo = 2020;
+  fetch('https://opendata.resas-portal.go.jp/api/v1/population/composition/perYear?cityCode=11362&prefCode=11' , {
+    method: 'GET',
+    'Content-Type': 'application/json;charset=UTF-8',
+    headers: {"X-API-KEY": "hPDqJFreaqzQ9eK3OUfIjNoSSaMCb0nxiWWMRPjq"}
+  })
+  .then(res => res.json())
+  .then(jsonData => {
+    var list = jsonData.result.data;
+    createApiMixGraph(list);
+    
+  })
+  .catch(error => { console.log(error); });
+});
+
+
+
+function createApiMixGraph(list){
+  const ctx = document.getElementById("apiMixChart").getContext('2d');
+  var datasets = [];
+  for(let i in list){
+    datasets.push({
+      label: "labelStr",
+      data: list[i].data.map(item => item["value"]), //[12, 19, 3, 5, 2, 3],tableから取得する
+      backgroundColor: [
+          'rgba(255, 99, 132, 0.2)',
+      ],
+      borderColor: [
+          'rgba(255, 99, 132, 1)',
+      ],
+      borderWidth: 1
+    })
+  }
+  var objChart1 = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: list[0].data.map(item => item["year"]),
+        datasets: datasets
+    },
+      options: {
+          scales: {
+              y: {
+                  beginAtZero: true
+              }
+          },
+          plugins: {
+              title: {
+                  display: true,
+                  align: "start",
+                  text: "labelStr"
+              }
+          }
+      }
+  });
+  return objChart1;
+}
+
+
+
+
+
+
 document.getElementById("btnMapOn").addEventListener('click', function() {
   document.getElementById("japan-map").style.display = "";
   if(document.getElementById("divSelectedPrefecture")!=undefined){

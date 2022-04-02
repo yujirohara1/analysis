@@ -46,7 +46,9 @@ ALTER TABLE ONLY analy_main
 
     
 
-create index on analy_main (nendo, hyo_num, gyo_num, retu_num);
+create index idx1_analy_main on analy_main (nendo, hyo_num, gyo_num, retu_num);
+create index idx2_analy_main on analy_main (nendo, gyomu_cd, gyoshu_cd, jigyo_cd, dantai_cd, sisetu_cd);
+create index idx3_analy_main on analy_main (nendo, gyomu_cd, gyoshu_cd, jigyo_cd, dantai_cd, sisetu_cd, hyo_num, gyo_num, retu_num);
 vacuum;
 analyze;
 vacuum;
