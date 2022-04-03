@@ -47,11 +47,35 @@ ALTER TABLE ONLY analy_main
     
 
 create index idx1_analy_main on analy_main (nendo, hyo_num, gyo_num, retu_num);
-create index idx2_analy_main on analy_main (nendo, gyomu_cd, gyoshu_cd, jigyo_cd, dantai_cd, sisetu_cd);
-create index idx3_analy_main on analy_main (nendo, gyomu_cd, gyoshu_cd, jigyo_cd, dantai_cd, sisetu_cd, hyo_num, gyo_num, retu_num);
-vacuum;
-analyze;
-vacuum;
-analyze;
+create index idx2_analy_main on analy_main (hyo_num, gyo_num, retu_num);
+create index idx3_analy_main on analy_main (nendo, gyomu_cd, gyoshu_cd, jigyo_cd, dantai_cd, sisetu_cd);
 
+-- create index idx3_analy_main on analy_main (nendo);
 
+-- create index idx3_analy_main on analy_main (nendo, gyoshu_cd, jigyo_cd);
+
+-- create index idx3_analy_main on analy_main (nendo, gyomu_cd, gyoshu_cd, jigyo_cd, dantai_cd, sisetu_cd, hyo_num, gyo_num, retu_num);
+
+-- 
+-- vacuum;
+-- analyze;
+-- vacuum;
+-- analyze;
+-- 
+-- drop index idx1_analy_main;
+-- drop index idx2_analy_main;
+-- drop index idx3_analy_main;
+-- drop index idx4_analy_main;
+-- 
+-- 
+-- 
+-- 
+-- EXPLAIN SELECT * FROM V_ANALY_KOTEI_HIRITU_A;
+EXPLAIN ANALYZE  SELECT * FROM V_ANALY_SHUEKISEI_A;
+EXPLAIN ANALYZE  SELECT * FROM V_ANALY_SHUEKISEI_A;
+EXPLAIN ANALYZE  SELECT * FROM V_ANALY_SHUEKISEI_A;
+EXPLAIN ANALYZE  SELECT * FROM V_ANALY_SHUEKISEI_A;
+EXPLAIN ANALYZE  SELECT * FROM V_ANALY_SHUEKISEI_A;
+EXPLAIN ANALYZE  SELECT * FROM V_ANALY_SHUEKISEI_A;
+EXPLAIN ANALYZE  SELECT * FROM V_ANALY_SHUEKISEI_A;
+EXPLAIN ANALYZE  SELECT * FROM V_ANALY_SHUEKISEI_A;

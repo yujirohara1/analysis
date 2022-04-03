@@ -1,10 +1,13 @@
-
 const BgColor_RadarChart =  ["rgba(2,35,199,.2)", "rgba(199,2,2,.2)", "rgba(42,199,2,.2)", "rgba(153,2,199,.2)", "rgba(199,120,2,.2)"];
 const BdrColor_RadarChart = ["rgba(2,35,199,1)",  "rgba(199,2,2,1)",  "rgba(42,199,2,1)",  "rgba(153,2,199,1)",  "rgba(199,120,2,1)"];
 const BgColor_ScatterChart =  ["rgba(2,35,199,.2)", "rgba(199,2,2,.2)", "rgba(42,199,2,.2)", "rgba(153,2,199,.2)", "rgba(199,120,2,.2)", "rgba(255,255,10,.2)", "rgba(255,122,255,.2)", "rgba(0,161,233,.2)"];
 const BdrColor_ScatterChart = ["rgba(2,35,199,1)",  "rgba(199,2,2,1)",  "rgba(42,199,2,1)",  "rgba(153,2,199,1)",  "rgba(199,120,2,1)", "rgba(204,204,0,1)", "rgba(255,71,255,1)", "rgba(0,161,233,1)"];
 const BgColor_DoghnutsChart =  ["rgba(2,35,199,.2)", "rgba(199,2,2,.2)", "rgba(42,199,2,.2)", "rgba(153,2,199,.2)", "rgba(199,120,2,.2)", "rgba(255,255,10,.2)", "rgba(255,122,255,.2)", "rgba(0,161,233,.2)"];
 const BdrColor_DoghnutsChart =  ["rgba(2,35,199,.2)", "rgba(199,2,2,.2)", "rgba(42,199,2,.2)", "rgba(153,2,199,.2)", "rgba(199,120,2,.2)", "rgba(255,255,10,.2)", "rgba(255,122,255,.2)", "rgba(0,161,233,.2)"];
+
+const BgColor_LineChart =  ["rgba(2,35,199,.2)", "rgba(199,2,2,.2)", "rgba(42,199,2,.2)", "rgba(153,2,199,.2)", "rgba(199,120,2,.2)"];
+const BdrColor_LineChart = ["rgba(2,35,199,1)",  "rgba(199,2,2,1)",  "rgba(42,199,2,1)",  "rgba(153,2,199,1)",  "rgba(199,120,2,1)"];
+
 //R:255 G:71 B:255
 
 // 01      北海道      0 北海道地方

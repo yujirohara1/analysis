@@ -4,6 +4,8 @@
 var radarChart=null;
 var scatterChart = null;
 var gyoshuSelectStauts = null;
+var apiMixLineChart = null;
+var globalSelectedRow = null;
 
 Chart.defaults.color = '#666666';
 Chart.defaults.font.weight = 'Bold';
@@ -62,6 +64,8 @@ window.onload = function(){
   }
 
   createSelectGyoshuPopOver();
+
+  createMapSummary();
 
   try{
     getAndCreateTable_ShuekiRankList();//収益性ランキングテーブルを作成
@@ -670,12 +674,13 @@ function createTableByJsonList(datalist, locationId, tableDivId, caption, hdText
             tdataA.addEventListener('click', (event) => {
               var key = event.target.title;
               //moveProfileTab(key);
-              createHyoVerticalNavbar(key); //基本情報タブの左の表バー
+              createHyoVerticalNavbar(datalist[i]); //基本情報タブの左の表バー
               moveCompareTab(datalist[i]);
               CreateRadarChart(datalist[i]);
               getAndCreateTable_DantaiListOfRadarChart(datalist[i]);
               createToasts(datalist[i]);
               createScatterChart(datalist[i]);
+              createApiMix(datalist[i]);
             });
         } 
       }
@@ -709,7 +714,22 @@ function createTableByJsonList(datalist, locationId, tableDivId, caption, hdText
         //clickCompareRight(datalist[i]);
         getRadarChartData(radarChart, datalist[i]);
       });
-    }
+    } else if(locationId == "prefDantaiListTableDiv"){//
+      trow.addEventListener('click', (event) => {
+        //clickCompareRight(datalist[i]);
+        const elements = document.querySelectorAll(".row_selected");
+        if(elements.length > 0){
+          for(let elem of elements){
+            elem.classList.remove("row_selected");
+            //btnTargetSelect
+          }
+        }
+        event.srcElement.parentElement.classList.add("row_selected");
+        //document.getElementById("btnTargetSelect").removeAttribute("disabled");
+        document.getElementById('btnTargetSelect').classList.remove("disabled");
+        globalSelectedRow = datalist[i];
+      });
+      }
     
     tbody.appendChild(trow);
   }
@@ -796,8 +816,9 @@ function moveCompareTab(datalist){
 }
 
 // 基本情報タブの左の表リストを作成
-function createHyoVerticalNavbar(key){
-    val = "2020"; // 会計年度、見直し必要。
+function createHyoVerticalNavbar(selectRow){
+    var key = selectRow.gyomu_cd + "-" + selectRow.gyoshu_cd + "-" + selectRow.jigyo_cd + "-" +  selectRow.dantai_cd + "-" +  selectRow.sisetu_cd;
+    var val = "2020"; // 会計年度、見直し必要。
     fetch('/getHyoListForProfile/' + val + '/20/30/40/50/60', {
       method: 'GET',
       'Content-Type': 'application/json'
@@ -846,7 +867,6 @@ function createHyoVerticalNavbar(key){
         divContent.id = "v-pills-" + list[i].hyo_num;
         divContent.setAttribute("role","tabpanel");
         divContent.setAttribute("aria-labelledby","v-pills-" + list[i].hyo_num + "-tab");
-        divContent.innerText = "aaaaaaaaaaaaaaaaaaaaaaaaa";
         divContentGroup.appendChild(divContent);
       }
       div1.appendChild(divTabGroup);
@@ -1111,8 +1131,6 @@ function createGraph(datalist, canvasId, labelStr){
 
 
 function CreateRadarChart(selectRow){
-    var dummy = "左の表から企業名を選択してください。"
-    var selectVendor = "aaaaa"; //(selectRowData == undefined ? dummy : selectRowData.vendor_nm);
     //var ctx = document.getElementById('myChart').getContext('2d');
     var chartData = {
         type: 'radar',
@@ -1812,10 +1830,7 @@ function donutsAmountFormat(dataString){
 
 
 
-
-
-
-document.getElementById('modalUse').addEventListener('show.bs.modal', function () {
+function createMapSummary(){
   var tmpDiv = document.getElementById("mapAreaDiv");
   while(tmpDiv.lastChild){
     tmpDiv.removeChild(tmpDiv.lastChild);
@@ -1839,10 +1854,20 @@ document.getElementById('modalUse').addEventListener('show.bs.modal', function (
         prefs[j].innerText = prefs[j].innerText + "\r\n" + kensu;
       }
     }
-    console.log(123);
+    document.getElementById('btnTargetSelect').classList.add("disabled");
+    //document.getElementById("btnTargetSelect").setAttribute("disabled");
+  console.log(123);
   })
-  .catch(error => { console.log(error); });
+  .catch(error => { 
+    console.log(error); 
+  });
 
+}
+
+
+document.getElementById('modalUse').addEventListener('show.bs.modal', function () {
+  ;
+  //createMapSummary();
 });
 
 
@@ -1921,7 +1946,7 @@ document.getElementById("mapAreaDiv").addEventListener('click', function() {
       var width = ["10%", "10%", "25%", "25%", "15%", "15%"];
       createTableByJsonList(list, "prefDantaiListTableDiv", "prefDantaiListTableDivMain", "企業名リスト", hdText, propId, align, width, 3);
       destroyTableLoading("prefDantaiListTableDiv", "prefDantaiListTableDivLoading");
-
+      document.getElementById('btnTargetSelect').classList.add("disabled");
       if(document.getElementById("mapHeadRowDiv").querySelectorAll("span").length == 0){
         var jigyoSummaryArray = getjigyoSummary( list ); //list.map(item => item["jigyo_nm"]) );
         var divCol4 = document.createElement("div"); 
@@ -1970,10 +1995,12 @@ function getjigyoSummary(array) {
   return returnArray;
 }
 
-document.getElementById("btnResasApiTest").addEventListener('click', function() {
-  
-  var nendo = 2020;
-  fetch('https://opendata.resas-portal.go.jp/api/v1/population/composition/perYear?cityCode=11362&prefCode=11' , {
+
+function createApiMix(selectRow){
+  var dantaiCd = selectRow.dantai_cd.substring(0,5);
+  var prefCd = selectRow.dantai_cd.substring(0,2);
+  //fetch('https://opendata.resas-portal.go.jp/api/v1/population/composition/perYear?cityCode=214019&prefCode=21' , {
+  fetch('https://opendata.resas-portal.go.jp/api/v1/population/composition/perYear?cityCode=' + dantaiCd + '&prefCode=' + prefCd , {
     method: 'GET',
     'Content-Type': 'application/json;charset=UTF-8',
     headers: {"X-API-KEY": "hPDqJFreaqzQ9eK3OUfIjNoSSaMCb0nxiWWMRPjq"}
@@ -1981,30 +2008,31 @@ document.getElementById("btnResasApiTest").addEventListener('click', function() 
   .then(res => res.json())
   .then(jsonData => {
     var list = jsonData.result.data;
-    createApiMixGraph(list);
+    if(apiMixLineChart != null){
+      apiMixLineChart.destroy();
+    }
+    apiMixLineChart = createApiMixGraph(list);
     
   })
   .catch(error => { console.log(error); });
-});
 
-
+}
 
 function createApiMixGraph(list){
+  //radarChart.destroy();
   const ctx = document.getElementById("apiMixChart").getContext('2d');
   var datasets = [];
   for(let i in list){
     datasets.push({
-      label: "labelStr",
+      label: list[i].label,
       data: list[i].data.map(item => item["value"]), //[12, 19, 3, 5, 2, 3],tableから取得する
-      backgroundColor: [
-          'rgba(255, 99, 132, 0.2)',
-      ],
-      borderColor: [
-          'rgba(255, 99, 132, 1)',
-      ],
-      borderWidth: 1
+      backgroundColor: BgColor_LineChart[i],
+      borderColor: BdrColor_LineChart[i],
+      borderWidth: 1,
+      pointRadius: 6,
     })
   }
+  let delayed;
   var objChart1 = new Chart(ctx, {
       type: 'line',
       data: {
@@ -2012,6 +2040,13 @@ function createApiMixGraph(list){
         datasets: datasets
     },
       options: {
+        //animation:false,
+        animation: {
+          onComplete: () => {
+            delayed = true;
+          },
+          delay: 10
+        },
           scales: {
               y: {
                   beginAtZero: true
@@ -2019,9 +2054,17 @@ function createApiMixGraph(list){
           },
           plugins: {
               title: {
-                  display: true,
+                  display: false,
                   align: "start",
                   text: "labelStr"
+              },
+              legend: {
+                  labels: {
+                      // This more specific font property overrides the global property
+                      font: {
+                          size: 16
+                      }
+                  }
               }
           }
       }
@@ -2032,7 +2075,23 @@ function createApiMixGraph(list){
 
 
 
-
+document.getElementById("btnTargetSelect").addEventListener('click', function() {
+  var selectRow = globalSelectedRow;
+  globalSelectedRow = null;
+  createHyoVerticalNavbar(selectRow); //基本情報タブの左の表バー
+  moveCompareTab(selectRow);
+  CreateRadarChart(selectRow);
+  getAndCreateTable_DantaiListOfRadarChart(selectRow);
+  createToasts(selectRow);
+  createScatterChart(selectRow);
+  createApiMix(selectRow);
+  
+  // var modal = document.getElementById('modalUse');
+  // modal.classList.remove('show');
+  // modal.setAttribute('aria-hidden', 'true');
+  // modal.setAttribute('style', 'display: none');
+  document.getElementById("btnCloseMapModal").click();
+});
 
 document.getElementById("btnMapOn").addEventListener('click', function() {
   document.getElementById("japan-map").style.display = "";
@@ -2040,6 +2099,7 @@ document.getElementById("btnMapOn").addEventListener('click', function() {
     document.getElementById("divSelectedPrefecture").remove();
   }
   remove("divSelectedPrefecture,prefDantaiListTableDiv,mapHeadRowDiv");
+  document.getElementById('btnTargetSelect').classList.add("disabled");
 
   // if(document.getElementById("japan-map").style.display=="none"){
 

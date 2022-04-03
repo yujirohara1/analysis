@@ -140,8 +140,12 @@
 
       %div.tab-pane#mix-panel(role="tabpanel" aria-labelledby="mix-tab")
         %div.row
-          %div.col-md-2
-            <button id="btnResasApiTest" type="button" class="btn btn-dark">Dark</button>
+          %div.col-md-6
+            %span.badge.bg-primary
+              人口マップ
+          %div.col-md-6
+            %span.badge.bg-primary
+              医療需給
         %div.row
           %div.col-md-6
             %canvas.#apiMixChart(style="position: relative")
@@ -274,7 +278,7 @@
     %div.modal-content(style="width:80%")
       %div.modal-header
         %div.col-6(style="font-size:18px; font-weight:bold;")
-          企業を探す
+          <i class="bi bi-search" style="padding-right:6px"></i>企業を探す
         %div.col-6(style="font-size:18px; font-weight:bold; text-align:right")
           %a.btn.btn-sm.btn-primary#btnMapOn(role="button")
             地図から探す
@@ -282,7 +286,9 @@
           
 
       %div.modal-footer
-        %button.btn.btn-secondary(type="button" data-bs-dismiss="modal")
+        %button.btn.btn-primary#btnTargetSelect(type="button")
+          見る
+        %button.btn.btn-secondary#btnCloseMapModal(type="button" data-bs-dismiss="modal")
           閉じる
 
 %div#loading
