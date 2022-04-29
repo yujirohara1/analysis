@@ -108,10 +108,11 @@
 
       %div.tab-pane#compare-panel(role="tabpanel" aria-labelledby="compare-tab")
         %div.row
-          %div.col-md-1#divCompareRadar
-          %div.col-md-7#divCompareRadar
+          %div.col-md-1
+          %div.col-md-6#divCompareRadar
             <canvas id="myChart" ></canvas>
-          %div.col-md-1#divCompareRadar
+          %div.col-md-2
+            %div#legend-container.canvas-legend
           %div.col-md-3#divCompareRight
 
       %div.tab-pane#sokan-panel(role="tabpanel" aria-labelledby="sokan-tab")

@@ -22,46 +22,12 @@ Chart.defaults.elements.point.radius = 2;
 
 window.onload = function(){
 
-  
-// Chart.register({
-//   afterDatasetsDraw: function (chart, easing) {
-//       // To only draw at the end of animation, check for easing === 1
-//       var ctx = chart.ctx;
-
-//       chart.data.datasets.forEach(function (dataset, i) {
-//           var meta = chart.getDatasetMeta(i);
-//           if (!meta.hidden) {
-//               meta.data.forEach(function (element, index) {
-//                   // Draw the text in black, with the specified font
-//                   ctx.fillStyle = 'rgb(0, 0, 0)';
-
-//                   var fontSize = 16;
-//                   var fontStyle = 'normal';
-//                   var fontFamily = 'Helvetica Neue';
-//                   ctx.font = Chart.helpers.fontString(fontSize, fontStyle, fontFamily);
-
-//                   // Just naively convert to string for now
-//                   var dataString = dataset.data[index].toString();
-
-//                   // Make sure alignment settings are correct
-//                   ctx.textAlign = 'center';
-//                   ctx.textBaseline = 'middle';
-
-//                   var padding = 5;
-//                   var position = element.tooltipPosition();
-//                   ctx.fillText(dataString, position.x, position.y - (fontSize / 2) - padding);
-//               });
-//           }
-//       });
-//   }
-// });
-
-  /* スーパーリロードを実装。最終的にソースが固まったら外す。*/
-  if(document.URL.indexOf("#")==-1){
-    url = document.URL+"#";
-    location = "#";
-    window.location.href = window.location.href;
-  }
+  // /* スーパーリロードを実装。最終的にソースが固まったら外す。*/
+  // if(document.URL.indexOf("#")==-1){
+  //   url = document.URL+"#";
+  //   location = "#";
+  //   window.location.href = window.location.href;
+  // }
 
   createSelectGyoshuPopOver();
 
@@ -283,7 +249,8 @@ function getAndCreateTable_DantaiListOfRadarChart(datalist){
     var propId = ["dantai_nm", "sisetu_nm"];
     var align = ["left", "left"];
     var width = ["70%", "70%"];
-    createTableByJsonList(list, "divCompareRight", "tableDivDantaiListOfRadarChart", "同規模団体と比べてみよう", hdText, propId, align, width, 1.5);
+    var headRowLines = 1;
+    createTableByJsonList(list, "divCompareRight", "tableDivDantaiListOfRadarChart", "同規模団体と比べてみよう", hdText, propId, align, width, 1.5, headRowLines);
     //ローダーを削除
     destroyTableLoading("divCompareRight", "tableDivLoadingCompareRight");
     return;
@@ -353,7 +320,8 @@ function getAndCreateTable_ShuekiRankList(){
     var propId = ["rank", "dantai_nm", "sisetu_nm",　"keijo_shusi_hiritu"];
     var align = ["center", "left", "left",　"right"];
     var width = ["10%", "35%", "40%", "25%"];
-    createTableByJsonList(list, "divMainLeftTop", "tableDivShueki", "経常収支比率による収益性ランキング", hdText, propId, align, width, 3);
+    var headRowLines = 2;
+    createTableByJsonList(list, "divMainLeftTop", "tableDivShueki", "経常収支比率による収益性ランキング", hdText, propId, align, width, 3, headRowLines);
     //ローダーを削除
     destroyTableLoading("divMainLeftTop", "tableDivLoading1");
     return;
@@ -381,7 +349,8 @@ function getAndCreateTable_ReturnOnEquityRankList(){
     var propId = ["rank", "dantai_nm", "sisetu_nm",　"roe"];
     var align = ["center", "left", "left",　"right"];
     var width = ["10%", "35%", "40%", "25%"];
-    createTableByJsonList(list, "divMainCenterBottom", "tableDivRoe", "自己資本利益率(ROE)による収益性ランキング", hdText, propId, align, width, 3);
+    var headRowLines = 2;
+    createTableByJsonList(list, "divMainCenterBottom", "tableDivRoe", "自己資本利益率(ROE)による収益性ランキング", hdText, propId, align, width, 3, headRowLines);
     //ローダーを削除
     destroyTableLoading("divMainCenterBottom", "tableDivLoading8");
     return;
@@ -409,7 +378,8 @@ function getAndCreateTable_ReturnOnAssetRankList(){
     var propId = ["rank", "dantai_nm", "sisetu_nm",　"roa"];
     var align = ["center", "left", "left",　"right"];
     var width = ["10%", "35%", "40%", "25%"];
-    createTableByJsonList(list, "divMainRightBottom", "tableDivRoa", "総資産利益率(ROA)による収益性ランキング", hdText, propId, align, width, 3);
+    var headRowLines = 2;
+    createTableByJsonList(list, "divMainRightBottom", "tableDivRoa", "総資産利益率(ROA)による収益性ランキング", hdText, propId, align, width, 3, headRowLines);
     //ローダーを削除
     destroyTableLoading("divMainRightBottom", "tableDivLoading9");
     return;
@@ -436,7 +406,8 @@ function getAndCreateTable_SihonHirituRankList(){
     var propId = ["rank", "dantai_nm", "sisetu_nm",　"sihon_hiritu"];
     var align = ["center", "left", "left",　"right"];
     var width = ["10%", "35%", "40%", "25%"];
-    createTableByJsonList(list, "divMainLeftBottom2", "tableDivSihonHiritu", "資本比率による収益性ランキング", hdText, propId, align, width, 3);
+    var headRowLines = 2;
+    createTableByJsonList(list, "divMainLeftBottom2", "tableDivSihonHiritu", "資本比率による収益性ランキング", hdText, propId, align, width, 3, headRowLines);
     //ローダーを削除
     destroyTableLoading("divMainLeftBottom2", "tableDivLoading10");
     return;
@@ -462,7 +433,8 @@ function getAndCreateTable_KoteiHirituRankList(){
     var propId = ["rank", "dantai_nm", "sisetu_nm",　"kotei_hiritu"];
     var align = ["center", "left", "left",　"right"];
     var width = ["10%", "35%", "40%", "25%"];
-    createTableByJsonList(list, "divMainCenterBottom2", "tableDivKoteiHiritu", "固定比率による収益性ランキング", hdText, propId, align, width, 3);
+    var headRowLines = 2;
+    createTableByJsonList(list, "divMainCenterBottom2", "tableDivKoteiHiritu", "固定比率による収益性ランキング", hdText, propId, align, width, 3, headRowLines);
     //ローダーを削除
     destroyTableLoading("divMainCenterBottom2", "tableDivLoading11");
     return;
@@ -489,7 +461,8 @@ function getAndCreateTable_JugyoinHitoriRiekiRankList(){
     var propId = ["rank", "dantai_nm", "sisetu_nm",　"hitori_rieki"];
     var align = ["center", "left", "left",　"right"];
     var width = ["10%", "35%", "40%", "25%"];
-    createTableByJsonList(list, "divMainRightBottom2", "tableDivHitoriRieki", "職員1人あたり利益による生産性ランキング", hdText, propId, align, width, 3);
+    var headRowLines = 2;
+    createTableByJsonList(list, "divMainRightBottom2", "tableDivHitoriRieki", "職員1人あたり利益による生産性ランキング", hdText, propId, align, width, 3, headRowLines);
     //ローダーを削除
     destroyTableLoading("divMainRightBottom2", "tableDivLoading12");
     return;
@@ -516,7 +489,8 @@ function getAndCreateTable_KeijoriekiSeichorituRankList(){
     var propId = ["rank", "dantai_nm", "sisetu_nm",　"seicho_ritu"];
     var align = ["center", "left", "left",　"right"];
     var width = ["10%", "35%", "40%", "25%"];
-    createTableByJsonList(list, "divMainLeftBottom3", "tableDivKeijoSeicho", "経常利益成長率による成長性ランキング", hdText, propId, align, width, 3);
+    var headRowLines = 2;
+    createTableByJsonList(list, "divMainLeftBottom3", "tableDivKeijoSeicho", "経常利益成長率による成長性ランキング", hdText, propId, align, width, 3, headRowLines);
     //ローダーを削除
     destroyTableLoading("divMainLeftBottom3", "tableDivLoading13");
     return;
@@ -543,7 +517,8 @@ function getAndCreateTable_SihonSeichorituRankList(){
     var propId = ["rank", "dantai_nm", "sisetu_nm",　"seicho_ritu"];
     var align = ["center", "left", "left",　"right"];
     var width = ["10%", "35%", "40%", "25%"];
-    createTableByJsonList(list, "divMainCenterBottom3", "tableDivSihonSeicho", "資本成長率による成長性ランキング", hdText, propId, align, width, 3);
+    var headRowLines = 2;
+    createTableByJsonList(list, "divMainCenterBottom3", "tableDivSihonSeicho", "資本成長率による成長性ランキング", hdText, propId, align, width, 3, headRowLines);
     //ローダーを削除
     destroyTableLoading("divMainCenterBottom3", "tableDivLoading14");
     return;
@@ -610,13 +585,14 @@ function createToasts(selectData){
 
 
 //テーブルの見出し行を作成する。戻したDOMはtheadにappendされる想定。
-function createTableHeader(hdText,width){
+function createTableHeader(hdText, width, headRowLines){
   let trow = document.createElement('tr');
   for (let hd in hdText){
     var thA = document.createElement('th');
     thA.innerHTML = hdText[hd];
     thA.style.textAlign = "center";
     thA.style.verticalAlign = "middle";
+    thA.style.height = (20*headRowLines) + "px";
     if(width!=null){
       try{thA.style.width=width[hd];}catch(e){}
     }
@@ -635,14 +611,14 @@ function createRankingCup(rank){
 }
 
 //jsonデータからhtmlテーブルを自作する。
-function createTableByJsonList(datalist, locationId, tableDivId, caption, hdText, propId, align, width, height){
+function createTableByJsonList(datalist, locationId, tableDivId, caption, hdText, propId, align, width, height, headRowLines){
   let table = document.createElement("table");
   let thead = document.createElement('thead');
   let tbody = document.createElement('tbody');
   let trow = document.createElement('tr');
 
   //見出し行作成
-  thead.appendChild(createTableHeader(hdText, width));
+  thead.appendChild(createTableHeader(hdText, width,headRowLines));
   
   for(let i in datalist){
     // if(i>=200){break;}
@@ -911,7 +887,8 @@ function createHyoTableByHyoNumber(key, hyo_num){
     var propId = ["gyo_num", "retu_num", "name1", "val_a",　"val_b", "val_c",　"val_d",　"val_e", "val_f",　"val_g",　"val_h", "val_i",　"val_j"];
     var align = ["center", "center", "left",　"right",　"right",　"right",　"right",　"right",　"right",　"right",　"right",　"right",　"right"];
     var width = ["", "", "40%",　"6%",　"6%",　"6%",　"6%",　"6%",　"6%",　"6%",　"6%",　"6%",　"6%"];
-    createTableByJsonList(list, "v-pills-" + hyo_num, "tableDivHyo", "", hdText, propId, align, width, 2.75);
+    var headRowLines = 1;
+    createTableByJsonList(list, "v-pills-" + hyo_num, "tableDivHyo", "", hdText, propId, align, width, 2.75, headRowLines);
 
     destroyTableLoading("v-pills-" + hyo_num, "tableDivHyoLoading");
   })
@@ -940,7 +917,8 @@ function getAndCreateTable_AnzenRankList(){
     var propId = ["rank", "dantai_nm", "sisetu_nm",　"ryudo_hiritu"];
     var align = ["center", "left", "left",　"right"];
     var width = ["10%", "35%", "40%", "25%"];
-    createTableByJsonList(list, "divMainCenterTop", "tableDivAnzen", "流動比率による安全性ランキング", hdText, propId, align, width, 3);
+    var headRowLines = 2;
+    createTableByJsonList(list, "divMainCenterTop", "tableDivAnzen", "流動比率による安全性ランキング", hdText, propId, align, width, 3, headRowLines);
 
     //ローダーを削除
     destroyTableLoading("divMainCenterTop", "tableDivLoading");
@@ -972,7 +950,8 @@ function getAndCreateTable_RuisekiKessonRankList(){
     var propId = ["rank", "dantai_nm", "sisetu_nm",　"ruiseki_kesson_hiritu"];
     var align = ["center", "left", "left",　"right"];
     var width = ["10%", "35%", "40%", "25%"];
-    createTableByJsonList(list, "divMainRightTop", "tableDivRuisekiKesson", "累積欠損比率による健全性ランキング", hdText, propId, align, width, 3);
+    var headRowLines = 2;
+    createTableByJsonList(list, "divMainRightTop", "tableDivRuisekiKesson", "累積欠損比率による健全性ランキング", hdText, propId, align, width, 3, headRowLines);
     //ローダーを削除
     destroyTableLoading("divMainRightTop", "tableDivLoading2");
     return;
@@ -1000,7 +979,8 @@ function getAndCreateTable_KigyosaiKyusuiRankList(){
     var propId = ["rank", "dantai_nm", "sisetu_nm",　"kigyosai_shueki_hiritu"];
     var align = ["center", "left", "left",　"right"];
     var width = ["10%", "35%", "40%", "25%"];
-    createTableByJsonList(list, "divMainLeftMiddle", "tableDivKigyosaiKyusuiRankList", "企業債残高対給水収益比率による健全性ランキング", hdText, propId, align, width, 3);
+    var headRowLines = 2;
+    createTableByJsonList(list, "divMainLeftMiddle", "tableDivKigyosaiKyusuiRankList", "企業債残高対給水収益比率による健全性ランキング", hdText, propId, align, width, 3, headRowLines);
     //ローダーを削除
     destroyTableLoading("divMainLeftMiddle", "tableDivLoading4");
     return;
@@ -1028,7 +1008,8 @@ function getAndCreateTable_KoteiShokyakurituRankList(){
     var propId = ["rank", "dantai_nm", "sisetu_nm",　"shokyaku_hiritu"];
     var align = ["center", "left", "left",　"right"];
     var width = ["10%", "35%", "40%", "25%"];
-    createTableByJsonList(list, "divMainCenterMiddle", "tableDivKoteiShokyakurituRankList", "有形固定資産償却率による健全性ランキング", hdText, propId, align, width, 3);
+    var headRowLines = 2;
+    createTableByJsonList(list, "divMainCenterMiddle", "tableDivKoteiShokyakurituRankList", "有形固定資産償却率による健全性ランキング", hdText, propId, align, width, 3, headRowLines);
     //ローダーを削除
     destroyTableLoading("divMainCenterMiddle", "tableDivLoading5");
     return;
@@ -1055,7 +1036,8 @@ function getAndCreateTable_ByoshoRiyorituRankList(){
     var propId = ["rank", "dantai_nm", "sisetu_nm",　"riyoritu"];
     var align = ["center", "left", "left",　"right"];
     var width = ["10%", "35%", "40%", "25%"];
-    createTableByJsonList(list, "divMainRightMiddle", "tableDivByoshoRiyorituRankList", "病床利用率による効率性ランキング", hdText, propId, align, width, 3);
+    var headRowLines = 2;
+    createTableByJsonList(list, "divMainRightMiddle", "tableDivByoshoRiyorituRankList", "病床利用率による効率性ランキング", hdText, propId, align, width, 3, headRowLines);
     //ローダーを削除
     destroyTableLoading("divMainRightMiddle", "tableDivLoading6");
     return;
@@ -1082,7 +1064,8 @@ function getAndCreateTable_NyuinHitoriShuekiRankList(){
     var propId = ["rank", "dantai_nm", "sisetu_nm",　"hitori_ichinichi_shueki"];
     var align = ["center", "left", "left",　"right"];
     var width = ["10%", "35%", "40%", "25%"];
-    createTableByJsonList(list, "divMainLeftBottom", "tableDivNyuinHitoriShuekiRankList", "入院患者1人1日あたり収益による収益性ランキング", hdText, propId, align, width, 3);
+    var headRowLines = 2;
+    createTableByJsonList(list, "divMainLeftBottom", "tableDivNyuinHitoriShuekiRankList", "入院患者1人1日あたり収益による収益性ランキング", hdText, propId, align, width, 3, headRowLines);
     //ローダーを削除
     destroyTableLoading("divMainLeftBottom", "tableDivLoading7");
     return;
@@ -1158,42 +1141,52 @@ function CreateRadarChart(selectRow){
                 //var pointLabelFontSize = 2; //Chart.helpers.getValueOrDefault(scale.options.pointLabels.fontSize, Chart.defaults.global.defaultFontSize);
                 // scale.height *= (2 / 1.7)
                 // scale.height -= pointLabelFontSize;
-                scale.height = scale.height * 0.85;
+                scale.height = scale.height * 0.9;
             },
             afterFit: function (scale) {
                 //var pointLabelFontSize = 2; //Chart.helpers.getValueOrDefault(scale.options.pointLabels.fontSize, Chart.defaults.global.defaultFontSize);
                 //scale.height += pointLabelFontSize;
                 //scale.height /= (2 / 1.7);
-                scale.height = scale.height * 0.85;
+                scale.height = scale.height * 0.9;
             },
           },
-            plugins: {
-                legend: {
-                    labels: {
-                        // This more specific font property overrides the global property
-                        font: {
-                            size: 16
-                        },
-                        padding:30
-                    },
-                    position:"right"
-                }
+          plugins: {
+            htmlLegend: {
+              // ID of the container to put the legend in
+              containerID: 'legend-container',
             },
-            scales: {
-                r:{
-                  pointLabels:{
-                    font:{
-                      size:16,
-                      
-                    },
-                    fontStyle: "bold",
+            legend: {
+              display: false,
+            }
+          },
+          // plugins: {
+          //     legend: {
+          //         labels: {
+          //             // This more specific font property overrides the global property
+          //             font: {
+          //                 size: 16
+          //             },
+          //             padding:30
+          //         },
+          //         position:"right"
+          //     }
+          // },
+          scales: {
+              r:{
+                pointLabels:{
+                  font:{
+                    size:16,
+                    
                   },
-                  min: 0,
-                  max: 10,
-                  stepSize: 1
+                  fontStyle: "bold",
                 },
-            },
-        }
+                min: 0,
+                max: 10,
+                stepSize: 1
+              },
+          },
+        },
+        plugins: [htmlLegendPlugin],
     };
     //const ctx = document.getElementById("myChart").getContext('2d');
     //radarChart = new Chart(ctx, chartData);
@@ -1201,7 +1194,75 @@ function CreateRadarChart(selectRow){
     getRadarChartData(chartData, selectRow);
 }
 
+const getOrCreateLegendList = (chart, id) => {
+  const legendContainer = document.getElementById(id);
+  let listContainer = legendContainer.querySelector('ul');
 
+  if (!listContainer) {
+    listContainer = document.createElement('ul');
+    listContainer.style.display = 'block';
+    //listContainer.style.flexDirection = 'row';
+    listContainer.style.margin = 0;
+    listContainer.style.padding = 0;
+
+    legendContainer.appendChild(listContainer);
+  }
+
+  return listContainer;
+};
+
+const htmlLegendPlugin = {
+  id: 'htmlLegend',
+  afterUpdate(chart, args, options) {
+    const ul = getOrCreateLegendList(chart, options.containerID);
+
+    // Remove old legend items
+    while (ul.firstChild) {
+      ul.firstChild.remove();
+    }
+
+    // Reuse the built-in legendItems generator
+    const items = chart.options.plugins.legend.labels.generateLabels(chart);
+
+    items.forEach(item => {
+      const li = document.createElement('li');
+      li.style.alignItems = 'center';
+      li.style.cursor = 'pointer';
+      li.style.display = 'flex';
+      li.style.flexDirection = 'row';
+      li.style.marginLeft = '10px';
+
+      li.onclick = () => {
+        chart.setDatasetVisibility(item.datasetIndex, !chart.isDatasetVisible(item.datasetIndex));
+        chart.update();
+      };
+
+      // Color box
+      const boxSpan = document.createElement('span');
+      boxSpan.style.background = item.fillStyle;
+      boxSpan.style.borderColor = item.strokeStyle;
+      boxSpan.style.borderWidth = item.lineWidth + 'px';
+      boxSpan.style.display = 'inline-block';
+      boxSpan.style.height = '20px';
+      boxSpan.style.marginRight = '10px';
+      boxSpan.style.width = '20px';
+
+      // Text
+      const textContainer = document.createElement('p');
+      textContainer.style.color = item.fontColor;
+      textContainer.style.margin = 0;
+      textContainer.style.padding = 0;
+      textContainer.style.textDecoration = item.hidden ? 'line-through' : '';
+
+      const text = document.createTextNode(item.text);
+      textContainer.appendChild(text);
+
+      li.appendChild(boxSpan);
+      li.appendChild(textContainer);
+      ul.appendChild(li);
+    });
+  }
+};
 
 // レーダーチャートに含まれるかどうかを検査
 function isContainsRadarChart(chartData, datalist){
@@ -1231,7 +1292,7 @@ function getRadarChartData(chartData, datalist){
       }
     }
 
-    if(idx>=5){
+    if(idx>=8){
       // var selectTdText = event.target.innerText;
       // var eventId = event.target.id;
       // event.target.style.backgroundColor = "red";
@@ -1239,8 +1300,9 @@ function getRadarChartData(chartData, datalist){
       // //setTimeout("$('#progressPrintSeikyuPercent').hide(); $('#progressPrintSeikyuPercent').html('')", 3000);
       // setTimeout('document.getElementById(' + eventId + ').innerText = ' + selectTdText + ";", 3000);
       //divCompareRadar か //myChart で間にメッセージ
+      try{document.getElementById("divRadarchartMessage").remove();}catch(e){}
       let divMessage = document.createElement("div");
-      divMessage.innerText = "レーダーチャートの比較機能は、最大５件までです。";
+      divMessage.innerText = "レーダーチャートの比較機能は、最大８件までです。";
       divMessage.style.color = "red";
       divMessage.style.textAlign = "center";
       divMessage.id = "divRadarchartMessage";
@@ -1268,7 +1330,7 @@ function getRadarChartData(chartData, datalist){
           data: [],
           borderWidth: 1
       });
-      chartData.data.datasets[idx].label = (datalist.dantai_nm + " " + datalist.sisetu_nm).substring(0,5); //datalist.sisetu_nm;//(idx == 0 ? selectVendor : selectVendor.substring(0,2));
+      chartData.data.datasets[idx].label = (datalist.dantai_nm + " " + datalist.sisetu_nm).substring(0,16); //datalist.sisetu_nm;//(idx == 0 ? selectVendor : selectVendor.substring(0,2));
       var list = JSON.parse(jsonData.data);
 
       if(datalist.dantai_nm != "dummy" && list.length > 0){
@@ -1944,7 +2006,8 @@ document.getElementById("mapAreaDiv").addEventListener('click', function() {
       var propId = ["dantai_cd", "sisetu_cd", "dantai_nm", "sisetu_nm", "gyoshu_nm", "jigyo_nm"];
       var align = ["left", "left", "left", "left", "left", "left"];
       var width = ["10%", "10%", "25%", "25%", "15%", "15%"];
-      createTableByJsonList(list, "prefDantaiListTableDiv", "prefDantaiListTableDivMain", "企業名リスト", hdText, propId, align, width, 3);
+    var headRowLines = 1;
+    createTableByJsonList(list, "prefDantaiListTableDiv", "prefDantaiListTableDivMain", "企業名リスト", hdText, propId, align, width, 3, headRowLines);
       destroyTableLoading("prefDantaiListTableDiv", "prefDantaiListTableDivLoading");
       document.getElementById('btnTargetSelect').classList.add("disabled");
       if(document.getElementById("mapHeadRowDiv").querySelectorAll("span").length == 0){
@@ -2253,7 +2316,8 @@ document.getElementById('btnExecuteCollect').addEventListener('click', function(
     var hdText = ["対象", "決算年度", "法適用区分","表番号", "検出URL", "状態","進捗"];
     var propId = ["checkbox", "year", "dantai", "text", "url", "jotai","sinchoku"];
     var align = ["left", "left", "left", "left", "left", "center"];
-    createTableByJsonList(jsonData.data, "tableFileCollectDiv", "tableFileCollect", "ファイル取り込み状況", hdText, propId, align, null, 1.5);
+    var headRowLines = 1;
+    createTableByJsonList(jsonData.data, "tableFileCollectDiv", "tableFileCollect", "ファイル取り込み状況", hdText, propId, align, null, 1.5, headRowLines);
     customizeFileImportTable();
     document.getElementById('btnExecuteCollect').classList.remove("disabled");
     document.getElementById('btnExecuteImport').classList.remove("disabled");
