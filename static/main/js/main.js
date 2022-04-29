@@ -1391,6 +1391,7 @@ function createScatterChart(selectRow){
       dataA.push({
         label:list[i].dantai_nm.substring(0,5), 
         pointRadius: bubbleSize, //(isSelected ? 12:8), 
+        pointHoverRadius: bubbleSize*0.75, //(isSelected ? 12:8), 
         backgroundColor: getScatterColor(list[i].dantai_cd,0,isSelected), //'rgba(255, 48, 32, 0.45)',
         borderColor: getScatterColor(list[i].dantai_cd,1,isSelected),
         data:[{ x: list[i].val_x,  y:  list[i].val_y}]
