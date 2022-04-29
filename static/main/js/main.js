@@ -2556,7 +2556,6 @@ function getCityList(){
     var list = JSON.parse(jsonData.data);
     createTableRightSideCityList(list);
     //createCitySelectOption(list);
-    //UndispLoading();
     return;
   })
   .catch(error => { console.log(error); });
@@ -2866,111 +2865,51 @@ function getSelectedCityNm(){
 }
 //var table = new DataTable("table");
 
-function createCitySelectOption(datalist){
-  var select = document.getElementById("selCity");
-  while(select.lastChild){
-    select.removeChild(select.lastChild);
-  }
-  var option = document.createElement("option");
-  option.value = "0";
-  option.text = "（市区町村選択）";
-  select.appendChild(option);  
-  for(let i in datalist){
-    var option = document.createElement("option");
-    option.value = datalist[i].dantai_cd;
-    option.text = datalist[i].city_nm;
-    select.appendChild(option);
-  }
-}
-
-
-// // 都道府県プルダウンの作成
-// // べた書きでいくよ
-// // selTdfk
-// function createTdfkSelectOption(){
-//   var vSelTdfk = document.getElementById("selTdfk"); //selTdfkSub
-//   for(let i=1; i<=47; i++){
-    
-//     if(i==2 || i==8 || i==16 || i==19 || i==25 || i==31 || i==36 || i==40){ //東北
-//       var separator = document.createElement("option");
-//       separator.value =  (i==2 ? '91' : (i==8 ? '92' : (i==16 ? '93' : (i==19 ? '94' : (i==25 ? '95' : (i==31 ? '96' : (i==36 ? '97' : (i==40 ? '97' : '')))))))); //"91";
-//       separator.text = (i==2 ? '─── 東北地方 ───' : (i==8 ? '─── 関東地方 ───' : (i==16 ? '─── 北陸地方 ───' : (i==19 ? '─── 中部地方 ───' : (i==25 ? '─── 関西地方 ───' : (i==31 ? '─── 中国地方 ───' : (i==36 ? '─── 四国地方 ───' : (i==40 ? '─── 九州地方 ───' : '')))))))); //"91";
-//       separator.setAttribute("disabled","disabled");
-//       vSelTdfk.appendChild(separator);
-//     }
-
-//     var option = document.createElement("option");
-//     var val = ( '0' + i).slice(-2);
-//     option.value = val;
-//     option.text = c_tdfk[val];
-//     vSelTdfk.appendChild(option);
+// function createCitySelectOption(datalist){
+//   var select = document.getElementById("selCity");
+//   while(select.lastChild){
+//     select.removeChild(select.lastChild);
 //   }
-//   var vSelTdfkSub = document.getElementById("selTdfkSub"); //
-//   const options = document.getElementById('selTdfk').options
-//   Array.from(options).forEach(function(option) {
-//     var opt = document.createElement("option");
-//     opt.value = option.value;
-//     opt.text = option.text
-//     vSelTdfkSub.appendChild(opt);
-//   });
-
-// }
-
-// const c_tdfk = {
-//   "01" : "北海道"   ,"02" : "青森県"   ,"03" : "岩手県"   ,"04" : "宮城県"   ,"05" : "秋田県"   ,"06" : "山形県"   ,"07" : "福島県"   ,"08" : "茨城県"   ,
-//   "09" : "栃木県"   ,"10" : "群馬県"   ,"11" : "埼玉県"   ,"12" : "千葉県"   ,"13" : "東京都"   ,"14" : "神奈川県" ,"15" : "新潟県"   ,"16" : "富山県"   ,
-//   "17" : "石川県"   ,"18" : "福井県"   ,"19" : "山梨県"   ,"20" : "長野県"   ,"21" : "岐阜県"   ,"22" : "静岡県"   ,"23" : "愛知県"   ,"24" : "三重県"   ,
-//   "25" : "滋賀県"   ,"26" : "京都府"   ,"27" : "大阪府"   ,"28" : "兵庫県"   ,"29" : "奈良県"   ,"30" : "和歌山県" ,"31" : "鳥取県"   ,"32" : "島根県"   ,
-//   "33" : "岡山県"   ,"34" : "広島県"   ,"35" : "山口県"   ,"36" : "徳島県"   ,"37" : "香川県"   ,"38" : "愛媛県"   ,"39" : "高知県"   ,"40" : "福岡県"   ,
-//   "41" : "佐賀県"   ,"42" : "長崎県"   ,"43" : "熊本県"   ,"44" : "大分県"   ,"45" : "宮崎県"   ,"46" : "鹿児島県" ,"47" : "沖縄県"
-// };
-
-
-// function createFilePatternSelectOption(){
-//   var select = document.getElementById("selFilePattern");
-//   for(let i=1; i<=Object.keys(c_filePattern).length; i++){
+//   var option = document.createElement("option");
+//   option.value = "0";
+//   option.text = "（市区町村選択）";
+//   select.appendChild(option);  
+//   for(let i in datalist){
 //     var option = document.createElement("option");
-//     option.value = i;
-//     option.text = c_filePattern[i];
+//     option.value = datalist[i].dantai_cd;
+//     option.text = datalist[i].city_nm;
 //     select.appendChild(option);
 //   }
 // }
-// const c_filePattern = {
-//   1:"財政状況資料_都道府県", 2:"ファイル２"
+
+// function dispLoading(){
+//   var bg = document.getElementById('loader-bg');
+//   var loader = document.getElementById('loader');
+//   bg.classList.remove('is-hide');
+//   loader.classList.remove('is-hide');
+//   bg.classList.remove('fadeout-bg');
+//   loader.classList.remove('fadeout-loader');
 // }
 
 
 
+// //dispLoading();
 
+// /* 読み込み完了 */
+// //window.addEventListener('load', UndispLoading);
 
-function dispLoading(){
-  var bg = document.getElementById('loader-bg');
-  var loader = document.getElementById('loader');
-  bg.classList.remove('is-hide');
-  loader.classList.remove('is-hide');
-  bg.classList.remove('fadeout-bg');
-  loader.classList.remove('fadeout-loader');
-}
+// /* 10秒経ったら強制的にロード画面を非表示にする */
+// //setTimeout('UndispLoading()',10000);
 
-
-
-//dispLoading();
-
-/* 読み込み完了 */
-//window.addEventListener('load', UndispLoading);
-
-/* 10秒経ったら強制的にロード画面を非表示にする */
-//setTimeout('UndispLoading()',10000);
-
-/* ロード画面を非表示にする処理 */
-function UndispLoading(){
-  var bg = document.getElementById('loader-bg');
-  var loader = document.getElementById('loader');
-    bg.classList.add('fadeout-bg');
-    loader.classList.add('fadeout-loader');
-    bg.classList.add('is-hide');
-    loader.classList.add('is-hide');
-}
+// /* ロード画面を非表示にする処理 */
+// function UndispLoading(){
+//   var bg = document.getElementById('loader-bg');
+//   var loader = document.getElementById('loader');
+//     bg.classList.add('fadeout-bg');
+//     loader.classList.add('fadeout-loader');
+//     bg.classList.add('is-hide');
+//     loader.classList.add('is-hide');
+// }
 
 
 
