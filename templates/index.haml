@@ -28,6 +28,11 @@
       %h6
         %a.headerLink(data-bs-toggle="modal" data-bs-target="#modalVersion")
           更新履歴
+      %span(style="padding-left:12px;padding-right:12px;")
+        ｜
+      %h6
+        %a.headerLink(data-bs-toggle="offcanvas" href="#offcanvasExample" role="button" aria-controls="offcanvasExample")
+          設定
 
     %div.col-1
       %button.btn.btn-primary.btn-sm.float-end(type="button" data-bs-toggle="modal" data-bs-target="#modalExcelUpload" style="margin-top:10px")
@@ -291,6 +296,30 @@
           見る
         %button.btn.btn-secondary#btnCloseMapModal(type="button" data-bs-dismiss="modal")
           閉じる
+
+
+
+
+
+<!-- offcanvas -->
+%div.offcanvas.offcanvas-start#offcanvasExample(tabindex="-1" aria-labelledby="offcanvasExampleLabel")
+  %div.offcanvas-header
+    %h5.offcanvas-title#offcanvasExampleLabel
+      設定
+    %button.btn-close.text-reset(type="button" data-bs-dismiss="offcanvas" aria-label="Close")
+  %div.offcanvas-body
+    %div.d-flex.align-items-start
+      %div.nav.nav-pills.me-3#v-setting-tab(role="tablist" aria-orientation="vertical")
+        %a.nav-link.active#vTabSetting-AA(data-bs-toggle="pill" data-bs-target="#v-setting-AA" type="button" role="tab" aria-controls="v-setting-AA" aria-selected="true")
+          行列項目
+        %a.nav-link#vTabSetting-BB(data-bs-toggle="pill" data-bs-target="#v-setting-BB" type="button" role="tab" aria-controls="v-setting-BB" aria-selected="false")
+          動作設定
+      %div.tab-content#v-setting-tabContent(style="width: 100%;")
+        %div.tab-pane.face.loadableTable.col-12.active#v-setting-AA(role="tabpanel" aria-labelledby="v-setting-AA-tab" style="")
+          %div#v-setting-AACaption
+          %div.table-responsive#tableDivSettingAA(style="width: 100%;")
+            a
+        %div.tab-pane.face.loadableTable.col-12#v-setting-BB(role="tabpanel" aria-labelledby="v-setting-BB-tab" style="")
 
 %div#loading
   %div.spinner-border(role="status" style="position:relative; left:50%; top:50%; width: 6rem; height: 6rem;")

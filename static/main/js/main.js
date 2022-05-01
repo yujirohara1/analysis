@@ -650,6 +650,7 @@ function createTableByJsonList(datalist, locationId, tableDivId, caption, hdText
             tdataA.addEventListener('click', (event) => {
               var key = event.target.title;
               //moveProfileTab(key);
+              globalSelectedRow = datalist[i];
               createHyoVerticalNavbar(datalist[i]); //基本情報タブの左の表バー
               moveCompareTab(datalist[i]);
               CreateRadarChart(datalist[i]);
@@ -1356,6 +1357,12 @@ function getRadarChartData(chartData, datalist){
     .catch(error => { console.log(error); });
 }
 
+
+
+document.getElementById("selScatterZ").addEventListener("change", function(){
+  var selectRow = globalSelectedRow;
+  createScatterChart(selectRow);
+});
 
 
 
@@ -2372,6 +2379,11 @@ function AllClearTable(tableDivId){
 }
 
 
+// var offcanvasElementList = [].slice.call(document.querySelectorAll('.offcanvas'))
+// var offcanvasList = offcanvasElementList.map(function (offcanvasEl) {
+//   return new bootstrap.Offcanvas(offcanvasEl)
+// })
+
 
 
 var datalist = null;
@@ -2538,7 +2550,6 @@ function openHikakuModal(datalist, rowindex, title){
   
   myModal.show();
 }
-
 
 document.getElementById("selTdfkSub").addEventListener("change", function(){
   //AllClearGraphs();
