@@ -2363,6 +2363,28 @@ document.getElementById('modalExcelUpload').addEventListener('show.bs.modal', fu
 
 
 
+//var tabEl = document.querySelector('button[data-bs-toggle="tab"]');
+//vTabSetting-AA
+
+let targets = document.querySelectorAll("[id^='vTabSetting']"); //' #divGraphArea *');
+targets.forEach(target => {
+  target.addEventListener("shown.bs.tab", function (event) {
+    alert(event.target.id);
+  });
+});
+
+
+document.getElementById("offcanvasSetting").addEventListener("shown.bs.offcanvas", function (event) {
+  alert(event.target.id);
+});
+
+// for(let i in targets){
+//   targets[i].addEventListener("shown.bs.tab", function (event) {
+//     alert(event.target);
+//   });
+// }
+
+
 function AllClearGraphs(){
   var graphArea = document.getElementById("divGraphRow1");
   while(graphArea.lastChild){
