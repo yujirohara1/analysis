@@ -354,6 +354,12 @@ table.dataTable thead tr {
     width: 542px;
 }
 
+.list-group-item-sm{
+    padding:4px 0px 4px 10px; 
+    font-size:0.9rem;
+    text-align: left;
+}
+
 .form-select-sm {
     padding-top: .25rem;
     padding-bottom: .25rem;

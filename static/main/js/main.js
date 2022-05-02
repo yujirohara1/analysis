@@ -796,7 +796,7 @@ function moveCompareTab(datalist){
 function createHyoVerticalNavbar(selectRow){
     var key = selectRow.gyomu_cd + "-" + selectRow.gyoshu_cd + "-" + selectRow.jigyo_cd + "-" +  selectRow.dantai_cd + "-" +  selectRow.sisetu_cd;
     var val = "2020"; // 会計年度、見直し必要。
-    fetch('/getHyoListForProfile/' + val + '/20/30/40/50/60', {
+    fetch('/getHyoListForProfile/' + val, {
       method: 'GET',
       'Content-Type': 'application/json'
     })
@@ -2369,9 +2369,84 @@ document.getElementById('modalExcelUpload').addEventListener('show.bs.modal', fu
 let targets = document.querySelectorAll("[id^='vTabSetting']"); //' #divGraphArea *');
 targets.forEach(target => {
   target.addEventListener("shown.bs.tab", function (event) {
-    alert(event.target.id);
+    if(event.target.id == "vTabSetting-AA"){
+      createHyoList();
+    } else {
+      alert(event.target.id);
+    }
   });
 });
+
+
+// 基本情報タブの左の表リストを作成
+function createHyoList(){
+  //var key = selectRow.gyomu_cd + "-" + selectRow.gyoshu_cd + "-" + selectRow.jigyo_cd + "-" +  selectRow.dantai_cd + "-" +  selectRow.sisetu_cd;
+  var val = "2020"; // 会計年度、見直し必要。
+  fetch('/getHyoListForProfile/' + document.getElementById("settingNendo").value, {
+    method: 'GET',
+    'Content-Type': 'application/json'
+  })
+  .then(res => res.json())
+  .then(jsonData => {
+    
+    var tmp = document.getElementById("divSettingHyoList");
+    while(tmp.lastChild){
+      tmp.removeChild(tmp.lastChild);
+    }
+
+    let group = document.getElementById("divSettingHyoList");
+    
+    // let div1 = document.createElement("div");
+    // div1.classList.add("d-flex");
+    // div1.classList.add("align-items-start");
+
+    // var divTabGroup = document.createElement("div");
+    // divTabGroup.classList.add("nav","flex-column","nav-pills","me-3");
+    // divTabGroup.id = "v-pills-tab";
+    // divTabGroup.setAttribute("role","tablist"); //role="tablist" aria-orientation="vertical"
+    // divTabGroup.setAttribute("aria-orientation","vertical"); //role="tablist" aria-orientation="vertical"
+
+    // var divContentGroup = document.createElement("div");
+    // divContentGroup.classList.add("tab-content");
+    // divContentGroup.id = "v-pills-tabContent";
+    // //divContentGroup.classList.add("loadableTable"); //ローダーをセンタリングする
+    // divContentGroup.style.width="100%";
+
+    var list = JSON.parse(jsonData.data);
+    for(let i in list){
+      var listItem = document.createElement("a");
+      listItem.classList.add("list-group-item","list-group-item-action","list-group-item-sm");
+      listItem.id = "aSettingHyoItem" + list[i].hyo_num;
+      listItem.innerText = list[i].hyo_num + "." + list[i].hyo_nm;
+      setAttributes(listItem,"data-bs-toggle,list" + "/" + "href,#" + "/" + "aria-selected,false");
+      
+    //   tabButtonA.addEventListener('click', (event) => {
+    //     createHyoTableByHyoNumber(key, event.target.innerText.substring(0,2));
+    //   });
+
+    //   divTabGroup.appendChild(tabButtonA);
+
+    //   //<div class="tab-pane fade" id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab">
+    //   var divContent = document.createElement("div");
+    //   divContent.classList.add("tab-pane", "face", "loadableTable", "col-12");
+    //   divContent.id = "v-pills-" + list[i].hyo_num;
+    //   divContent.setAttribute("role","tabpanel");
+    //   divContent.setAttribute("aria-labelledby","v-pills-" + list[i].hyo_num + "-tab");
+    //   divContentGroup.appendChild(divContent);
+      group.appendChild(listItem);
+    }
+    // div1.appendChild(divTabGroup);
+    // div1.appendChild(divContentGroup);
+    // document.getElementById('profile-panel').appendChild(div1);
+
+    // // デフォルトで20表を選択する。
+    // document.getElementById('vTabHyo_20').classList.add("active");
+    // document.getElementById('v-pills-20').classList.add("active");
+    // createHyoTableByHyoNumber(key, 20);
+    return;
+  })
+  .catch(error => { console.log(error); });
+}
 
 
 document.getElementById("offcanvasSetting").addEventListener("show.bs.offcanvas", function (event) {
@@ -2402,16 +2477,8 @@ function createNendoList(){
       option.text = list[i].nendo;
       settingNendoObj.appendChild(option);
     }
-    // createTableDiv("divMainLeftTop", "tableDivShueki");
-    // var list = JSON.parse(jsonData.data);
-    // var hdText = ["ランク", "団体名", "事業名・施設名",　"経常収支比率(%)"];
-    // var propId = ["rank", "dantai_nm", "sisetu_nm",　"keijo_shusi_hiritu"];
-    // var align = ["center", "left", "left",　"right"];
-    // var width = ["10%", "35%", "40%", "25%"];
-    // var headRowLines = 2;
-    // createTableByJsonList(list, "divMainLeftTop", "tableDivShueki", "経常収支比率による収益性ランキング", hdText, propId, align, width, 3, headRowLines);
-    // //ローダーを削除
-    // destroyTableLoading("divMainLeftTop", "tableDivLoading1");
+    document.getElementById("settingNendo").value = list[0].nendo;
+    createHyoList();
     return;
   })
   .catch(error => { console.log(error); });

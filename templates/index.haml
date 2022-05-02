@@ -319,10 +319,15 @@
           行列項目
         %a.nav-link#vTabSetting-BB(data-bs-toggle="pill" data-bs-target="#v-setting-BB" type="button" role="tab" aria-controls="v-setting-BB" aria-selected="false")
           動作設定
-      %div.tab-content#v-setting-tabContent(style="width:100%; height:100%; border-left:1px solid #d3d3d3")
+      %div.tab-content#v-setting-tabContent(style="width:100%; height:100%; border-left:1px solid #d3d3d3; padding-left:20px")
         %div.tab-pane.face.loadableTable.col-12#v-setting-AA(role="tabpanel" aria-labelledby="v-setting-AA-tab" style="")
-          %div.table-responsive#tableDivSettingAA(style="width: 100%;")
-            a
+          %div.row
+            %div.col-3
+              <div class="list-group" id="divSettingHyoList">
+              </div>
+            %div.col-9
+              %div.table-responsive#tableDivSettingAA(style="width: 100%;")
+                a
         %div.tab-pane.face.loadableTable.col-12#v-setting-BB(role="tabpanel" aria-labelledby="v-setting-BB-tab" style="")
 
 %div#loading

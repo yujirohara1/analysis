@@ -641,6 +641,15 @@ def getNendoList():
     resultset.append({"nendo":row["nendo"]})
   return jsonify({'data': json.dumps(resultset,default=decimal_default_proc)})
 
+# # 表リスト
+# @app.route('/getHyoList')
+# def getNendoList():
+#   datalist = db.session.execute(text("select distinct nendo from analy_gyoretu order by nendo desc"))
+#   resultset=[]
+#   for row in datalist:
+#     resultset.append({"nendo":row["nendo"]})
+#   return jsonify({'data': json.dumps(resultset,default=decimal_default_proc)})
+
 # 収益性ランキングの作成（経常収支比率の昇順）
 @app.route('/getShuekiRankList/<nendo>/<joken>')
 def getShuekiRankList(nendo, joken):
@@ -761,8 +770,8 @@ def getSihonSeichorituRankList(nendo, joken):
 
 
 # 基本情報タブ用の表リスト取得
-@app.route('/getHyoListForProfile/<nendo>/<gyomu_cd>/<gyoshu_cd>/<jigyo_cd>/<dantai_cd>/<sisetu_cd>')
-def getHyoListForProfile(nendo, gyomu_cd, gyoshu_cd, jigyo_cd, dantai_cd, sisetu_cd):
+@app.route('/getHyoListForProfile/<nendo>')
+def getHyoListForProfile(nendo):
     datalist = AnalyHyo.query.filter(AnalyHyo.nendo == nendo).order_by(asc(AnalyHyo.hyo_num)).all()
     datalist_schema = AnalyHyoSchema(many=True)
     return jsonify({'data': datalist_schema.dumps(datalist, ensure_ascii=False, default=decimal_default_proc)})
