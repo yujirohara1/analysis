@@ -632,6 +632,15 @@ def getRankList(nendo, joken, table_nm, rank_col):
 
 
 
+# 年度リスト
+@app.route('/getNendoList')
+def getNendoList():
+  datalist = db.session.execute(text("select distinct nendo from analy_gyoretu order by nendo desc"))
+  resultset=[]
+  for row in datalist:
+    resultset.append({"nendo":row["nendo"]})
+  return jsonify({'data': json.dumps(resultset,default=decimal_default_proc)})
+
 # 収益性ランキングの作成（経常収支比率の昇順）
 @app.route('/getShuekiRankList/<nendo>/<joken>')
 def getShuekiRankList(nendo, joken):

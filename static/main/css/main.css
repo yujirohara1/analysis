@@ -359,6 +359,7 @@ table.dataTable thead tr {
     padding-bottom: .25rem;
     padding-left: .5rem;
     font-size: .875rem;
+    height: 30px;
 }
 
 ::-webkit-scrollbar{

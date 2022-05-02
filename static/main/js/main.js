@@ -2374,9 +2374,50 @@ targets.forEach(target => {
 });
 
 
-document.getElementById("offcanvasSetting").addEventListener("shown.bs.offcanvas", function (event) {
-  alert(event.target.id);
+document.getElementById("offcanvasSetting").addEventListener("show.bs.offcanvas", function (event) {
+  var settingNendoObj = document.getElementById("settingNendo");
+  while(settingNendoObj.lastChild){
+    settingNendoObj.removeChild(settingNendoObj.lastChild);
+  }
+  createNendoList();
 });
+
+
+function createNendoList(){
+  //枠内にローダーを表示
+  //createTableLoading("divMainLeftTop", "tableDivLoading1", "経常収支比率による収益性ランクを作成中...");
+  //var val = "2020"; // 会計年度、見直し必要。
+  //var joken = getGyoshuJoken();
+  fetch('/getNendoList', {
+    method: 'GET',
+    'Content-Type': 'application/json'
+  })
+  .then(res => res.json())
+  .then(jsonData => {
+    var list = JSON.parse(jsonData.data);
+    var settingNendoObj = document.getElementById("settingNendo"); //selTdfkSub
+    for(let i in list){
+      var option = document.createElement("option");
+      option.value = list[i].nendo;
+      option.text = list[i].nendo;
+      settingNendoObj.appendChild(option);
+    }
+    // createTableDiv("divMainLeftTop", "tableDivShueki");
+    // var list = JSON.parse(jsonData.data);
+    // var hdText = ["ランク", "団体名", "事業名・施設名",　"経常収支比率(%)"];
+    // var propId = ["rank", "dantai_nm", "sisetu_nm",　"keijo_shusi_hiritu"];
+    // var align = ["center", "left", "left",　"right"];
+    // var width = ["10%", "35%", "40%", "25%"];
+    // var headRowLines = 2;
+    // createTableByJsonList(list, "divMainLeftTop", "tableDivShueki", "経常収支比率による収益性ランキング", hdText, propId, align, width, 3, headRowLines);
+    // //ローダーを削除
+    // destroyTableLoading("divMainLeftTop", "tableDivLoading1");
+    return;
+  })
+  .catch(error => { console.log(error); });
+}
+
+
 
 // for(let i in targets){
 //   targets[i].addEventListener("shown.bs.tab", function (event) {

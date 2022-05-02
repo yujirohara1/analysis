@@ -308,15 +308,19 @@
       設定
     %button.btn-close.text-reset(type="button" data-bs-dismiss="offcanvas" aria-label="Close")
   %div.offcanvas-body
+    %div.row
+      %p(style="float:left; width:10%")
+        会計年度
+      %select.form-select.form-select-sm#settingNendo(aria-label="Default select example" style="float:left; width:10%")
+    %hr
     %div.d-flex.align-items-start(style="height:100%")
       %div.nav.nav-pills#v-setting-tab(role="tablist" aria-orientation="vertical")
-        %a.nav-link.active#vTabSetting-AA(data-bs-toggle="pill" data-bs-target="#v-setting-AA" type="button" role="tab" aria-controls="v-setting-AA" aria-selected="true")
+        %a.nav-link#vTabSetting-AA(data-bs-toggle="pill" data-bs-target="#v-setting-AA" type="button" role="tab" aria-controls="v-setting-AA" aria-selected="false")
           行列項目
         %a.nav-link#vTabSetting-BB(data-bs-toggle="pill" data-bs-target="#v-setting-BB" type="button" role="tab" aria-controls="v-setting-BB" aria-selected="false")
           動作設定
       %div.tab-content#v-setting-tabContent(style="width:100%; height:100%; border-left:1px solid #d3d3d3")
-        %div.tab-pane.face.loadableTable.col-12.active#v-setting-AA(role="tabpanel" aria-labelledby="v-setting-AA-tab" style="")
-          %div#v-setting-AACaption
+        %div.tab-pane.face.loadableTable.col-12#v-setting-AA(role="tabpanel" aria-labelledby="v-setting-AA-tab" style="")
           %div.table-responsive#tableDivSettingAA(style="width: 100%;")
             a
         %div.tab-pane.face.loadableTable.col-12#v-setting-BB(role="tabpanel" aria-labelledby="v-setting-BB-tab" style="")
